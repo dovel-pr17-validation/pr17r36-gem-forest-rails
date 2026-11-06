@@ -1,0 +1,3053 @@
+## [9.22.17](https://github.com/ForestAdmin/forest-rails/compare/v9.22.16...v9.22.17) (2026-11-03)
+
+
+### Bug Fixes
+
+* quote context variable values in live query segments ([#846](https://github.com/ForestAdmin/forest-rails/issues/846)) ([3b41dd5](https://github.com/ForestAdmin/forest-rails/commit/3b41dd571232d1c9cda4f2adba2ae043e1da1ec9))
+
+## [9.22.16](https://github.com/ForestAdmin/forest-rails/compare/v9.22.15...v9.22.16) (2026-10-30)
+
+
+### Bug Fixes
+
+* **stripe:** answer refund requests like the forest-express integration ([4e44992](https://github.com/ForestAdmin/forest-rails/commit/4e449928bea228491ca94fe436f079680447e5fa))
+* **stripe:** check the Refund action permission before refunding payments ([c594f99](https://github.com/ForestAdmin/forest-rails/commit/c594f99593c0a619352e283c9e56293aa5d7f617))
+* **stripe:** check the Refund action permission before refunding payments [PRD-1758] ([09d580e](https://github.com/ForestAdmin/forest-rails/commit/09d580e838ac0a048ccc9e2cc905a9042529235f))
+
+## [9.22.15](https://github.com/ForestAdmin/forest-rails/compare/v9.22.14...v9.22.15) (2026-10-30)
+
+
+### Bug Fixes
+
+* **devise:** apply smart action permissions and scope to change-password [PRD-1757] ([d7f4871](https://github.com/ForestAdmin/forest-rails/commit/d7f487156516ee821ebf4ed70ee05e348426fd1d))
+* **devise:** check the action permission and scope on change-password [PRD-1757] ([056d525](https://github.com/ForestAdmin/forest-rails/commit/056d525e00baf6a6232cc7ac7ab6d7f0bda18c18))
+* **devise:** declare change-password as a single-record action [PRD-1757] ([e998575](https://github.com/ForestAdmin/forest-rails/commit/e9985752739b3da7da305b929e02de27e84e936d))
+* **devise:** refuse a select-all selection on change-password [PRD-1757] ([b6906ea](https://github.com/ForestAdmin/forest-rails/commit/b6906ea7e4efda972cc457ef2b42976fa9726783))
+* **devise:** resolve the change-password target within the user scope [PRD-1757] ([2934314](https://github.com/ForestAdmin/forest-rails/commit/2934314be99a319667c930b3f385ed8160e9975f))
+* **smart-action:** only read the requester from a signed approval request [PRD-1757] ([346d61a](https://github.com/ForestAdmin/forest-rails/commit/346d61af52e8705333fbc897867fb1487620ac84))
+
+## [9.22.14](https://github.com/ForestAdmin/forest-rails/compare/v9.22.13...v9.22.14) (2026-10-30)
+
+
+### Bug Fixes
+
+* **live-query:** follow the MySQL session mode and SQL Server comments ([8ccdedc](https://github.com/ForestAdmin/forest-rails/commit/8ccdedc25da6215621a3d71cf63029b4ac3c56cd))
+* **live-query:** quote record id and context variable values in charts ([c072773](https://github.com/ForestAdmin/forest-rails/commit/c0727736cf908c60e2451626c16f6507d26721a2))
+* **live-query:** quote record id and context variable values in charts ([faf7b7e](https://github.com/ForestAdmin/forest-rails/commit/faf7b7e2ec0b80745fc87fb41211870096fa7d06))
+* **live-query:** read MySQL dash comments only when a space follows ([86ccfc7](https://github.com/ForestAdmin/forest-rails/commit/86ccfc742e9fbf50e37a709175e3e4e387665bd3))
+* **live-query:** read nested PostgreSQL comments and SQLite bracket identifiers ([962c129](https://github.com/ForestAdmin/forest-rails/commit/962c129f8770b9a14d761428705b59bb07e7e6c0))
+* **live-query:** read the continuation lines of a PostgreSQL E'' string ([c9187aa](https://github.com/ForestAdmin/forest-rails/commit/c9187aa31b73a5f03e614758a0d5dd05f3c9c389))
+* **live-query:** read untagged dollar quotes and refuse values after a backslash ([aa04132](https://github.com/ForestAdmin/forest-rails/commit/aa041326e4c3db4e9f5b21f4f8703f677c580b6d))
+* **live-query:** validate the chart query before values are injected ([afcd1b3](https://github.com/ForestAdmin/forest-rails/commit/afcd1b3a8b31154567872bd8170a49ca65ee5066))
+
+## [9.22.13](https://github.com/ForestAdmin/forest-rails/compare/v9.22.12...v9.22.13) (2026-10-23)
+
+
+### Bug Fixes
+
+* **smart-action:** refuse a single-record action given several records [PRD-1704] ([5e74f17](https://github.com/ForestAdmin/forest-rails/commit/5e74f17182af2cb0e35d69035946fd0d367c55d5))
+* **smart-action:** refuse a single-record action given several records [PRD-1704] ([2b4e91a](https://github.com/ForestAdmin/forest-rails/commit/2b4e91aa8ca9f367ea4c17fc5247d9a880a07538))
+* **smart-action:** refuse a single-record action's form hooks given several records [PRD-1704] ([b212bdf](https://github.com/ForestAdmin/forest-rails/commit/b212bdf4a138f33e7b1d10760500a2a80c687fa3))
+
+## [9.22.12](https://github.com/ForestAdmin/forest-rails/compare/v9.22.11...v9.22.12) (2026-10-13)
+
+
+### Performance Improvements
+
+* cut list, count and get-one CPU on large schemas (PRD-1524) ([#838](https://github.com/ForestAdmin/forest-rails/issues/838)) ([1c13446](https://github.com/ForestAdmin/forest-rails/commit/1c13446d681f5e60d801b1085253d5220cda298b)), closes [#831](https://github.com/ForestAdmin/forest-rails/issues/831) [#833](https://github.com/ForestAdmin/forest-rails/issues/833) [#835](https://github.com/ForestAdmin/forest-rails/issues/835) [#834](https://github.com/ForestAdmin/forest-rails/issues/834) [#837](https://github.com/ForestAdmin/forest-rails/issues/837)
+
+## [9.22.11](https://github.com/ForestAdmin/forest-rails/compare/v9.22.10...v9.22.11) (2026-10-10)
+
+
+### Bug Fixes
+
+* **license:** relicense from GPL-3.0 to Apache-2.0 ([be8803b](https://github.com/ForestAdmin/forest-rails/commit/be8803b963b83535b3646705e6f4479e0014bcb8))
+
+## [9.22.10](https://github.com/ForestAdmin/forest-rails/compare/v9.22.9...v9.22.10) (2026-10-09)
+
+
+### Performance Improvements
+
+* remember schema lookups by name instead of rescanning models on every request ([#829](https://github.com/ForestAdmin/forest-rails/issues/829)) ([5809327](https://github.com/ForestAdmin/forest-rails/commit/5809327a6061159f38db4b59ca0fb9426b44ebfd))
+
+## [9.22.9](https://github.com/ForestAdmin/forest-rails/compare/v9.22.8...v9.22.9) (2026-10-09)
+
+
+### Performance Improvements
+
+* remove per-field apimap scans and quadratic relation links on wide collections ([#827](https://github.com/ForestAdmin/forest-rails/issues/827)) ([d4a28fb](https://github.com/ForestAdmin/forest-rails/commit/d4a28fb5931c76114b69e0e73f028cbae0dc691f))
+
+## [9.22.8](https://github.com/ForestAdmin/forest-rails/compare/v9.22.7...v9.22.8) (2026-10-07)
+
+
+### Bug Fixes
+
+* **sort:** load the association of every comma-separated sort field ([#826](https://github.com/ForestAdmin/forest-rails/issues/826)) ([208dd41](https://github.com/ForestAdmin/forest-rails/commit/208dd4195aeb38e359ffd3346e4bc546b7ec2055))
+
+## [9.22.7](https://github.com/ForestAdmin/forest-rails/compare/v9.22.6...v9.22.7) (2026-10-05)
+
+
+### Bug Fixes
+
+* **permissions:** drop a polymorphic relation with no declared target instead of refusing the request ([#825](https://github.com/ForestAdmin/forest-rails/issues/825)) ([c8c9b4f](https://github.com/ForestAdmin/forest-rails/commit/c8c9b4fd6cec8de514bce83ce4388479c6ba52be)), closes [#824](https://github.com/ForestAdmin/forest-rails/issues/824)
+
+## [9.22.6](https://github.com/ForestAdmin/forest-rails/compare/v9.22.5...v9.22.6) (2026-10-01)
+
+
+### Bug Fixes
+
+* tolerate search_param overrides and smart fields named like unexposed relations ([#822](https://github.com/ForestAdmin/forest-rails/issues/822)) ([ce07ac8](https://github.com/ForestAdmin/forest-rails/commit/ce07ac844f0ec5da96cdc45147c89755fee374b7)), closes [#820](https://github.com/ForestAdmin/forest-rails/issues/820) [#821](https://github.com/ForestAdmin/forest-rails/issues/821) [#823](https://github.com/ForestAdmin/forest-rails/issues/823)
+
+## [9.22.5](https://github.com/ForestAdmin/forest-rails/compare/v9.22.4...v9.22.5) (2026-10-01)
+
+
+### Bug Fixes
+
+* **projection:** select the right keys for preloaded :through relations on related lists ([#819](https://github.com/ForestAdmin/forest-rails/issues/819)) ([c491eb3](https://github.com/ForestAdmin/forest-rails/commit/c491eb349daee386a20c5d8444d97433c186adaa))
+
+## [9.22.4](https://github.com/ForestAdmin/forest-rails/compare/v9.22.3...v9.22.4) (2026-09-28)
+
+
+### Bug Fixes
+
+* **apimap-sorter:** keep sorting when fields share a name with different types ([#812](https://github.com/ForestAdmin/forest-rails/issues/812)) ([c8265df](https://github.com/ForestAdmin/forest-rails/commit/c8265df6598c91ab30ea7fc29b32ccfa66984680))
+
+## [9.22.3](https://github.com/ForestAdmin/forest-rails/compare/v9.22.2...v9.22.3) (2026-09-25)
+
+
+### Bug Fixes
+
+* **charts:** build a leaderboard from the parent collection so its table reaches the FROM clause ([#807](https://github.com/ForestAdmin/forest-rails/issues/807)) ([bd03ba2](https://github.com/ForestAdmin/forest-rails/commit/bd03ba22d1784b14e747e59bb82ad346e9b55274))
+
+## [9.22.2](https://github.com/ForestAdmin/forest-rails/compare/v9.22.1...v9.22.2) (2026-09-24)
+
+
+### Bug Fixes
+
+* **performance:** preload cross-database to-one relations in lists and exports [PRD-1317] ([#816](https://github.com/ForestAdmin/forest-rails/issues/816)) ([10c1b7c](https://github.com/ForestAdmin/forest-rails/commit/10c1b7cca6e16a67f3d91681be0f0ab53571904c))
+
+## [9.22.1](https://github.com/ForestAdmin/forest-rails/compare/v9.22.0...v9.22.1) (2026-09-24)
+
+
+### Bug Fixes
+
+* **projection:** select the key a dependency preload reads off a joined relation [PRD-1316] ([#815](https://github.com/ForestAdmin/forest-rails/issues/815)) ([1302645](https://github.com/ForestAdmin/forest-rails/commit/1302645ad10a03af476ece91428400c7c9b3105d))
+
+# [9.22.0](https://github.com/ForestAdmin/forest-rails/compare/v9.21.0...v9.22.0) (2026-09-23)
+
+
+### Features
+
+* RBAC capabilities — permissions, projection, search footprint & smart-field preloading ([#809](https://github.com/ForestAdmin/forest-rails/issues/809)) ([b89d6f9](https://github.com/ForestAdmin/forest-rails/commit/b89d6f98f06baef5717128c01036e09007f886cc))
+
+# [9.21.0](https://github.com/ForestAdmin/forest-rails/compare/v9.20.13...v9.21.0) (2026-09-09)
+
+
+### Bug Fixes
+
+* **actions:** encode composite primary keys in resolved approval record ids ([b806f23](https://github.com/ForestAdmin/forest-rails/commit/b806f231b5444920a49cc13a272d42072f75967f))
+* **actions:** filter composite-key exclusions and render ApprovalSelectionTooLarge as 422 ([46980d8](https://github.com/ForestAdmin/forest-rails/commit/46980d820bf00ee649fbb363a338e602d7010977))
+* **actions:** never resolve select-all ids for global actions ([51339c8](https://github.com/ForestAdmin/forest-rails/commit/51339c86463c61972b98dc5cd72b8257a9bd250e))
+* **actions:** resolve select-all ids with the JWT user and harden the resolution ([2615bb5](https://github.com/ForestAdmin/forest-rails/commit/2615bb505d1bc1420452e3cc9e7a5b670df9a7b2))
+
+
+### Features
+
+* **actions:** resolve select-all selections for approval-required actions ([9128183](https://github.com/ForestAdmin/forest-rails/commit/912818367fb60db40faa121437dd9415347605d4))
+
+
+### Performance Improvements
+
+* **actions:** bound the select-all id fetch instead of materializing the whole table ([6d593e5](https://github.com/ForestAdmin/forest-rails/commit/6d593e5a80866535c9fd0c622045b4e1d8a2087f))
+
+## [9.20.13](https://github.com/ForestAdmin/forest-rails/compare/v9.20.12...v9.20.13) (2026-08-25)
+
+
+### Bug Fixes
+
+* **has-many-getter:** gate extended search on nil, not present, search ([#792](https://github.com/ForestAdmin/forest-rails/issues/792)) ([3d3c052](https://github.com/ForestAdmin/forest-rails/commit/3d3c05298349642a60a6f320f10abb9c81e2e070))
+
+## [9.20.12](https://github.com/ForestAdmin/forest-rails/compare/v9.20.11...v9.20.12) (2026-08-25)
+
+
+### Bug Fixes
+
+* **count:** search the same columns for a count as for its list ([a11cc22](https://github.com/ForestAdmin/forest-rails/commit/a11cc22903f6a1fa9314035cd27ca13d88bf2357))
+* **search:** restore the related-list 200 and its requested projection ([575f05a](https://github.com/ForestAdmin/forest-rails/commit/575f05a46c6832a0030c1f8f535e8b7bb6d32778))
+* **search:** search only joined tables on top-level extended search ([9e553f8](https://github.com/ForestAdmin/forest-rails/commit/9e553f87a9306ea850517324fddcdab0a15a5d1e))
+
+## [9.20.11](https://github.com/ForestAdmin/forest-rails/compare/v9.20.10...v9.20.11) (2026-08-24)
+
+
+### Bug Fixes
+
+* **has-many-getter:** stop dropping records when a has_one is one-to-many in the data ([#790](https://github.com/ForestAdmin/forest-rails/issues/790)) ([ff04a74](https://github.com/ForestAdmin/forest-rails/commit/ff04a7406b39063570b4b5ad08ed20281ca06c0a))
+
+## [9.20.10](https://github.com/ForestAdmin/forest-rails/compare/v9.20.9...v9.20.10) (2026-08-11)
+
+
+### Bug Fixes
+
+* **actions:** normalize declared endpoints and free the route block's closure ([6658fd2](https://github.com/ForestAdmin/forest-rails/commit/6658fd2b36c87f6c701f3cc79080f8fb6f918922))
+* **actions:** normalize the endpoint at assignment, not per consumer ([94bfa2b](https://github.com/ForestAdmin/forest-rails/commit/94bfa2b67409d58e1b27c17910f072977da1d3e3))
+* **actions:** prepend host hook routes and trim redundant specs ([74b3bec](https://github.com/ForestAdmin/forest-rails/commit/74b3becf6f53e256fe310af11e9ad8f2fbc3dbc2))
+* **actions:** serve hooks of out-of-mount custom endpoints [PRD-915] ([1279f64](https://github.com/ForestAdmin/forest-rails/commit/1279f646900842792c9f14517c77e45b7b4737e2))
+* **actions:** serve hooks of out-of-mount custom endpoints [PRD-915] ([9908344](https://github.com/ForestAdmin/forest-rails/commit/99083445405064df382162b43936b50a6d26fada))
+
+## [9.20.9](https://github.com/ForestAdmin/forest-rails/compare/v9.20.8...v9.20.9) (2026-08-05)
+
+
+### Bug Fixes
+
+* skip LIKE scans for malformed UUID searches ([#786](https://github.com/ForestAdmin/forest-rails/issues/786)) ([44d2adb](https://github.com/ForestAdmin/forest-rails/commit/44d2adba417a687e018f824c262eff64abf6c961))
+
+## [9.20.8](https://github.com/ForestAdmin/forest-rails/compare/v9.20.7...v9.20.8) (2026-08-05)
+
+
+### Bug Fixes
+
+* translate null equality/inequality filters to IS [NOT] NULL ([#784](https://github.com/ForestAdmin/forest-rails/issues/784)) ([d27956d](https://github.com/ForestAdmin/forest-rails/commit/d27956dbf13ecf0e8327254c1b694bfeebd2143f))
+
+## [9.20.7](https://github.com/ForestAdmin/forest-rails/compare/v9.20.6...v9.20.7) (2026-08-03)
+
+
+### Bug Fixes
+
+* map timestamptz columns to the Date type ([#785](https://github.com/ForestAdmin/forest-rails/issues/785)) ([e8bcc1f](https://github.com/ForestAdmin/forest-rails/commit/e8bcc1f3c88a4dcf36f522b1b02985ff11a127a8))
+
+## [9.20.6](https://github.com/ForestAdmin/forest-rails/compare/v9.20.5...v9.20.6) (2026-08-03)
+
+
+### Bug Fixes
+
+* return 404 not 500 when counting an unknown relationship ([#788](https://github.com/ForestAdmin/forest-rails/issues/788)) ([dad083a](https://github.com/ForestAdmin/forest-rails/commit/dad083af00ca6f08ac6a9d9b5dcce3ebb2fb48ca))
+
+## [9.20.5](https://github.com/ForestAdmin/forest-rails/compare/v9.20.4...v9.20.5) (2026-08-03)
+
+
+### Bug Fixes
+
+* handle nil datetime group key in pie chart aggregation ([#787](https://github.com/ForestAdmin/forest-rails/issues/787)) ([b323460](https://github.com/ForestAdmin/forest-rails/commit/b3234607beddab1d71e582aa66935a83d5a3279a))
+
+## [9.20.4](https://github.com/ForestAdmin/forest-rails/compare/v9.20.3...v9.20.4) (2026-07-31)
+
+
+### Bug Fixes
+
+* serialize Array/Hash context variables as JSON instead of Ruby #to_s ([#783](https://github.com/ForestAdmin/forest-rails/issues/783)) ([d6c4568](https://github.com/ForestAdmin/forest-rails/commit/d6c4568550bf36295a2f3d50217d3dcc0b6cd97c))
+
+## [9.20.3](https://github.com/ForestAdmin/forest-rails/compare/v9.20.2...v9.20.3) (2026-07-30)
+
+
+### Performance Improvements
+
+* avoid a SQL query per association in separate_database? ([#782](https://github.com/ForestAdmin/forest-rails/issues/782)) ([bb0ded2](https://github.com/ForestAdmin/forest-rails/commit/bb0ded221ceb972664ef9156d9dc2bf2e7699412))
+
+## [9.20.2](https://github.com/ForestAdmin/forest-rails/compare/v9.20.1...v9.20.2) (2026-07-30)
+
+
+### Bug Fixes
+
+* **schema:** guard the polymorphic reject too, and pin the deletion that must stay ([f13120c](https://github.com/ForestAdmin/forest-rails/commit/f13120c2b2fa54f68861584a0231e1103295858e))
+* **schema:** keep primary key columns that double as a foreign key ([5fe4dec](https://github.com/ForestAdmin/forest-rails/commit/5fe4dec8b717e988d85afab9aaff93f811b8094b))
+* **schema:** keep primary key columns that double as a foreign key ([e0a540b](https://github.com/ForestAdmin/forest-rails/commit/e0a540bb265d0e5cc1dee9bf461e99f64b6ac410))
+
+## [9.20.1](https://github.com/ForestAdmin/forest-rails/compare/v9.20.0...v9.20.1) (2026-07-23)
+
+
+### Bug Fixes
+
+* **actions:** always expose /hooks/load even without a load hook [PRD-801] ([#780](https://github.com/ForestAdmin/forest-rails/issues/780)) ([4b28797](https://github.com/ForestAdmin/forest-rails/commit/4b28797b2be7e9b0602e4d5dd973ae9140ac1e00))
+
+# [9.20.0](https://github.com/ForestAdmin/forest-rails/compare/v9.19.0...v9.20.0) (2026-06-26)
+
+
+### Features
+
+* **workflow:** forward any executor route generically [PRD-567] ([#778](https://github.com/ForestAdmin/forest-rails/issues/778)) ([8b1edfb](https://github.com/ForestAdmin/forest-rails/commit/8b1edfb9528c80344d73b9ff244ffc66deaef471))
+
+# [9.19.0](https://github.com/ForestAdmin/forest-rails/compare/v9.18.2...v9.19.0) (2026-06-10)
+
+
+### Features
+
+* **schema:** expose polymorphic discriminator column in schema ([5c67fa7](https://github.com/ForestAdmin/forest-rails/commit/5c67fa7f0d55f1d4c190859df76f555af882fb75))
+
+## [9.18.2](https://github.com/ForestAdmin/forest-rails/compare/v9.18.1...v9.18.2) (2026-06-08)
+
+
+### Bug Fixes
+
+* **schema:** keep is_primary_key on FK columns composing a composite PK ([b8761e9](https://github.com/ForestAdmin/forest-rails/commit/b8761e97c7994c2a68f37effe13831a7e7425304)), closes [#772](https://github.com/ForestAdmin/forest-rails/issues/772)
+
+## [9.18.1](https://github.com/ForestAdmin/forest-rails/compare/v9.18.0...v9.18.1) (2026-06-08)
+
+
+### Bug Fixes
+
+* **composite-pk:** accept pipe-joined composite ids [PRD-450] ([#774](https://github.com/ForestAdmin/forest-rails/issues/774)) ([3db6377](https://github.com/ForestAdmin/forest-rails/commit/3db6377de04d444d8206e4fbea04ffe028a42faf))
+
+# [9.18.0](https://github.com/ForestAdmin/forest-rails/compare/v9.17.7...v9.18.0) (2026-06-04)
+
+
+### Features
+
+* **agent:** add workflow executor proxy routes ([#769](https://github.com/ForestAdmin/forest-rails/issues/769)) ([d6e897d](https://github.com/ForestAdmin/forest-rails/commit/d6e897d6b09b81a41b7b9fe0df45d298b6d81815))
+
+## [9.17.7](https://github.com/ForestAdmin/forest-rails/compare/v9.17.6...v9.17.7) (2026-06-04)
+
+
+### Bug Fixes
+
+* **engine:** prevent boot crash when Rake is partially loaded ([#773](https://github.com/ForestAdmin/forest-rails/issues/773)) ([a1854a0](https://github.com/ForestAdmin/forest-rails/commit/a1854a011a52a710999d8ead3f2825aafb267386))
+
+## [9.17.6](https://github.com/ForestAdmin/forest-rails/compare/v9.17.5...v9.17.6) (2026-06-04)
+
+
+### Bug Fixes
+
+* **schema:** emit is_primary_key flag on collection fields ([025a424](https://github.com/ForestAdmin/forest-rails/commit/025a424d3a9465591163ebd9bf31372af86d190a))
+
+## [9.17.5](https://github.com/ForestAdmin/forest-rails/compare/v9.17.4...v9.17.5) (2026-05-29)
+
+
+### Bug Fixes
+
+* skip bootstrapper during rails-invoked rake tasks ([#771](https://github.com/ForestAdmin/forest-rails/issues/771)) ([572f08f](https://github.com/ForestAdmin/forest-rails/commit/572f08f2c996a4da00eeb3b46f4d726b94eb82ff))
+
+## [9.17.4](https://github.com/ForestAdmin/forest-rails/compare/v9.17.3...v9.17.4) (2026-05-21)
+
+
+### Bug Fixes
+
+* search array uuid columns using ANY() operator ([#770](https://github.com/ForestAdmin/forest-rails/issues/770)) ([1066a2b](https://github.com/ForestAdmin/forest-rails/commit/1066a2b71803dcb43685bf3ba87bee8aa0891969))
+
+## [9.17.3](https://github.com/ForestAdmin/forest-rails/compare/v9.17.2...v9.17.3) (2026-01-27)
+
+
+### Bug Fixes
+
+* include all intermediate foreign keys for deep has_one through associations ([#768](https://github.com/ForestAdmin/forest-rails/issues/768)) ([0342d4d](https://github.com/ForestAdmin/forest-rails/commit/0342d4d007180aff7fd6ee47c7fff3ac39407bb4))
+
+## [9.17.2](https://github.com/ForestAdmin/forest-rails/compare/v9.17.1...v9.17.2) (2026-01-20)
+
+
+### Bug Fixes
+
+* **composite-pk:** support update and count operations ([#767](https://github.com/ForestAdmin/forest-rails/issues/767)) ([7731de1](https://github.com/ForestAdmin/forest-rails/commit/7731de1697fa6d27e7a5eb17c84c4d542bbbe882))
+
+## [9.17.1](https://github.com/ForestAdmin/forest-rails/compare/v9.17.0...v9.17.1) (2026-01-13)
+
+
+### Bug Fixes
+
+* normalize default values in schema for ruby 4.0 and rails 8 compatibility ([#765](https://github.com/ForestAdmin/forest-rails/issues/765)) ([581a743](https://github.com/ForestAdmin/forest-rails/commit/581a743b14a0c5f383752fa323fa89efcbcc0003))
+
+# [9.17.0](https://github.com/ForestAdmin/forest-rails/compare/v9.16.1...v9.17.0) (2026-01-06)
+
+
+### Features
+
+* add ruby 4.0.0 support ([#764](https://github.com/ForestAdmin/forest-rails/issues/764)) ([323f688](https://github.com/ForestAdmin/forest-rails/commit/323f688da4abd57f65f1f1455e5273a80136194a))
+
+## [9.16.1](https://github.com/ForestAdmin/forest-rails/compare/v9.16.0...v9.16.1) (2025-12-05)
+
+
+### Bug Fixes
+
+* support composite primary keys in resource getters ([#760](https://github.com/ForestAdmin/forest-rails/issues/760)) ([010f8c5](https://github.com/ForestAdmin/forest-rails/commit/010f8c5f7cc4bcfb68a5af32c78287e39db16605)), closes [#763](https://github.com/ForestAdmin/forest-rails/issues/763)
+
+# [9.16.0](https://github.com/ForestAdmin/forest-rails/compare/v9.15.8...v9.16.0) (2025-12-02)
+
+
+### Features
+
+* add skip_schema_update configuration flag ([#762](https://github.com/ForestAdmin/forest-rails/issues/762)) ([7bf25b6](https://github.com/ForestAdmin/forest-rails/commit/7bf25b6ed17f07123bd0dac104201bb4f6e65c6d))
+
+## [9.15.8](https://github.com/ForestAdmin/forest-rails/compare/v9.15.7...v9.15.8) (2025-09-03)
+
+
+### Bug Fixes
+
+* key conflicts in fields for same-collection smart relations ([#755](https://github.com/ForestAdmin/forest-rails/issues/755)) ([c38e224](https://github.com/ForestAdmin/forest-rails/commit/c38e2246fa2541cdca07dffb15471b785a50b917))
+
+## [9.15.7](https://github.com/ForestAdmin/forest-rails/compare/v9.15.6...v9.15.7) (2025-08-29)
+
+
+### Bug Fixes
+
+* remove unnecessary validation logic in serializer relationships ([#754](https://github.com/ForestAdmin/forest-rails/issues/754)) ([5e3dd03](https://github.com/ForestAdmin/forest-rails/commit/5e3dd034d1b3bfc7d4667ae5284c66872e3eb5d8))
+
+## [9.15.6](https://github.com/ForestAdmin/forest-rails/compare/v9.15.5...v9.15.6) (2025-08-27)
+
+
+### Bug Fixes
+
+* enable unoptimized mode in serializer when searchToEdit flag is set ([#753](https://github.com/ForestAdmin/forest-rails/issues/753)) ([7c1f7d4](https://github.com/ForestAdmin/forest-rails/commit/7c1f7d4fb047519bbb763fa3d3ebd902ad9f8d19)), closes [#751](https://github.com/ForestAdmin/forest-rails/issues/751)
+
+## [9.15.5](https://github.com/ForestAdmin/forest-rails/compare/v9.15.4...v9.15.5) (2025-08-25)
+
+
+### Bug Fixes
+
+* **has_many_getter:** add has_one support ([#752](https://github.com/ForestAdmin/forest-rails/issues/752)) ([da14366](https://github.com/ForestAdmin/forest-rails/commit/da14366505c6e3dff947de10d8b4884b83769e3a))
+
+## [9.15.4](https://github.com/ForestAdmin/forest-rails/compare/v9.15.3...v9.15.4) (2025-08-12)
+
+
+### Bug Fixes
+
+* **controller:** distinguish relation from self + unoptimized getOne ([8fbfdf2](https://github.com/ForestAdmin/forest-rails/commit/8fbfdf29f2009a8551fb96920ced1586a26b5966))
+* **controller:** distinguish relation from self + unoptimized getOne ([060c69b](https://github.com/ForestAdmin/forest-rails/commit/060c69b026a6ccd0273a92656d6e358691d0e603))
+
+## [9.15.3](https://github.com/ForestAdmin/forest-rails/compare/v9.15.2...v9.15.3) (2025-08-08)
+
+
+### Bug Fixes
+
+* improve performance by only serializing requested fields ([89db677](https://github.com/ForestAdmin/forest-rails/commit/89db6774c453d655b8d209ac6a320ea2e508953f))
+* test ([8766f25](https://github.com/ForestAdmin/forest-rails/commit/8766f25cfd9a37f8303b6067777ac20b54db24c4))
+* **serializer:** load correctly cross db relationship ([afc2a65](https://github.com/ForestAdmin/forest-rails/commit/afc2a659c61e6e2a4cb898d381c91c69f0148f4e))
+* **serializer:** load smart field ([0d72103](https://github.com/ForestAdmin/forest-rails/commit/0d72103e0e36fb7464091f8c6e6635f048b6e5f8))
+* **serializer:** load smart field & improve queries ([672dbeb](https://github.com/ForestAdmin/forest-rails/commit/672dbebf21f14f51a605855445c84b63416314c8))
+* **serializer:** override find_recursive_relationships ([a173f43](https://github.com/ForestAdmin/forest-rails/commit/a173f437dc29a26f359d6b062346b4970541203a))
+
+## [9.15.2](https://github.com/ForestAdmin/forest-rails/compare/v9.15.1...v9.15.2) (2025-07-24)
+
+
+### Bug Fixes
+
+* serializer on relationships ([#745](https://github.com/ForestAdmin/forest-rails/issues/745)) ([dc96641](https://github.com/ForestAdmin/forest-rails/commit/dc966414c645fe0f34764ad264e2fbe55226d4cc))
+
+## [9.15.1](https://github.com/ForestAdmin/forest-rails/compare/v9.15.0...v9.15.1) (2025-07-23)
+
+
+### Bug Fixes
+
+* **filters:** properly parse filters from request params ([#743](https://github.com/ForestAdmin/forest-rails/issues/743)) ([801f5d1](https://github.com/ForestAdmin/forest-rails/commit/801f5d1e898f76cc5c0edea06b3cb24bb0e37d2b))
+* **filters:** properly parse filters from request params ([#747](https://github.com/ForestAdmin/forest-rails/issues/747)) ([a1d011e](https://github.com/ForestAdmin/forest-rails/commit/a1d011e5bb0cf1800e0af4c5a2e0aa2ee976a180))
+
+
+### Reverts
+
+* Revert "fix(filters): properly parse filters from request params" (#746) ([7f57f25](https://github.com/ForestAdmin/forest-rails/commit/7f57f25adddffc07ccb95d3d3d330358184f4a58)), closes [#746](https://github.com/ForestAdmin/forest-rails/issues/746) [#743](https://github.com/ForestAdmin/forest-rails/issues/743)
+
+# [9.15.0](https://github.com/ForestAdmin/forest-rails/compare/v9.14.7...v9.15.0) (2025-07-17)
+
+
+### Features
+
+* **router:** make controller and action available to middleware ([#533](https://github.com/ForestAdmin/forest-rails/issues/533)) ([57804f6](https://github.com/ForestAdmin/forest-rails/commit/57804f6354e45341497589fdbee38b5f9788040a))
+
+## [9.14.7](https://github.com/ForestAdmin/forest-rails/compare/v9.14.6...v9.14.7) (2025-07-17)
+
+
+### Bug Fixes
+
+* skip where when computed search conditions are empty ([#544](https://github.com/ForestAdmin/forest-rails/issues/544)) ([5a9aa09](https://github.com/ForestAdmin/forest-rails/commit/5a9aa09f3cae48e38ec3907af721fc13c7eededd))
+
+## [9.14.6](https://github.com/ForestAdmin/forest-rails/compare/v9.14.5...v9.14.6) (2025-07-17)
+
+
+### Bug Fixes
+
+* **schema:** ensure fields are properly sorted in SchemaFileUpdater ([#541](https://github.com/ForestAdmin/forest-rails/issues/541)) ([711f1a2](https://github.com/ForestAdmin/forest-rails/commit/711f1a2c7b4ce9253c06261117ae0549645e1ad1))
+
+## [9.14.5](https://github.com/ForestAdmin/forest-rails/compare/v9.14.4...v9.14.5) (2025-06-30)
+
+
+### Bug Fixes
+
+* rails 8 compatibility for stat aggregators ([#741](https://github.com/ForestAdmin/forest-rails/issues/741)) ([370c852](https://github.com/ForestAdmin/forest-rails/commit/370c852bdaf9eb53e3699f57ab6b3b6bf0446db8))
+
+## [9.14.4](https://github.com/ForestAdmin/forest-rails/compare/v9.14.3...v9.14.4) (2025-06-20)
+
+
+### Bug Fixes
+
+* avoid creating invalid objects when foreign key is null in serializer ([#740](https://github.com/ForestAdmin/forest-rails/issues/740)) ([61432ef](https://github.com/ForestAdmin/forest-rails/commit/61432ef478b81683df4a68a646b3db21fad9810f))
+
+## [9.14.3](https://github.com/ForestAdmin/forest-rails/compare/v9.14.2...v9.14.3) (2025-06-19)
+
+
+### Bug Fixes
+
+* **search:** prevent nil error in field selection during search ([#739](https://github.com/ForestAdmin/forest-rails/issues/739)) ([069c647](https://github.com/ForestAdmin/forest-rails/commit/069c647554353450c255a36e47309dfd232143f2)), closes [#738](https://github.com/ForestAdmin/forest-rails/issues/738)
+
+## [9.14.2](https://github.com/ForestAdmin/forest-rails/compare/v9.14.1...v9.14.2) (2025-06-10)
+
+
+### Bug Fixes
+
+* correct column selection in cross-db associations and extended-search ([#737](https://github.com/ForestAdmin/forest-rails/issues/737)) ([f352809](https://github.com/ForestAdmin/forest-rails/commit/f352809ea4f8853001357a3dd04cf2ea90645728))
+
+## [9.14.1](https://github.com/ForestAdmin/forest-rails/compare/v9.14.0...v9.14.1) (2025-05-28)
+
+
+### Bug Fixes
+
+* preload polymorphic associations to improve performance ([#731](https://github.com/ForestAdmin/forest-rails/issues/731)) ([00ceef7](https://github.com/ForestAdmin/forest-rails/commit/00ceef75b9c9beb3b01216c03f42e7e337ecd4bf))
+
+# [9.14.0](https://github.com/ForestAdmin/forest-rails/compare/v9.13.0...v9.14.0) (2025-05-26)
+
+
+### Features
+
+* improve performance by avoiding unnecessary jointure on belongsTo relations ([#735](https://github.com/ForestAdmin/forest-rails/issues/735)) ([a256135](https://github.com/ForestAdmin/forest-rails/commit/a256135fad5353db3743f837c5a5e0016c1f2ad8))
+
+# [9.13.0](https://github.com/ForestAdmin/forest-rails/compare/v9.12.2...v9.13.0) (2025-05-26)
+
+
+### Features
+
+* reduce redundant queries on cross-db belongs_to ([#734](https://github.com/ForestAdmin/forest-rails/issues/734)) ([e040718](https://github.com/ForestAdmin/forest-rails/commit/e0407185cde95b9abc6f00b0d17f38c8dc5e5fdc))
+
+## [9.12.2](https://github.com/ForestAdmin/forest-rails/compare/v9.12.1...v9.12.2) (2025-05-15)
+
+
+### Bug Fixes
+
+* **serializer:** do not execute smart feature on object like a native attribute ([#733](https://github.com/ForestAdmin/forest-rails/issues/733)) ([09c9e5f](https://github.com/ForestAdmin/forest-rails/commit/09c9e5fb9a3155d00057cc517e0b6e9156c1b143))
+
+## [9.12.1](https://github.com/ForestAdmin/forest-rails/compare/v9.12.0...v9.12.1) (2025-05-15)
+
+
+### Bug Fixes
+
+* include has_one through associations in compute_select_fields in ResourcesGetter ([#732](https://github.com/ForestAdmin/forest-rails/issues/732)) ([6472522](https://github.com/ForestAdmin/forest-rails/commit/6472522e73156e2cc8909e17cb052947880f5137))
+
+# [9.12.0](https://github.com/ForestAdmin/forest-rails/compare/v9.11.3...v9.12.0) (2025-05-05)
+
+
+### Features
+
+* **active-record:** improve performance when a belongsTo relation is included ([#729](https://github.com/ForestAdmin/forest-rails/issues/729)) ([2491f66](https://github.com/ForestAdmin/forest-rails/commit/2491f668a36208a6c6b3ec4ddb55642fcea2da18))
+
+## [9.11.3](https://github.com/ForestAdmin/forest-rails/compare/v9.11.2...v9.11.3) (2025-04-09)
+
+
+### Bug Fixes
+
+* **filters:** get collection name with the right format ([#728](https://github.com/ForestAdmin/forest-rails/issues/728)) ([68455f8](https://github.com/ForestAdmin/forest-rails/commit/68455f8a3e60fac2fffdb866f041030fdd846f1e))
+
+## [9.11.2](https://github.com/ForestAdmin/forest-rails/compare/v9.11.1...v9.11.2) (2025-04-07)
+
+
+### Bug Fixes
+
+* **filters:** filtering on date only fields now format value properly ([#727](https://github.com/ForestAdmin/forest-rails/issues/727)) ([0e3b54a](https://github.com/ForestAdmin/forest-rails/commit/0e3b54a733b551dc2dfcce386a0c392934cb3f36))
+
+## [9.11.1](https://github.com/ForestAdmin/forest-rails/compare/v9.11.0...v9.11.1) (2025-03-19)
+
+
+### Bug Fixes
+
+* **charts:** properly format week of year ([#726](https://github.com/ForestAdmin/forest-rails/issues/726)) ([5cbfd3a](https://github.com/ForestAdmin/forest-rails/commit/5cbfd3a22bbe31e6c35aa3b74582c79599cf10de))
+
+# [9.11.0](https://github.com/ForestAdmin/forest-rails/compare/v9.10.6...v9.11.0) (2025-03-19)
+
+
+### Features
+
+* **operators:** add i_contains operator support ([#725](https://github.com/ForestAdmin/forest-rails/issues/725)) ([3ed9123](https://github.com/ForestAdmin/forest-rails/commit/3ed912383e3592191c55335d369ef3e98d31f0f0))
+
+## [9.10.6](https://github.com/ForestAdmin/forest-rails/compare/v9.10.5...v9.10.6) (2025-03-11)
+
+
+### Bug Fixes
+
+* **schema-updater:** fix regression introduced with [#720](https://github.com/ForestAdmin/forest-rails/issues/720) regex when writing schema ([c7da92c](https://github.com/ForestAdmin/forest-rails/commit/c7da92cf904f6fba80460de42aa4ffe742a7ebcd))
+
+## [9.10.5](https://github.com/ForestAdmin/forest-rails/compare/v9.10.4...v9.10.5) (2025-03-07)
+
+
+### Bug Fixes
+
+* **startup:** display current env secret when ip whitelist fails to ease debugging ([#722](https://github.com/ForestAdmin/forest-rails/issues/722)) ([e23500b](https://github.com/ForestAdmin/forest-rails/commit/e23500b015d0bd26df34f261344ce1d046dff9dc))
+
+## [9.10.4](https://github.com/ForestAdmin/forest-rails/compare/v9.10.3...v9.10.4) (2025-03-07)
+
+
+### Bug Fixes
+
+* **schema-bypass:** properly bypass schema update using forest_disable_auto_schema_apply ([#721](https://github.com/ForestAdmin/forest-rails/issues/721)) ([4540c7a](https://github.com/ForestAdmin/forest-rails/commit/4540c7a755fcf8db98bdb54396e19762fc0b0cc4))
+
+## [9.10.3](https://github.com/ForestAdmin/forest-rails/compare/v9.10.2...v9.10.3) (2025-03-05)
+
+
+### Bug Fixes
+
+* **schema-updater:** properly write validation regex when writing schema on disk ([#720](https://github.com/ForestAdmin/forest-rails/issues/720)) ([ffee038](https://github.com/ForestAdmin/forest-rails/commit/ffee03897eb25d368e400597e9d6ceaf941bb467))
+
+## [9.10.2](https://github.com/ForestAdmin/forest-rails/compare/v9.10.1...v9.10.2) (2025-02-28)
+
+
+### Bug Fixes
+
+* **api_map:** display more information when we don't understand why schema could not be sent ([#719](https://github.com/ForestAdmin/forest-rails/issues/719)) ([efec7d4](https://github.com/ForestAdmin/forest-rails/commit/efec7d4d730e085fae16411a9900e22f761eb78a))
+
+## [9.10.1](https://github.com/ForestAdmin/forest-rails/compare/v9.10.0...v9.10.1) (2025-02-26)
+
+
+### Bug Fixes
+
+* **export:** format relation model name for matching collection ([#718](https://github.com/ForestAdmin/forest-rails/issues/718)) ([597116e](https://github.com/ForestAdmin/forest-rails/commit/597116e3ad21adb60cc09ed287f0ebfdbc8a301c))
+
+# [9.10.0](https://github.com/ForestAdmin/forest-rails/compare/v9.9.1...v9.10.0) (2025-02-11)
+
+
+### Bug Fixes
+
+* rename route search to query ([79e5702](https://github.com/ForestAdmin/forest-rails/commit/79e5702a7d5b7b34659238b9bbe8abfb98f66607))
+
+
+### Features
+
+* **inbox:** rename route search to query ([285fb7b](https://github.com/ForestAdmin/forest-rails/commit/285fb7b7744c8424962d5d2ac2a05d011534525e))
+
+## [9.9.1](https://github.com/ForestAdmin/forest-rails/compare/v9.9.0...v9.9.1) (2025-02-10)
+
+
+### Bug Fixes
+
+* prevent infinite loops in context variable injection ([#716](https://github.com/ForestAdmin/forest-rails/issues/716)) ([6744b81](https://github.com/ForestAdmin/forest-rails/commit/6744b812cda6e773e51a997539c3ff86943771d6)), closes [#714](https://github.com/ForestAdmin/forest-rails/issues/714)
+
+# [9.9.0](https://github.com/ForestAdmin/forest-rails/compare/v9.8.0...v9.9.0) (2025-02-07)
+
+
+### Features
+
+* **inbox:** add new route count post for inbox feature ([da7bf82](https://github.com/ForestAdmin/forest-rails/commit/da7bf82f5050e3384a6bc187840d3605dd5ef4bd))
+
+# [9.8.0](https://github.com/ForestAdmin/forest-rails/compare/v9.7.0...v9.8.0) (2025-02-04)
+
+
+### Features
+
+* **inbox:** add new route post for inbox feature ([#713](https://github.com/ForestAdmin/forest-rails/issues/713)) ([acf6f22](https://github.com/ForestAdmin/forest-rails/commit/acf6f22d3ad48c235ba8972a906cdcfcfbdd3bb6))
+
+# [9.7.0](https://github.com/ForestAdmin/forest-rails/compare/v9.6.4...v9.7.0) (2025-01-06)
+
+
+### Features
+
+* enable context variable usage in segment queries ([#712](https://github.com/ForestAdmin/forest-rails/issues/712)) ([0851178](https://github.com/ForestAdmin/forest-rails/commit/08511789fcd2c9fae6625a937e5f23b39d89fe9a))
+
+## [9.6.4](https://github.com/ForestAdmin/forest-rails/compare/v9.6.3...v9.6.4) (2024-12-27)
+
+
+### Bug Fixes
+
+* **forest-requester:** forest reporter now gets actual error instead of message ([#711](https://github.com/ForestAdmin/forest-rails/issues/711)) ([0b8611f](https://github.com/ForestAdmin/forest-rails/commit/0b8611fc6e877d5d93ab327af2151e89e5120d0e))
+
+## [9.6.3](https://github.com/ForestAdmin/forest-rails/compare/v9.6.2...v9.6.3) (2024-12-24)
+
+
+### Bug Fixes
+
+* **forest-requester:** don't swallow error anymore ([#710](https://github.com/ForestAdmin/forest-rails/issues/710)) ([6fd1dd8](https://github.com/ForestAdmin/forest-rails/commit/6fd1dd8a8e150bc8e0fd28beb72e61ff1c8d6e5f))
+
+## [9.6.2](https://github.com/ForestAdmin/forest-rails/compare/v9.6.1...v9.6.2) (2024-12-19)
+
+
+### Bug Fixes
+
+* **errors:** provide stacktrace with errors ([#705](https://github.com/ForestAdmin/forest-rails/issues/705)) ([ab166dd](https://github.com/ForestAdmin/forest-rails/commit/ab166dde516d1d8c71bf5075454176f47ec7d91c))
+
+## [9.6.1](https://github.com/ForestAdmin/forest-rails/compare/v9.6.0...v9.6.1) (2024-12-19)
+
+
+### Bug Fixes
+
+* **serializer:** provide more information when association can't be loaded ([#704](https://github.com/ForestAdmin/forest-rails/issues/704)) ([3129e96](https://github.com/ForestAdmin/forest-rails/commit/3129e96312eabfa0f3ff8c241c11c50f4449adac))
+
+# [9.6.0](https://github.com/ForestAdmin/forest-rails/compare/v9.5.7...v9.6.0) (2024-12-10)
+
+
+### Features
+
+* **smart-field:** set filterable and sortable options at true by default on polymorphic smart field ([#697](https://github.com/ForestAdmin/forest-rails/issues/697)) ([7f9de48](https://github.com/ForestAdmin/forest-rails/commit/7f9de48c88a3801f36d4c9f63d058e8b587e31bd))
+
+## [9.5.7](https://github.com/ForestAdmin/forest-rails/compare/v9.5.6...v9.5.7) (2024-12-10)
+
+
+### Bug Fixes
+
+* **validations:** ignore default before_validation ([#708](https://github.com/ForestAdmin/forest-rails/issues/708)) ([436e9a6](https://github.com/ForestAdmin/forest-rails/commit/436e9a6699e9a0891b5431c975979024668e3219))
+
+## [9.5.6](https://github.com/ForestAdmin/forest-rails/compare/v9.5.5...v9.5.6) (2024-12-10)
+
+
+### Bug Fixes
+
+* avoid smart feature to be load more one time ([#706](https://github.com/ForestAdmin/forest-rails/issues/706)) ([bbbb321](https://github.com/ForestAdmin/forest-rails/commit/bbbb3218a6a333a244b3cdebbb6d83d6e7bc66a0))
+
+## [9.5.5](https://github.com/ForestAdmin/forest-rails/compare/v9.5.4...v9.5.5) (2024-12-09)
+
+
+### Bug Fixes
+
+* **search:** highlight decorator search on smart field ([#707](https://github.com/ForestAdmin/forest-rails/issues/707)) ([69e2cac](https://github.com/ForestAdmin/forest-rails/commit/69e2cac636d4d018af6ea370266050080afda6ee))
+
+## [9.5.4](https://github.com/ForestAdmin/forest-rails/compare/v9.5.3...v9.5.4) (2024-12-04)
+
+
+### Bug Fixes
+
+* **scopes:** prevent unnecessary HTTP call despite caching ([#702](https://github.com/ForestAdmin/forest-rails/issues/702)) ([5013e2b](https://github.com/ForestAdmin/forest-rails/commit/5013e2b7e1a64fa95f69ac24c3b7cafe4b3d559e))
+
+## [9.5.3](https://github.com/ForestAdmin/forest-rails/compare/v9.5.2...v9.5.3) (2024-11-22)
+
+
+### Bug Fixes
+
+* **security:** patch cross-spawn dependency vulnerabilities ([#700](https://github.com/ForestAdmin/forest-rails/issues/700)) ([b97e86c](https://github.com/ForestAdmin/forest-rails/commit/b97e86c22568d6cbb93e3925865c3ea6ffb7cd1c))
+* **security:** patch micromatch dependency vulnerabilities ([#699](https://github.com/ForestAdmin/forest-rails/issues/699)) ([ccf60b3](https://github.com/ForestAdmin/forest-rails/commit/ccf60b39f07d44840f7726dd2131bb2e77a12aff))
+
+## [9.5.2](https://github.com/ForestAdmin/forest-rails/compare/v9.5.1...v9.5.2) (2024-11-18)
+
+
+### Bug Fixes
+
+* **permission:** get approval conditions by role id  ([#698](https://github.com/ForestAdmin/forest-rails/issues/698)) ([73d9874](https://github.com/ForestAdmin/forest-rails/commit/73d9874f925e2868c996dcae02f1e4070b3d06ed))
+
+## [9.5.1](https://github.com/ForestAdmin/forest-rails/compare/v9.5.0...v9.5.1) (2024-11-13)
+
+
+### Bug Fixes
+
+* remove arel-helpers to enable Rails 8 compatibility ([#696](https://github.com/ForestAdmin/forest-rails/issues/696)) ([6558699](https://github.com/ForestAdmin/forest-rails/commit/655869923fc045464c6374f93e2392e3611486a5))
+
+# [9.5.0](https://github.com/ForestAdmin/forest-rails/compare/v9.4.3...v9.5.0) (2024-11-12)
+
+
+### Features
+
+* **smart-field:** add new options to support native polymorphic fields ([#694](https://github.com/ForestAdmin/forest-rails/issues/694)) ([891d07a](https://github.com/ForestAdmin/forest-rails/commit/891d07a9b1a64d5e20bc7d04a5c242919630a891))
+
+## [9.4.3](https://github.com/ForestAdmin/forest-rails/compare/v9.4.2...v9.4.3) (2024-11-04)
+
+
+### Bug Fixes
+
+* **action:** fix get_ids_from_request helper call on related data ([#695](https://github.com/ForestAdmin/forest-rails/issues/695)) ([28a0371](https://github.com/ForestAdmin/forest-rails/commit/28a03716fae3afa4a69826bbfee2fd3ef1a79c9f))
+
+## [9.4.2](https://github.com/ForestAdmin/forest-rails/compare/v9.4.1...v9.4.2) (2024-10-30)
+
+
+### Bug Fixes
+
+* **security:** patch possible ReDoS vulnerabilities ([#693](https://github.com/ForestAdmin/forest-rails/issues/693)) ([deeab93](https://github.com/ForestAdmin/forest-rails/commit/deeab935d9bc132a3faad0718c8a89c6fb3c6281))
+
+## [9.4.1](https://github.com/ForestAdmin/forest-rails/compare/v9.4.0...v9.4.1) (2024-10-24)
+
+
+### Bug Fixes
+
+* ensure correct values are returned for user tags in context variables ([#692](https://github.com/ForestAdmin/forest-rails/issues/692)) ([03b3b63](https://github.com/ForestAdmin/forest-rails/commit/03b3b632beb564ad332981a80dd36e260a224af3))
+
+# [9.4.0](https://github.com/ForestAdmin/forest-rails/compare/v9.3.16...v9.4.0) (2024-10-17)
+
+
+### Features
+
+* **form:** support layout elements in smart action form hooks  ([#691](https://github.com/ForestAdmin/forest-rails/issues/691)) ([d2a2d47](https://github.com/ForestAdmin/forest-rails/commit/d2a2d47082a87650b1a2065d430f25b47c5fef16))
+
+## [9.3.16](https://github.com/ForestAdmin/forest-rails/compare/v9.3.15...v9.3.16) (2024-09-18)
+
+
+### Bug Fixes
+
+* **association:** return bad request when associated record is not destroy ([#688](https://github.com/ForestAdmin/forest-rails/issues/688)) ([d293515](https://github.com/ForestAdmin/forest-rails/commit/d2935156b763806cca70426258f5a178bc1e1e87))
+
+## [9.3.15](https://github.com/ForestAdmin/forest-rails/compare/v9.3.14...v9.3.15) (2024-09-10)
+
+
+### Bug Fixes
+
+* improve quey with duplicate alias ([#687](https://github.com/ForestAdmin/forest-rails/issues/687)) ([a163407](https://github.com/ForestAdmin/forest-rails/commit/a1634076ff6f7078bb06065396fb6bb8c57eb30d)), closes [#512](https://github.com/ForestAdmin/forest-rails/issues/512)
+
+## [9.3.14](https://github.com/ForestAdmin/forest-rails/compare/v9.3.13...v9.3.14) (2024-08-30)
+
+
+### Bug Fixes
+
+* **security:** patch micromatch dependency vulnerabilities ([#686](https://github.com/ForestAdmin/forest-rails/issues/686)) ([eee2fbf](https://github.com/ForestAdmin/forest-rails/commit/eee2fbf216b32098abd43737eabdd2a3a03720e6))
+
+## [9.3.13](https://github.com/ForestAdmin/forest-rails/compare/v9.3.12...v9.3.13) (2024-07-19)
+
+
+### Bug Fixes
+
+* **permission:** forward action approval exception for return expected response ([#685](https://github.com/ForestAdmin/forest-rails/issues/685)) ([1e6333c](https://github.com/ForestAdmin/forest-rails/commit/1e6333c707773ec5fa0699675dec47b1a5795272))
+
+## [9.3.12](https://github.com/ForestAdmin/forest-rails/compare/v9.3.11...v9.3.12) (2024-07-02)
+
+
+### Bug Fixes
+
+* **search:** does not apply the extended search for polymorphic relationships ([#684](https://github.com/ForestAdmin/forest-rails/issues/684)) ([d4c74e8](https://github.com/ForestAdmin/forest-rails/commit/d4c74e8bac582cc335cd1b2236b7a05b73f664d8))
+
+## [9.3.11](https://github.com/ForestAdmin/forest-rails/compare/v9.3.10...v9.3.11) (2024-06-14)
+
+
+### Bug Fixes
+
+* **security:** patch braces dependency vulnerabilities ([#683](https://github.com/ForestAdmin/forest-rails/issues/683)) ([68ba271](https://github.com/ForestAdmin/forest-rails/commit/68ba27188c80c6ab92eee05aa03e521d2e62e09e))
+
+## [9.3.10](https://github.com/ForestAdmin/forest-rails/compare/v9.3.9...v9.3.10) (2024-06-14)
+
+
+### Bug Fixes
+
+* remove warning  forest_application_url ([#682](https://github.com/ForestAdmin/forest-rails/issues/682)) ([0a1a7cf](https://github.com/ForestAdmin/forest-rails/commit/0a1a7cfdb2e64d7e3ebe9cb3d32c850cfb7a3a2c)), closes [#648](https://github.com/ForestAdmin/forest-rails/issues/648)
+
+## [9.3.9](https://github.com/ForestAdmin/forest-rails/compare/v9.3.8...v9.3.9) (2024-06-10)
+
+
+### Bug Fixes
+
+* **security:** patch actionpack dependency vulnerabilities ([#681](https://github.com/ForestAdmin/forest-rails/issues/681)) ([fa58a31](https://github.com/ForestAdmin/forest-rails/commit/fa58a3196217f40d95c71b2d6fb465eb508b32fa))
+
+## [9.3.8](https://github.com/ForestAdmin/forest-rails/compare/v9.3.7...v9.3.8) (2024-06-10)
+
+
+### Bug Fixes
+
+* **permission:** refetch permission if collection name doesn't exist ([#680](https://github.com/ForestAdmin/forest-rails/issues/680)) ([4e72624](https://github.com/ForestAdmin/forest-rails/commit/4e72624f15e39ae4e42a8b59c64182a394711a08))
+
+## [9.3.7](https://github.com/ForestAdmin/forest-rails/compare/v9.3.6...v9.3.7) (2024-06-07)
+
+
+### Bug Fixes
+
+* **query:** allow user using context variables into query ([#679](https://github.com/ForestAdmin/forest-rails/issues/679)) ([3020a78](https://github.com/ForestAdmin/forest-rails/commit/3020a784c9f136ae4cc1e961c7cbca420cd3b96f))
+
+## [9.3.6](https://github.com/ForestAdmin/forest-rails/compare/v9.3.5...v9.3.6) (2024-06-06)
+
+
+### Bug Fixes
+
+* **permission:** send api response for 409 error ([#678](https://github.com/ForestAdmin/forest-rails/issues/678)) ([6076a32](https://github.com/ForestAdmin/forest-rails/commit/6076a3293a39cf97f8d5be3eff7e8d43e1662732))
+
+## [9.3.5](https://github.com/ForestAdmin/forest-rails/compare/v9.3.4...v9.3.5) (2024-05-16)
+
+
+### Bug Fixes
+
+* **security:** patch nokogiri dependency vulnerabilities ([#675](https://github.com/ForestAdmin/forest-rails/issues/675)) ([dba08fb](https://github.com/ForestAdmin/forest-rails/commit/dba08fb82d3fe8a490565c30f876ffe68c6d8515))
+
+## [9.3.4](https://github.com/ForestAdmin/forest-rails/compare/v9.3.3...v9.3.4) (2024-05-16)
+
+
+### Bug Fixes
+
+* remove downcase on model name when updated polymorphic association ([#670](https://github.com/ForestAdmin/forest-rails/issues/670)) ([ad5fe26](https://github.com/ForestAdmin/forest-rails/commit/ad5fe263665656b73333a7a51ee57c398f33f441))
+
+## [9.3.3](https://github.com/ForestAdmin/forest-rails/compare/v9.3.2...v9.3.3) (2024-04-17)
+
+
+### Bug Fixes
+
+* **mixpanel:** add import ostruct in lib/forest_liana/mixpanel_event.rb ([7b485d2](https://github.com/ForestAdmin/forest-rails/commit/7b485d266a216628ce13835a74735fcaa1bf820a))
+
+## [9.3.2](https://github.com/ForestAdmin/forest-rails/compare/v9.3.1...v9.3.2) (2024-04-12)
+
+
+### Bug Fixes
+
+* **security:** patch tar dependency vulnerabilities ([#671](https://github.com/ForestAdmin/forest-rails/issues/671)) ([fbb156b](https://github.com/ForestAdmin/forest-rails/commit/fbb156b4ffc68ae0632c9982da960448c94c55de))
+
+## [9.3.1](https://github.com/ForestAdmin/forest-rails/compare/v9.3.0...v9.3.1) (2024-03-26)
+
+
+### Bug Fixes
+
+* **permission:** fix chart permissions to work properly with multiple filter conditions ([#666](https://github.com/ForestAdmin/forest-rails/issues/666)) ([ef706ee](https://github.com/ForestAdmin/forest-rails/commit/ef706ee5c0b18d416a0e551683a917077e49d5ef))
+
+# [9.3.0](https://github.com/ForestAdmin/forest-rails/compare/v9.2.3...v9.3.0) (2024-03-14)
+
+
+### Features
+
+* add multiple sort support ([#665](https://github.com/ForestAdmin/forest-rails/issues/665)) ([531705f](https://github.com/ForestAdmin/forest-rails/commit/531705fb0e43aa8b6721256e9a130911d6b1d626))
+
+## [9.2.3](https://github.com/ForestAdmin/forest-rails/compare/v9.2.2...v9.2.3) (2024-03-11)
+
+
+### Bug Fixes
+
+* **security:** patch rack rack-cors nokogiri httparty dependency vulnerabilities ([#662](https://github.com/ForestAdmin/forest-rails/issues/662)) ([f05e93e](https://github.com/ForestAdmin/forest-rails/commit/f05e93e2944ab695c3bd8f63e8f3a9b76421eb2b))
+
+## [9.2.2](https://github.com/ForestAdmin/forest-rails/compare/v9.2.1...v9.2.2) (2024-03-08)
+
+
+### Bug Fixes
+
+* **security:** patch rails active-record dependency vulnerabilities ([#661](https://github.com/ForestAdmin/forest-rails/issues/661)) ([1f0b99d](https://github.com/ForestAdmin/forest-rails/commit/1f0b99d95ba87c714fd61237925a01cf3a879fe6))
+
+## [9.2.1](https://github.com/ForestAdmin/forest-rails/compare/v9.2.0...v9.2.1) (2024-03-06)
+
+
+### Bug Fixes
+
+* **security:** patch json-jwt dependency vulnerabilities ([#660](https://github.com/ForestAdmin/forest-rails/issues/660)) ([017d54d](https://github.com/ForestAdmin/forest-rails/commit/017d54d6d2ab5895db96489f392f7583eccefa19))
+
+# [9.2.0](https://github.com/ForestAdmin/forest-rails/compare/v9.1.10...v9.2.0) (2024-02-29)
+
+
+### Features
+
+* add support for workspace context in charts ([#649](https://github.com/ForestAdmin/forest-rails/issues/649)) ([3e98864](https://github.com/ForestAdmin/forest-rails/commit/3e98864b1815449aff6983a9eadca1c3b0eaec0b))
+
+## [9.1.10](https://github.com/ForestAdmin/forest-rails/compare/v9.1.9...v9.1.10) (2024-02-28)
+
+
+### Bug Fixes
+
+* **security:** patch semantic-release dependency vulnerabilities ([20e08da](https://github.com/ForestAdmin/forest-rails/commit/20e08da90376b45c4321554af8a538d816f0e38c))
+* **security:** patch semver-regex dependency vulnerabilities ([#659](https://github.com/ForestAdmin/forest-rails/issues/659)) ([4f8360b](https://github.com/ForestAdmin/forest-rails/commit/4f8360b02d7caaacb6c434124d535d28d2d883ab))
+
+## [9.1.9](https://github.com/ForestAdmin/forest-rails/compare/v9.1.8...v9.1.9) (2024-02-28)
+
+
+### Bug Fixes
+
+* **security:** patch npm dependency vulnerabilities ([#658](https://github.com/ForestAdmin/forest-rails/issues/658)) ([169997a](https://github.com/ForestAdmin/forest-rails/commit/169997a0a4de9a91cca3cdb815e3e9624ee605be))
+
+## [9.1.8](https://github.com/ForestAdmin/forest-rails/compare/v9.1.7...v9.1.8) (2024-02-28)
+
+
+### Bug Fixes
+
+* **security:** patch path-parse dependency vulnerabilities ([#657](https://github.com/ForestAdmin/forest-rails/issues/657)) ([9ed91e8](https://github.com/ForestAdmin/forest-rails/commit/9ed91e89db906557c0571845f6423d6004b174be))
+
+## [9.1.7](https://github.com/ForestAdmin/forest-rails/compare/v9.1.6...v9.1.7) (2024-02-28)
+
+
+### Bug Fixes
+
+* **security:** patch hosted-git-info dependency vulnerabilities ([#656](https://github.com/ForestAdmin/forest-rails/issues/656)) ([1ce4d5b](https://github.com/ForestAdmin/forest-rails/commit/1ce4d5b08196cff81a3f3cff31d13b7eb212f37c))
+
+## [9.1.6](https://github.com/ForestAdmin/forest-rails/compare/v9.1.5...v9.1.6) (2024-02-28)
+
+
+### Bug Fixes
+
+* **security:** patch http-cache-semantics dependency vulnerabilities ([#655](https://github.com/ForestAdmin/forest-rails/issues/655)) ([9a7b7bc](https://github.com/ForestAdmin/forest-rails/commit/9a7b7bc0c68dc13210965b1a64be6b5bed594301))
+
+## [9.1.5](https://github.com/ForestAdmin/forest-rails/compare/v9.1.4...v9.1.5) (2024-02-28)
+
+
+### Bug Fixes
+
+* **security:** patch ansi-regex dependency vulnerabilities ([#654](https://github.com/ForestAdmin/forest-rails/issues/654)) ([98d3d18](https://github.com/ForestAdmin/forest-rails/commit/98d3d18d002dbf1f83a4fa135169fd1a48d766b1))
+
+## [9.1.4](https://github.com/ForestAdmin/forest-rails/compare/v9.1.3...v9.1.4) (2024-02-28)
+
+
+### Bug Fixes
+
+* **security:** patch lodash dependency vulnerabilities ([#653](https://github.com/ForestAdmin/forest-rails/issues/653)) ([e80e814](https://github.com/ForestAdmin/forest-rails/commit/e80e814a249f0e6929ada9f8c2da2e18fb985047))
+
+## [9.1.3](https://github.com/ForestAdmin/forest-rails/compare/v9.1.2...v9.1.3) (2024-02-28)
+
+
+### Bug Fixes
+
+* **security:** patch ip dependency vulnerabilities ([#652](https://github.com/ForestAdmin/forest-rails/issues/652)) ([1b25da8](https://github.com/ForestAdmin/forest-rails/commit/1b25da850e43ae0cf03f569ea9b1d68142b81878))
+
+## [9.1.2](https://github.com/ForestAdmin/forest-rails/compare/v9.1.1...v9.1.2) (2024-02-28)
+
+
+### Bug Fixes
+
+* **security:** patch semver dependency vulnerabilities ([#651](https://github.com/ForestAdmin/forest-rails/issues/651)) ([7ed497e](https://github.com/ForestAdmin/forest-rails/commit/7ed497e4db064945a0037ea52d7ea93a028703cf))
+
+## [9.1.1](https://github.com/ForestAdmin/forest-rails/compare/v9.1.0...v9.1.1) (2024-02-28)
+
+
+### Bug Fixes
+
+* **security:** patch commitlint dependency vulnerabilities ([#650](https://github.com/ForestAdmin/forest-rails/issues/650)) ([1f71c65](https://github.com/ForestAdmin/forest-rails/commit/1f71c65cf9ff86c55a2b33a71445031d4bb7bff2))
+
+# [9.1.0](https://github.com/ForestAdmin/forest-rails/compare/v9.0.0...v9.1.0) (2024-01-29)
+
+
+### Features
+
+* allow search on UUID v7 and v8  ([#647](https://github.com/ForestAdmin/forest-rails/issues/647)) ([c3be02a](https://github.com/ForestAdmin/forest-rails/commit/c3be02af69bcbbb6c2a21cbea19a228939383e55))
+
+# [9.0.0](https://github.com/ForestAdmin/forest-rails/compare/v8.1.0...v9.0.0) (2024-01-25)
+
+
+### Features
+
+* **polymorphic:** enabled polymorphic associations support by default ([#644](https://github.com/ForestAdmin/forest-rails/issues/644)) ([92853a9](https://github.com/ForestAdmin/forest-rails/commit/92853a91ed23b8834f85582aef8f24c6b12f3cb0))
+
+
+### BREAKING CHANGES
+
+* **polymorphic:** polymorphic association support enabled by default. It is no longer necessary to define the env variable ENABLE_SUPPORT_POLYMORPHISM
+
+# [9.0.0-beta.1](https://github.com/ForestAdmin/forest-rails/compare/v8.1.0...v9.0.0-beta.1) (2024-01-23)
+
+
+### Features
+
+* **polymorphic:** enabled polymorphic associations support by default ([#644](https://github.com/ForestAdmin/forest-rails/issues/644)) ([92853a9](https://github.com/ForestAdmin/forest-rails/commit/92853a91ed23b8834f85582aef8f24c6b12f3cb0))
+
+
+### BREAKING CHANGES
+
+* **polymorphic:** polymorphic association support enabled by default. It is no longer necessary to define the env variable ENABLE_SUPPORT_POLYMORPHISM
+
+# [8.1.0](https://github.com/ForestAdmin/forest-rails/compare/v8.0.17...v8.1.0) (2024-01-18)
+
+
+### Features
+
+* add polymorphic associations support ([#640](https://github.com/ForestAdmin/forest-rails/issues/640)) ([2d43bc3](https://github.com/ForestAdmin/forest-rails/commit/2d43bc35c9085555cb3625a4325e427e80a5ec6a))
+
+## [8.0.17](https://github.com/ForestAdmin/forest-rails/compare/v8.0.16...v8.0.17) (2023-12-05)
+
+
+### Bug Fixes
+
+* security vulnerabilities RCE on 8.x.x ([#638](https://github.com/ForestAdmin/forest-rails/issues/638)) ([02679b5](https://github.com/ForestAdmin/forest-rails/commit/02679b584b84eda3d1f0be6e6482d130b53b4d19))
+
+## [8.0.16](https://github.com/ForestAdmin/forest-rails/compare/v8.0.15...v8.0.16) (2023-11-16)
+
+
+### Bug Fixes
+
+* **authentication:** return errors detail instead of generic error 500 ([#636](https://github.com/ForestAdmin/forest-rails/issues/636)) ([1a69e2f](https://github.com/ForestAdmin/forest-rails/commit/1a69e2f0ce308b060454ca98ab0d08fd8f14a862))
+
+## [8.0.15](https://github.com/ForestAdmin/forest-rails/compare/v8.0.14...v8.0.15) (2023-10-23)
+
+
+### Bug Fixes
+
+* **permissions:** fetch permissions return an exception when the server doesn't return an 200 response ([#635](https://github.com/ForestAdmin/forest-rails/issues/635)) ([9a7590b](https://github.com/ForestAdmin/forest-rails/commit/9a7590b5084ed4588fab09bd903822d05a0930fc))
+
+## [8.0.14](https://github.com/ForestAdmin/forest-rails/compare/v8.0.13...v8.0.14) (2023-10-16)
+
+
+### Bug Fixes
+
+* **logger:** format of the datetime ([#634](https://github.com/ForestAdmin/forest-rails/issues/634)) ([e356b83](https://github.com/ForestAdmin/forest-rails/commit/e356b838ebd8b426d189f076414841216b5198ab)), closes [#633](https://github.com/ForestAdmin/forest-rails/issues/633)
+
+## [8.0.13](https://github.com/ForestAdmin/forest-rails/compare/v8.0.12...v8.0.13) (2023-10-05)
+
+
+### Bug Fixes
+
+* destroy record with restriction on children ([#632](https://github.com/ForestAdmin/forest-rails/issues/632)) ([da1f8b6](https://github.com/ForestAdmin/forest-rails/commit/da1f8b6cf22d1701a83c40e2a79d056622566715)), closes [#630](https://github.com/ForestAdmin/forest-rails/issues/630)
+
+## [8.0.12](https://github.com/ForestAdmin/forest-rails/compare/v8.0.11...v8.0.12) (2023-07-07)
+
+
+### Bug Fixes
+
+* allow charts with dynamic query using record id ([#628](https://github.com/ForestAdmin/forest-rails/issues/628)) ([ff2e1b5](https://github.com/ForestAdmin/forest-rails/commit/ff2e1b5231393a8adfbef3b9c4abb135999e73ad))
+
+## [8.0.11](https://github.com/ForestAdmin/forest-rails/compare/v8.0.10...v8.0.11) (2023-06-29)
+
+
+### Bug Fixes
+
+* reporter error on dissociate action ([#627](https://github.com/ForestAdmin/forest-rails/issues/627)) ([edc45aa](https://github.com/ForestAdmin/forest-rails/commit/edc45aa0d09f06d89acec3ac835347129aa35d7c))
+
+## [8.0.10](https://github.com/ForestAdmin/forest-rails/compare/v8.0.9...v8.0.10) (2023-06-19)
+
+
+### Bug Fixes
+
+* **smartaction:**  register custom endpoint for load/changes hooks ([#626](https://github.com/ForestAdmin/forest-rails/issues/626)) ([3d66b3b](https://github.com/ForestAdmin/forest-rails/commit/3d66b3bff1ddfb3476af3b6f54bcef6f15d79247))
+
+## [8.0.9](https://github.com/ForestAdmin/forest-rails/compare/v8.0.8...v8.0.9) (2023-06-13)
+
+
+### Bug Fixes
+
+* **permissions:** use correct collection name for model under module ([#624](https://github.com/ForestAdmin/forest-rails/issues/624)) ([e896763](https://github.com/ForestAdmin/forest-rails/commit/e8967631d93a8375de26f7707f8acba93f6ecc5c))
+
+## [8.0.8](https://github.com/ForestAdmin/forest-rails/compare/v8.0.7...v8.0.8) (2023-05-23)
+
+
+### Bug Fixes
+
+* **scope:** cast filters to json before merge with scope ([#622](https://github.com/ForestAdmin/forest-rails/issues/622)) ([b0e0196](https://github.com/ForestAdmin/forest-rails/commit/b0e01966158a37cadb2de7bf6ac177e53912d437))
+
+## [8.0.7](https://github.com/ForestAdmin/forest-rails/compare/v8.0.6...v8.0.7) (2023-05-23)
+
+
+### Bug Fixes
+
+* **operator:** replace the hard-coded duration by the duration variable ([#621](https://github.com/ForestAdmin/forest-rails/issues/621)) ([776f23d](https://github.com/ForestAdmin/forest-rails/commit/776f23d4afe47a0d41ca65abf9762e1c86504b3e))
+
+## [8.0.6](https://github.com/ForestAdmin/forest-rails/compare/v8.0.5...v8.0.6) (2023-05-05)
+
+
+### Bug Fixes
+
+* **hooks:** use exact namespace to prevent controller conflict ([#620](https://github.com/ForestAdmin/forest-rails/issues/620)) ([3e4e7d6](https://github.com/ForestAdmin/forest-rails/commit/3e4e7d64dcbe22f981ef21d82076765fd8a12ed3))
+
+## [8.0.5](https://github.com/ForestAdmin/forest-rails/compare/v8.0.4...v8.0.5) (2023-05-04)
+
+
+### Bug Fixes
+
+* **relation:** fix dissociate all records of relationship ([#618](https://github.com/ForestAdmin/forest-rails/issues/618)) ([861d76f](https://github.com/ForestAdmin/forest-rails/commit/861d76f2606f66d81df0cd31581950744a4b67a9))
+
+## [8.0.4](https://github.com/ForestAdmin/forest-rails/compare/v8.0.3...v8.0.4) (2023-04-21)
+
+
+### Bug Fixes
+
+* **action:** authorize all actions on development environment ([#617](https://github.com/ForestAdmin/forest-rails/issues/617)) ([72bec24](https://github.com/ForestAdmin/forest-rails/commit/72bec24fee8b0397c80a93654d28f52d9c20cc15))
+
+## [8.0.3](https://github.com/ForestAdmin/forest-rails/compare/v8.0.2...v8.0.3) (2023-04-06)
+
+
+### Bug Fixes
+
+* **permissions:** use forest collection name for check the permission ([#616](https://github.com/ForestAdmin/forest-rails/issues/616)) ([a35646f](https://github.com/ForestAdmin/forest-rails/commit/a35646f4c39cb151aed14e52e1be1099b1946fd9))
+
+## [8.0.2](https://github.com/ForestAdmin/forest-rails/compare/v8.0.1...v8.0.2) (2023-03-22)
+
+
+### Bug Fixes
+
+* developers can disable automatic schema send ([#614](https://github.com/ForestAdmin/forest-rails/issues/614)) ([97e1f06](https://github.com/ForestAdmin/forest-rails/commit/97e1f06d9442ed8faf8b22504caf76c8a4b50fe1))
+
+## [8.0.1](https://github.com/ForestAdmin/forest-rails/compare/v8.0.0...v8.0.1) (2023-03-16)
+
+
+### Bug Fixes
+
+* schema version generation for all versions ([#613](https://github.com/ForestAdmin/forest-rails/issues/613)) ([de72c6e](https://github.com/ForestAdmin/forest-rails/commit/de72c6e514ebb3483ffaf0fbc739acfeae0a56e7))
+
+# [8.0.0](https://github.com/ForestAdmin/forest-rails/compare/v7.8.1...v8.0.0) (2023-03-14)
+
+
+### Features
+
+* **conditional-approval:** users want conditional triggers of conditional approval ([#612](https://github.com/ForestAdmin/forest-rails/issues/612)) ([c4c7511](https://github.com/ForestAdmin/forest-rails/commit/c4c751117d5edec781ab81070f52ec38fd57f3f2))
+
+
+### BREAKING CHANGES
+
+* **conditional-approval:** Introduction of a new permission module call Ability. The previous permission system PermissionChecker doesn't exist anymore.
+
+# [8.0.0-beta.1](https://github.com/ForestAdmin/forest-rails/compare/v7.8.1...v8.0.0-beta.1) (2023-03-14)
+
+
+### Bug Fixes
+
+* raise error when an action is call on a smartcollection ([#605](https://github.com/ForestAdmin/forest-rails/issues/605)) ([675821e](https://github.com/ForestAdmin/forest-rails/commit/675821e086137cf7413a1e328b71a9c836d8c21a))
+* **apimap:** format apimap liana version ([#603](https://github.com/ForestAdmin/forest-rails/issues/603)) ([b8a83bb](https://github.com/ForestAdmin/forest-rails/commit/b8a83bb6a4edf229ca788227cac2a917dc4fd204))
+* **conditional-approval:** update condition to check if user can trigger the action ([#604](https://github.com/ForestAdmin/forest-rails/issues/604)) ([36f55b3](https://github.com/ForestAdmin/forest-rails/commit/36f55b3bfeb992831c10238264af2931448ccae8))
+
+
+### Features
+
+* **conditional-approval:** users want conditional triggers of conditional approval ([#600](https://github.com/ForestAdmin/forest-rails/issues/600)) ([062bcac](https://github.com/ForestAdmin/forest-rails/commit/062bcace329f302f238324fb0f1db2f00331978e))
+
+
+### BREAKING CHANGES
+
+* **conditional-approval:** Introduction of a new permission module call Ability. The previous permission system PermissionChecker doesn't exist anymore.
+
+## [7.8.2-beta.1](https://github.com/ForestAdmin/forest-rails/compare/v7.8.1...v7.8.2-beta.1) (2023-03-14)
+
+
+### Bug Fixes
+
+* raise error when an action is call on a smartcollection ([#605](https://github.com/ForestAdmin/forest-rails/issues/605)) ([675821e](https://github.com/ForestAdmin/forest-rails/commit/675821e086137cf7413a1e328b71a9c836d8c21a))
+* **apimap:** format apimap liana version ([#603](https://github.com/ForestAdmin/forest-rails/issues/603)) ([b8a83bb](https://github.com/ForestAdmin/forest-rails/commit/b8a83bb6a4edf229ca788227cac2a917dc4fd204))
+* **conditional-approval:** update condition to check if user can trigger the action ([#604](https://github.com/ForestAdmin/forest-rails/issues/604)) ([36f55b3](https://github.com/ForestAdmin/forest-rails/commit/36f55b3bfeb992831c10238264af2931448ccae8))
+
+
+### Features
+
+* **conditional-approval:** users want conditional triggers of conditional approval ([#600](https://github.com/ForestAdmin/forest-rails/issues/600)) ([062bcac](https://github.com/ForestAdmin/forest-rails/commit/062bcace329f302f238324fb0f1db2f00331978e))
+
+
+### BREAKING CHANGES
+
+* **conditional-approval:** Introduction of a new permission module call Ability. The previous permission system PermissionChecker doesn't exist anymore.
+
+# [8.0.0-beta.4](https://github.com/ForestAdmin/forest-rails/compare/v8.0.0-beta.3...v8.0.0-beta.4) (2023-02-23)
+
+
+### Bug Fixes
+
+* raise error when an action is call on a smartcollection ([#605](https://github.com/ForestAdmin/forest-rails/issues/605)) ([c98ac23](https://github.com/ForestAdmin/forest-rails/commit/c98ac238d55bef201945b1cd3cfcea806d4c2d26))
+
+# [8.0.0-beta.3](https://github.com/ForestAdmin/forest-rails/compare/v8.0.0-beta.2...v8.0.0-beta.3) (2023-02-22)
+
+
+### Bug Fixes
+
+* **conditional-approval:** update condition to check if user can trigger the action ([#604](https://github.com/ForestAdmin/forest-rails/issues/604)) ([d55db18](https://github.com/ForestAdmin/forest-rails/commit/d55db187ea6c12d6aa24e10a509983b0940bc21e))
+
+# [8.0.0-beta.2](https://github.com/ForestAdmin/forest-rails/compare/v8.0.0-beta.1...v8.0.0-beta.2) (2023-02-21)
+
+
+### Bug Fixes
+
+* **apimap:** format apimap liana version ([#603](https://github.com/ForestAdmin/forest-rails/issues/603)) ([37fc823](https://github.com/ForestAdmin/forest-rails/commit/37fc82346870ab367a130c750256d5e37f1de4fd))
+
+# [8.0.0-beta.1](https://github.com/ForestAdmin/forest-rails/compare/v7.8.0...v8.0.0-beta.1) (2023-02-17)
+
+
+### Features
+
+* **conditional-approval:** users want conditional triggers of conditional approval ([#600](https://github.com/ForestAdmin/forest-rails/issues/600)) ([ca99939](https://github.com/ForestAdmin/forest-rails/commit/ca99939647d20c0a223f9f4f1d1d75bede1128b1))
+
+
+### BREAKING CHANGES
+
+* **conditional-approval:** Introduction of a new permission module call Ability. The previous permission system PermissionChecker doesn't exist anymore.
+
+## [7.8.1](https://github.com/ForestAdmin/forest-rails/compare/v7.8.0...v7.8.1) (2023-02-28)
+
+# [7.8.0](https://github.com/ForestAdmin/forest-rails/compare/v7.7.3...v7.8.0) (2023-01-24)
+
+
+### Features
+
+* **ruby:** make repo compatible with ruby 3.2 ([#595](https://github.com/ForestAdmin/forest-rails/issues/595)) ([8dad38c](https://github.com/ForestAdmin/forest-rails/commit/8dad38c0aa6a9ae8ccf5b970a4823af20035e5e8))
+
+## [7.7.3](https://github.com/ForestAdmin/forest-rails/compare/v7.7.2...v7.7.3) (2022-12-07)
+
+
+### Bug Fixes
+
+* **charts:** remove any sort on chart and remove default join behaviour on line chart ([#588](https://github.com/ForestAdmin/forest-rails/issues/588)) ([2de4c83](https://github.com/ForestAdmin/forest-rails/commit/2de4c837462bea9acc7f958fa06c5c751590f2bc))
+
+## [7.7.2](https://github.com/ForestAdmin/forest-rails/compare/v7.7.1...v7.7.2) (2022-11-21)
+
+
+### Bug Fixes
+
+* **serializer:** serialize only the foreignKeys of belongsTo relations ([#587](https://github.com/ForestAdmin/forest-rails/issues/587)) ([3695f97](https://github.com/ForestAdmin/forest-rails/commit/3695f972a382f1c35ea0da42eb0af06793dc39be))
+
+## [7.7.1](https://github.com/ForestAdmin/forest-rails/compare/v7.7.0...v7.7.1) (2022-10-20)
+
+
+### Bug Fixes
+
+* onboard issue with openid_connect gem when running "rails g forest_liana:install"  ([#586](https://github.com/ForestAdmin/forest-rails/issues/586)) ([18347c5](https://github.com/ForestAdmin/forest-rails/commit/18347c53e695541e55fed9dc5ebb60cb5c8774e5)), closes [#585](https://github.com/ForestAdmin/forest-rails/issues/585)
+
+# [7.7.0](https://github.com/ForestAdmin/forest-rails/compare/v7.6.14...v7.7.0) (2022-09-14)
+
+
+### Features
+
+* **auth:** remove callbackUrl parameter on authentication and remove forest_agent_url (FOREST_APPLICATION_URL) variable ([#582](https://github.com/ForestAdmin/forest-rails/issues/582)) ([00bfb3a](https://github.com/ForestAdmin/forest-rails/commit/00bfb3ab50a9aa4e5f742ef41cf30e108addff34))
+
+## [7.6.14](https://github.com/ForestAdmin/forest-rails/compare/v7.6.13...v7.6.14) (2022-09-08)
+
+
+### Bug Fixes
+
+* **charts:** user with permissions level that allows charts creation or edition should always be allow to perform charts requests  released ([#583](https://github.com/ForestAdmin/forest-rails/issues/583)) ([e6611e9](https://github.com/ForestAdmin/forest-rails/commit/e6611e9c1adc2411439a8d88fa6259bd85b4e183))
+
+## [7.6.13](https://github.com/ForestAdmin/forest-rails/compare/v7.6.12...v7.6.13) (2022-08-23)
+
+
+### Bug Fixes
+
+* dynamic scopes ([#580](https://github.com/ForestAdmin/forest-rails/issues/580)) ([890eead](https://github.com/ForestAdmin/forest-rails/commit/890eeadd73eb6485c75041103a42df20384f9a73))
+
+## [7.6.12](https://github.com/ForestAdmin/forest-rails/compare/v7.6.11...v7.6.12) (2022-08-09)
+
+
+### Bug Fixes
+
+* **sti:** remove unnecessary sti detection and always use actual model instead of parent ([#579](https://github.com/ForestAdmin/forest-rails/issues/579)) ([a159ad0](https://github.com/ForestAdmin/forest-rails/commit/a159ad0b51fe3a8d79e38a96673efbba85995136))
+
+## [7.6.11](https://github.com/ForestAdmin/forest-rails/compare/v7.6.10...v7.6.11) (2022-08-01)
+
+
+### Bug Fixes
+
+* use stable sort for schema fields so we get same results across OS ([#577](https://github.com/ForestAdmin/forest-rails/issues/577)) ([359d396](https://github.com/ForestAdmin/forest-rails/commit/359d396c27e152ad4f2aaaa096a8dd285183b3a4)), closes [#575](https://github.com/ForestAdmin/forest-rails/issues/575)
+
+## [7.6.10](https://github.com/ForestAdmin/forest-rails/compare/v7.6.9...v7.6.10) (2022-08-01)
+
+
+### Bug Fixes
+
+* **multidb:** fix issue with multiple connection detection ([#578](https://github.com/ForestAdmin/forest-rails/issues/578)) ([3a3340b](https://github.com/ForestAdmin/forest-rails/commit/3a3340b147fd5fcc7ce94d6a27249d505ac516fb))
+
+## [7.6.9](https://github.com/ForestAdmin/forest-rails/compare/v7.6.8...v7.6.9) (2022-07-22)
+
+
+### Bug Fixes
+
+* **security:** patch tzinfo dependency vulnerabilities ([#573](https://github.com/ForestAdmin/forest-rails/issues/573)) ([9793917](https://github.com/ForestAdmin/forest-rails/commit/97939176d11d7b9f0545a2394f3d22faccefd846))
+
+## [7.6.8](https://github.com/ForestAdmin/forest-rails/compare/v7.6.7...v7.6.8) (2022-07-20)
+
+
+### Bug Fixes
+
+* **multidb:** allow associations across databases to work properly ([#572](https://github.com/ForestAdmin/forest-rails/issues/572)) ([0f6261d](https://github.com/ForestAdmin/forest-rails/commit/0f6261d22dd59d39ccf7c783555fa9176abe6f62))
+
+## [7.6.7](https://github.com/ForestAdmin/forest-rails/compare/v7.6.6...v7.6.7) (2022-06-29)
+
+
+### Bug Fixes
+
+* remove default sort on columns created_at & id in the query builder ([fd734fc](https://github.com/ForestAdmin/forest-rails/commit/fd734fc8f581262cb922b0b95921506c6494e37d))
+
+## [7.6.6](https://github.com/ForestAdmin/forest-rails/compare/v7.6.5...v7.6.6) (2022-06-29)
+
+
+### Bug Fixes
+
+* take into account subclasses of ActiveRecord models ([#569](https://github.com/ForestAdmin/forest-rails/issues/569)) ([2298081](https://github.com/ForestAdmin/forest-rails/commit/22980817c2e5edeb437c32da404e75e79e8cb8bf))
+
+## [7.6.5](https://github.com/ForestAdmin/forest-rails/compare/v7.6.4...v7.6.5) (2022-06-21)
+
+
+### Bug Fixes
+
+* prevent duplication of models from multiple ActiveRecord application classes ([#566](https://github.com/ForestAdmin/forest-rails/issues/566)) ([3a135b7](https://github.com/ForestAdmin/forest-rails/commit/3a135b79a91544e9b37fe07345acdfe1ff6a2554))
+
+## [7.6.4](https://github.com/ForestAdmin/forest-rails/compare/v7.6.3...v7.6.4) (2022-06-20)
+
+
+### Bug Fixes
+
+* handle instance dependent associations ([#567](https://github.com/ForestAdmin/forest-rails/issues/567)) ([43f60a3](https://github.com/ForestAdmin/forest-rails/commit/43f60a3b7a0f67981697e2b724b89e396bd30016))
+
+## [7.6.3](https://github.com/ForestAdmin/forest-rails/compare/v7.6.2...v7.6.3) (2022-05-19)
+
+
+### Bug Fixes
+
+* sort fields in schema ([#561](https://github.com/ForestAdmin/forest-rails/issues/561)) ([d5eff3c](https://github.com/ForestAdmin/forest-rails/commit/d5eff3c2134d69417121fcb07c6252ee4c011534))
+* **search:** fix search on fields of type UUID ([#560](https://github.com/ForestAdmin/forest-rails/issues/560)) ([f997659](https://github.com/ForestAdmin/forest-rails/commit/f997659925670fe03c336a2924317ce04de9d67b))
+
+## [7.6.2](https://github.com/ForestAdmin/forest-rails/compare/v7.6.1...v7.6.2) (2022-05-11)
+
+
+### Bug Fixes
+
+* **apimap:** fix generate schema with unknown action ([#555](https://github.com/ForestAdmin/forest-rails/issues/555)) ([92a0da4](https://github.com/ForestAdmin/forest-rails/commit/92a0da47fe207d188793f88d9bf4fa8a6edade0a))
+
+## [7.6.1](https://github.com/ForestAdmin/forest-rails/compare/v7.6.0...v7.6.1) (2022-05-10)
+
+
+### Bug Fixes
+
+* typo on deactivated count response ([#559](https://github.com/ForestAdmin/forest-rails/issues/559)) ([43f7c5b](https://github.com/ForestAdmin/forest-rails/commit/43f7c5b73f087c7be75dc501fcc773963b4a340f))
+
+# [7.6.0](https://github.com/ForestAdmin/forest-rails/compare/v7.5.1...v7.6.0) (2022-05-03)
+
+
+### Features
+
+* **cors:** add access control allow private network handling ([#554](https://github.com/ForestAdmin/forest-rails/issues/554)) ([7832b4c](https://github.com/ForestAdmin/forest-rails/commit/7832b4c7554fd2f9ea89aa9118770ebc57cabbf6))
+
+## [7.5.1](https://github.com/ForestAdmin/forest-rails/compare/v7.5.0...v7.5.1) (2022-03-31)
+
+
+### Bug Fixes
+
+* add support count deactivate on relationships resources ([#552](https://github.com/ForestAdmin/forest-rails/issues/552)) ([4d24c0f](https://github.com/ForestAdmin/forest-rails/commit/4d24c0fd473bc3f7d2b455ebce43670cfa9478a5))
+
+# [7.5.0](https://github.com/ForestAdmin/forest-rails/compare/v7.4.5...v7.5.0) (2022-03-29)
+
+
+### Features
+
+* **count:** add deactivate count support ([#547](https://github.com/ForestAdmin/forest-rails/issues/547)) ([06423f9](https://github.com/ForestAdmin/forest-rails/commit/06423f9bbd4470fa32b745ec5840f8596383cd2e))
+
+## [7.4.5](https://github.com/ForestAdmin/forest-rails/compare/v7.4.4...v7.4.5) (2021-12-22)
+
+
+### Bug Fixes
+
+* onboarding with rails 7 when running "rails g forest_liana:install" ([#539](https://github.com/ForestAdmin/forest-rails/issues/539)) ([6fcee9b](https://github.com/ForestAdmin/forest-rails/commit/6fcee9b00cf71cd717680854397016442a4c2d99))
+
+## [7.4.4](https://github.com/ForestAdmin/forest-rails/compare/v7.4.3...v7.4.4) (2021-12-22)
+
+
+### Bug Fixes
+
+* revert "fix: update arel-helpers dependency ([#535](https://github.com/ForestAdmin/forest-rails/issues/535))" ([#537](https://github.com/ForestAdmin/forest-rails/issues/537)) ([7b75556](https://github.com/ForestAdmin/forest-rails/commit/7b755567a89c6fe59b8280c8ce2f62e2def0b4ba))
+
+## [7.4.3](https://github.com/ForestAdmin/forest-rails/compare/v7.4.2...v7.4.3) (2021-12-21)
+
+
+### Bug Fixes
+
+* update arel-helpers dependency ([#535](https://github.com/ForestAdmin/forest-rails/issues/535)) ([176afff](https://github.com/ForestAdmin/forest-rails/commit/176afff36718964768401e03d89de583db810514))
+
+## [7.4.2](https://github.com/ForestAdmin/forest-rails/compare/v7.4.1...v7.4.2) (2021-12-16)
+
+
+### Bug Fixes
+
+* add user inside context for smart actions hooks ([#532](https://github.com/ForestAdmin/forest-rails/issues/532)) ([8d71e9c](https://github.com/ForestAdmin/forest-rails/commit/8d71e9c957d305dfb365d455a5abdef019ae2569))
+
+## [7.4.1](https://github.com/ForestAdmin/forest-rails/compare/v7.4.0...v7.4.1) (2021-11-22)
+
+
+### Bug Fixes
+
+* avoid attaching smart action hooks on pre-defined smart actions ([#526](https://github.com/ForestAdmin/forest-rails/issues/526)) ([baab51f](https://github.com/ForestAdmin/forest-rails/commit/baab51f4c95011a5cc11f2bb9ce42be82e92713b))
+
+# [7.4.0](https://github.com/ForestAdmin/forest-rails/compare/v7.3.0...v7.4.0) (2021-11-04)
+
+
+### Features
+
+* **reporter:** customers can now catch every errors thrown by forest ([#519](https://github.com/ForestAdmin/forest-rails/issues/519)) ([c040b73](https://github.com/ForestAdmin/forest-rails/commit/c040b7351177757bb6d43a9111bcd175a372c219))
+
+# [7.3.0](https://github.com/ForestAdmin/forest-rails/compare/v7.2.2...v7.3.0) (2021-10-13)
+
+
+### Features
+
+* **filter:** handle correctly uuid field type ([#525](https://github.com/ForestAdmin/forest-rails/issues/525)) ([22be1a8](https://github.com/ForestAdmin/forest-rails/commit/22be1a8d032b8fb56b96464fcfecf03514b48cbc))
+
+## [7.2.2](https://github.com/ForestAdmin/forest-rails/compare/v7.2.1...v7.2.2) (2021-09-30)
+
+
+### Bug Fixes
+
+* **authentication:** fix certificate issues that break the authentication ([#522](https://github.com/ForestAdmin/forest-rails/issues/522)) ([0caa6c5](https://github.com/ForestAdmin/forest-rails/commit/0caa6c561055e892504b9df8181ab2142c2ea9d4))
+
+## [7.2.1](https://github.com/ForestAdmin/forest-rails/compare/v7.2.0...v7.2.1) (2021-09-29)
+
+
+### Bug Fixes
+
+* smart actions restricted to a segment using segment query should be visible ([#510](https://github.com/ForestAdmin/forest-rails/issues/510)) ([6bb4439](https://github.com/ForestAdmin/forest-rails/commit/6bb4439dee11da92e4aa89a1d2b57a2aa02938a2))
+
+# [7.2.0](https://github.com/ForestAdmin/forest-rails/compare/v7.1.0...v7.2.0) (2021-09-10)
+
+
+### Features
+
+* **filter:** add "is in" filter ([#518](https://github.com/ForestAdmin/forest-rails/issues/518)) ([020310c](https://github.com/ForestAdmin/forest-rails/commit/020310c80e9aee2d39e77301ec97577e1b26f8ee))
+
+# [7.1.0](https://github.com/ForestAdmin/forest-rails/compare/v7.0.2...v7.1.0) (2021-08-25)
+
+
+### Features
+
+* include tags in the user data inside the request ([#515](https://github.com/ForestAdmin/forest-rails/issues/515)) ([91e9bb9](https://github.com/ForestAdmin/forest-rails/commit/91e9bb93e954c9f8e03191497dd1a8fae7fb4fcf))
+
+## [7.0.2](https://github.com/ForestAdmin/forest-rails/compare/v7.0.1...v7.0.2) (2021-08-16)
+
+
+### Bug Fixes
+
+* **hooks:** smart action hooks response correctly send back serialized fields ([#514](https://github.com/ForestAdmin/forest-rails/issues/514)) ([794f9a7](https://github.com/ForestAdmin/forest-rails/commit/794f9a7b45a828cc7971a4d7f21192dc0ed2edd3))
+
+## [7.0.1](https://github.com/ForestAdmin/forest-rails/compare/v7.0.0...v7.0.1) (2021-07-23)
+
+
+### Bug Fixes
+
+* restrict the use of surrounding parentheses only to in operator ([2e8d0cd](https://github.com/ForestAdmin/forest-rails/commit/2e8d0cdf05d9a1a0bb509bb0f67beff0136a1b19))
+* restrict the use of surrounding parentheses only to IN operator ([17df2c0](https://github.com/ForestAdmin/forest-rails/commit/17df2c017fdaa7d5904a9dc3307e9c7ec8e69570))
+
+# [7.0.0](https://github.com/ForestAdmin/forest-rails/compare/v6.6.2...v7.0.0) (2021-07-20)
+
+
+### Bug Fixes
+
+* **dependency:** now using forestadmin-jsonapi-serializers instead of the jsonapi-serializers gem ([#475](https://github.com/ForestAdmin/forest-rails/issues/475)) ([3feea36](https://github.com/ForestAdmin/forest-rails/commit/3feea36b3b578638f3ad7c16ebab8e457a68d71f))
+
+
+### chore
+
+* **force-release:** now using forestadmin-jsonapi-serializers instead of the jsonapi-serializers gem ([#464](https://github.com/ForestAdmin/forest-rails/issues/464)) ([00ee2a4](https://github.com/ForestAdmin/forest-rails/commit/00ee2a40ded4eaccbe7fecb68e4edf0aaa36e38b))
+
+
+### Features
+
+* **scopes:** enforce scopes restrictions on a wider range of requests ([#488](https://github.com/ForestAdmin/forest-rails/issues/488)) ([66825a3](https://github.com/ForestAdmin/forest-rails/commit/66825a339fc11d03b8a1653b1877cb9d492dacfb))
+* smart action hooks now have access to the http request ([#499](https://github.com/ForestAdmin/forest-rails/issues/499)) ([5cd4a0e](https://github.com/ForestAdmin/forest-rails/commit/5cd4a0e7b9d9e1fcc551198a2eab62e471f51d92))
+* **hooks:** developers can dynamically add or remove smart actions fields ([#465](https://github.com/ForestAdmin/forest-rails/issues/465)) ([970f3d8](https://github.com/ForestAdmin/forest-rails/commit/970f3d82806296137f2e64379c92884b04954580))
+* **security:** secure segments queries ([#495](https://github.com/ForestAdmin/forest-rails/issues/495)) ([571f889](https://github.com/ForestAdmin/forest-rails/commit/571f889d85c226b8d4b78618150c75f4fa2aa9ad))
+
+
+### BREAKING CHANGES
+
+* record is no longer send to the hook midleware & values option on smart action is no longer supported
+* **hooks:** fields parameters on hook function is no longer a map of field, it is now an array.
+change hook is no longer choosen by the field name, field need to have hook defined inside it definition by addin a props hook.
+* **dependency:** Switch from jsonapi-serializers to forestadmin-jsonapi-serializers to serialize data to the JSONAPI format, mainly to avoid conflict with the jsonapi-serializer library
+* **force-release:** Switch from jsonapi-serializers to forestadmin-jsonapi-serializers to serialize data to the JSONAPI format, mainly to avoid conflict with the jsonapi-serializer library
+
+# [7.0.0-beta.6](https://github.com/ForestAdmin/forest-rails/compare/v7.0.0-beta.5...v7.0.0-beta.6) (2021-07-20)
+
+
+### Bug Fixes
+
+* allow smart action endpoints to start with slashes ([d4f6a61](https://github.com/ForestAdmin/forest-rails/commit/d4f6a618aeea72364b0e7511545b67fbbfb17c99))
+* allow smart action endpoints to start with slashes ([cf6c6a9](https://github.com/ForestAdmin/forest-rails/commit/cf6c6a96498e6813e4b7ccaa56cacd9abefc332f))
+* fix time based graph when timezone is different with database ([#476](https://github.com/ForestAdmin/forest-rails/issues/476)) ([5d9fb89](https://github.com/ForestAdmin/forest-rails/commit/5d9fb8903ae53615dd1789bdebbc4d9c7d6f4576))
+* stats permissions should be retrieved only one time per team ([#489](https://github.com/ForestAdmin/forest-rails/issues/489)) ([c2e9104](https://github.com/ForestAdmin/forest-rails/commit/c2e9104ebf32deeb3e5676706fdcbaae5de34869))
+* support permissions infos with ruby < 2.7 ([#486](https://github.com/ForestAdmin/forest-rails/issues/486)) ([a611271](https://github.com/ForestAdmin/forest-rails/commit/a611271e709bb6a9ed0d3ebccfb64b6eea1d324d))
+
+
+### Features
+
+* include role in the user data inside the request ([#478](https://github.com/ForestAdmin/forest-rails/issues/478)) ([0a34716](https://github.com/ForestAdmin/forest-rails/commit/0a347165897aa118e486895e55f4b29ba7fb888b))
+* **schema:** move some meta data under stack attribute to prevent blocking scenarios on DWO ([#469](https://github.com/ForestAdmin/forest-rails/issues/469)) ([76aa754](https://github.com/ForestAdmin/forest-rails/commit/76aa7540300f75b0ea1d00ec3b60e4976b7d800e))
+
+# [7.0.0-beta.5](https://github.com/ForestAdmin/forest-rails/compare/v7.0.0-beta.4...v7.0.0-beta.5) (2021-07-09)
+
+
+### Features
+
+* **scopes:** enforce scopes restrictions on a wider range of requests ([#488](https://github.com/ForestAdmin/forest-rails/issues/488)) ([66825a3](https://github.com/ForestAdmin/forest-rails/commit/66825a339fc11d03b8a1653b1877cb9d492dacfb))
+
+# [7.0.0-beta.4](https://github.com/ForestAdmin/forest-rails/compare/v7.0.0-beta.3...v7.0.0-beta.4) (2021-07-06)
+
+
+### Features
+
+* smart action hooks now have access to the http request ([#499](https://github.com/ForestAdmin/forest-rails/issues/499)) ([5cd4a0e](https://github.com/ForestAdmin/forest-rails/commit/5cd4a0e7b9d9e1fcc551198a2eab62e471f51d92))
+
+
+### BREAKING CHANGES
+
+* record is no longer send to the hook midleware & values option on smart action is no longer supported
+
+# [7.0.0-beta.3](https://github.com/ForestAdmin/forest-rails/compare/v7.0.0-beta.2...v7.0.0-beta.3) (2021-07-02)
+
+
+### Features
+
+* **security:** secure segments queries ([#495](https://github.com/ForestAdmin/forest-rails/issues/495)) ([571f889](https://github.com/ForestAdmin/forest-rails/commit/571f889d85c226b8d4b78618150c75f4fa2aa9ad))
+
+## [6.6.2](https://github.com/ForestAdmin/forest-rails/compare/v6.6.1...v6.6.2) (2021-06-16)
+
+
+### Bug Fixes
+
+* stats permissions should be retrieved only one time per team ([#489](https://github.com/ForestAdmin/forest-rails/issues/489)) ([c2e9104](https://github.com/ForestAdmin/forest-rails/commit/c2e9104ebf32deeb3e5676706fdcbaae5de34869))
+
+## [6.6.1](https://github.com/ForestAdmin/forest-rails/compare/v6.6.0...v6.6.1) (2021-06-10)
+
+
+### Bug Fixes
+
+* support permissions infos with ruby < 2.7 ([#486](https://github.com/ForestAdmin/forest-rails/issues/486)) ([a611271](https://github.com/ForestAdmin/forest-rails/commit/a611271e709bb6a9ed0d3ebccfb64b6eea1d324d))
+
+# [6.6.0](https://github.com/ForestAdmin/forest-rails/compare/v6.5.1...v6.6.0) (2021-06-09)
+
+
+### Features
+
+* include role in the user data inside the request ([#478](https://github.com/ForestAdmin/forest-rails/issues/478)) ([0a34716](https://github.com/ForestAdmin/forest-rails/commit/0a347165897aa118e486895e55f4b29ba7fb888b))
+
+## [6.5.1](https://github.com/ForestAdmin/forest-rails/compare/v6.5.0...v6.5.1) (2021-06-08)
+
+
+### Bug Fixes
+
+* allow smart action endpoints to start with slashes ([d4f6a61](https://github.com/ForestAdmin/forest-rails/commit/d4f6a618aeea72364b0e7511545b67fbbfb17c99))
+* allow smart action endpoints to start with slashes ([cf6c6a9](https://github.com/ForestAdmin/forest-rails/commit/cf6c6a96498e6813e4b7ccaa56cacd9abefc332f))
+
+# [7.0.0-beta.2](https://github.com/ForestAdmin/forest-rails/compare/v7.0.0-beta.1...v7.0.0-beta.2) (2021-06-07)
+
+
+### Features
+
+* **hooks:** developers can dynamically add or remove smart actions fields ([#465](https://github.com/ForestAdmin/forest-rails/issues/465)) ([970f3d8](https://github.com/ForestAdmin/forest-rails/commit/970f3d82806296137f2e64379c92884b04954580))
+
+
+### BREAKING CHANGES
+
+* **hooks:** fields parameters on hook function is no longer a map of field, it is now an array.
+change hook is no longer choosen by the field name, field need to have hook defined inside it definition by addin a props hook.
+
+# [6.5.0](https://github.com/ForestAdmin/forest-rails/compare/v6.4.1...v6.5.0) (2021-06-03)
+
+
+### Features
+
+* **schema:** move some meta data under stack attribute to prevent blocking scenarios on DWO ([#469](https://github.com/ForestAdmin/forest-rails/issues/469)) ([76aa754](https://github.com/ForestAdmin/forest-rails/commit/76aa7540300f75b0ea1d00ec3b60e4976b7d800e))
+
+# [7.0.0-beta.1](https://github.com/ForestAdmin/forest-rails/compare/v6.4.1-beta.1...v7.0.0-beta.1) (2021-06-01)
+
+
+### Bug Fixes
+
+* **dependency:** now using forestadmin-jsonapi-serializers instead of the jsonapi-serializers gem ([#475](https://github.com/ForestAdmin/forest-rails/issues/475)) ([3feea36](https://github.com/ForestAdmin/forest-rails/commit/3feea36b3b578638f3ad7c16ebab8e457a68d71f))
+
+
+### BREAKING CHANGES
+
+* **dependency:** Switch from jsonapi-serializers to forestadmin-jsonapi-serializers to serialize data to the JSONAPI format, mainly to avoid conflict with the jsonapi-serializer library
+
+## [6.4.1](https://github.com/ForestAdmin/forest-rails/compare/v6.4.0...v6.4.1) (2021-06-01)
+
+
+### Bug Fixes
+
+* fix time based graph when timezone is different with database ([#476](https://github.com/ForestAdmin/forest-rails/issues/476)) ([5d9fb89](https://github.com/ForestAdmin/forest-rails/commit/5d9fb8903ae53615dd1789bdebbc4d9c7d6f4576))
+
+# [6.4.0](https://github.com/ForestAdmin/forest-rails/compare/v6.3.8...v6.4.0) (2021-05-26)
+
+
+### Features
+
+* **logger:** allow the logger to be configurable by the parent application ([#467](https://github.com/ForestAdmin/forest-rails/issues/467)) ([0bd355a](https://github.com/ForestAdmin/forest-rails/commit/0bd355ae6e52da33aa3a2988d48e958c400fb5f4))
+
+## [6.3.8](https://github.com/ForestAdmin/forest-rails/compare/v6.3.7...v6.3.8) (2021-05-26)
+
+
+### Bug Fixes
+
+* **validation:** support multilines regex ([#466](https://github.com/ForestAdmin/forest-rails/issues/466)) ([1daf0b1](https://github.com/ForestAdmin/forest-rails/commit/1daf0b18e1757dd24e24b1cd2db759769a2daf1f))
+
+## [6.3.7](https://github.com/ForestAdmin/forest-rails/compare/v6.3.6...v6.3.7) (2021-05-18)
+
+
+### Bug Fixes
+
+* **schema:** generate the schema properly on server start while using the classic Autoloader using Rails 5 ([#463](https://github.com/ForestAdmin/forest-rails/issues/463)) ([767236c](https://github.com/ForestAdmin/forest-rails/commit/767236c9a856709fc22d8f3b55f60e3384ec99d5))
+
+## [6.3.6](https://github.com/ForestAdmin/forest-rails/compare/v6.3.5...v6.3.6) (2021-05-18)
+
+
+### Bug Fixes
+
+* fix timebased charts display with groupdate 5.2 and ruby 3.0 ([#462](https://github.com/ForestAdmin/forest-rails/issues/462)) ([ef64d9e](https://github.com/ForestAdmin/forest-rails/commit/ef64d9eedd4942dabd969ed1e139bba1f0d88b0e))
+
+## [6.3.5](https://github.com/ForestAdmin/forest-rails/compare/v6.3.4...v6.3.5) (2021-05-12)
+
+
+### Bug Fixes
+
+* distribution charts using groupby on a relationship should not throws 403 Forbidden ([#459](https://github.com/ForestAdmin/forest-rails/issues/459)) ([50663e9](https://github.com/ForestAdmin/forest-rails/commit/50663e93083fc1b816b5fb56f8c0d049a9cec990))
+
+## [6.3.4](https://github.com/ForestAdmin/forest-rails/compare/v6.3.3...v6.3.4) (2021-05-12)
+
+
+### Bug Fixes
+
+* **dependency:** ensure that project with a groupdate dependency >= 5 can install forest-rails ([#454](https://github.com/ForestAdmin/forest-rails/issues/454)) ([2c0a350](https://github.com/ForestAdmin/forest-rails/commit/2c0a3501a4a70319877bd1bd1bde970d10a86c9b))
+
+## [6.3.3](https://github.com/ForestAdmin/forest-rails/compare/v6.3.2...v6.3.3) (2021-05-07)
+
+
+### Bug Fixes
+
+* allow actions hooks in production ([#455](https://github.com/ForestAdmin/forest-rails/issues/455)) ([39e976e](https://github.com/ForestAdmin/forest-rails/commit/39e976e550482f9c4f7da1c7facd11eb19ad499f))
+
+## [6.3.2](https://github.com/ForestAdmin/forest-rails/compare/v6.3.1...v6.3.2) (2021-04-27)
+
+
+### Bug Fixes
+
+* **date-filter:** filtering only on hours now returns the expected records ([#449](https://github.com/ForestAdmin/forest-rails/issues/449)) ([aa02186](https://github.com/ForestAdmin/forest-rails/commit/aa021865df0309cb6a8894f501f267e29244cccf))
+
+## [6.3.1](https://github.com/ForestAdmin/forest-rails/compare/v6.3.0...v6.3.1) (2021-04-13)
+
+
+### Bug Fixes
+
+* **authentication:** fix authentication errors after deploying a new instance with the same code (#gb01xz) ([#447](https://github.com/ForestAdmin/forest-rails/issues/447)) ([e2d1e37](https://github.com/ForestAdmin/forest-rails/commit/e2d1e374419fe7231374960e1cb279648b47882f)), closes [#gb01](https://github.com/ForestAdmin/forest-rails/issues/gb01)
+
+# [6.3.0](https://github.com/ForestAdmin/forest-rails/compare/v6.2.3...v6.3.0) (2021-04-12)
+
+
+### Features
+
+* **smart-action:** handle isReadOnly field in smart action forms ([#442](https://github.com/ForestAdmin/forest-rails/issues/442)) ([835eab7](https://github.com/ForestAdmin/forest-rails/commit/835eab7176c652921e1df48418c97920c288e107))
+
+## [6.2.3](https://github.com/ForestAdmin/forest-rails/compare/v6.2.2...v6.2.3) (2021-04-06)
+
+
+### Bug Fixes
+
+* **security:** patch marked dependency vulnerabilities ([#446](https://github.com/ForestAdmin/forest-rails/issues/446)) ([3a48d76](https://github.com/ForestAdmin/forest-rails/commit/3a48d76df19d1ec40542f882c935fee8675cc7e5))
+
+## [6.2.2](https://github.com/ForestAdmin/forest-rails/compare/v6.2.1...v6.2.2) (2021-04-06)
+
+
+### Bug Fixes
+
+* **security:** patch y18n dependency vulnerabilities ([#445](https://github.com/ForestAdmin/forest-rails/issues/445)) ([9e10f7a](https://github.com/ForestAdmin/forest-rails/commit/9e10f7ae2db98a8c835f5fb548ea23d209fefe30))
+
+## [6.2.1](https://github.com/ForestAdmin/forest-rails/compare/v6.2.0...v6.2.1) (2021-04-06)
+
+
+### Bug Fixes
+
+* **security:** patch ini dependency vulnerabilities ([#444](https://github.com/ForestAdmin/forest-rails/issues/444)) ([2e42eba](https://github.com/ForestAdmin/forest-rails/commit/2e42ebabb5e204bc8be4f7c662a96b2600ecac18))
+
+# [6.2.0](https://github.com/ForestAdmin/forest-rails/compare/v6.1.1...v6.2.0) (2021-03-30)
+
+
+### Features
+
+* **filter:** add the possibility to filter on a smart field ([#410](https://github.com/ForestAdmin/forest-rails/issues/410)) ([00728be](https://github.com/ForestAdmin/forest-rails/commit/00728bedb5296ed2226c6eb94a6b4cb71758138c))
+
+## [6.1.1](https://github.com/ForestAdmin/forest-rails/compare/v6.1.0...v6.1.1) (2021-03-22)
+
+
+### Bug Fixes
+
+* forest stats api 403 forbidden at chart creation ([#438](https://github.com/ForestAdmin/forest-rails/issues/438)) ([974a485](https://github.com/ForestAdmin/forest-rails/commit/974a485614221e7d460a9b23a97a5a7ab5f84f90))
+
+# [6.1.0](https://github.com/ForestAdmin/forest-rails/compare/v6.0.5...v6.1.0) (2021-03-15)
+
+
+### Features
+
+* **security:** authorised only allowed stats queries using permissions ([#434](https://github.com/ForestAdmin/forest-rails/issues/434)) ([2014ab5](https://github.com/ForestAdmin/forest-rails/commit/2014ab5e4ef9365928f2a461ea19487c80558982))
+
+## [6.0.5](https://github.com/ForestAdmin/forest-rails/compare/v6.0.4...v6.0.5) (2021-03-11)
+
+
+### Bug Fixes
+
+* **serurity:** decrease token expiration time to 1 hour ([c7a13c9](https://github.com/ForestAdmin/forest-rails/commit/c7a13c99ec3000aec5e081ffc271a4f169373b8e))
+
+## [6.0.4](https://github.com/ForestAdmin/forest-rails/compare/v6.0.3...v6.0.4) (2021-03-09)
+
+
+### Bug Fixes
+
+* **authentication:** authentication error when the agent uses a prefix path in its url (#fb79c7) ([#436](https://github.com/ForestAdmin/forest-rails/issues/436)) ([0c6d46a](https://github.com/ForestAdmin/forest-rails/commit/0c6d46ae6817d14042320e5b4a38aaa2a2487d71)), closes [#fb79c7](https://github.com/ForestAdmin/forest-rails/issues/fb79c7)
+
+## [6.0.3](https://github.com/ForestAdmin/forest-rails/compare/v6.0.2...v6.0.3) (2021-03-04)
+
+
+### Bug Fixes
+
+* **authentication:** safari cannot login on remote lianas because of third party cookies ([#435](https://github.com/ForestAdmin/forest-rails/issues/435)) ([033661f](https://github.com/ForestAdmin/forest-rails/commit/033661fc930b34da852e7a7720e621a8ebc9a9d8))
+
+## [6.0.2](https://github.com/ForestAdmin/forest-rails/compare/v6.0.1...v6.0.2) (2021-03-04)
+
+
+### Bug Fixes
+
+* **authentication:** properly setup the session cookie to restore authentication on remote environments ([#433](https://github.com/ForestAdmin/forest-rails/issues/433)) ([556c56d](https://github.com/ForestAdmin/forest-rails/commit/556c56d37d0334464cb44c67ab91a21e191aa3a5))
+
+## [6.0.1](https://github.com/ForestAdmin/forest-rails/compare/v6.0.0...v6.0.1) (2021-02-26)
+
+
+### Bug Fixes
+
+* **authentication:** add missing environment variable generation and check if caching is enabled (#epz6k0) ([#431](https://github.com/ForestAdmin/forest-rails/issues/431)) ([3fb83d1](https://github.com/ForestAdmin/forest-rails/commit/3fb83d17e2cfa8aa6148f90eba1f62748e938135)), closes [#epz6k0](https://github.com/ForestAdmin/forest-rails/issues/epz6k0)
+
+# [6.0.0](https://github.com/ForestAdmin/forest-rails/compare/v5.4.4...v6.0.0) (2021-02-22)
+
+
+### Bug Fixes
+
+* **auth:** support multi-instances and remove auth's redirection ([#407](https://github.com/ForestAdmin/forest-rails/issues/407)) ([8fcf9d4](https://github.com/ForestAdmin/forest-rails/commit/8fcf9d4ba0f41b8c98451a3d15d31c73ab4fd162))
+* **gemfile:** gemfile.lock forest_liana version mismatch ([#401](https://github.com/ForestAdmin/forest-rails/issues/401)) ([60ceaf1](https://github.com/ForestAdmin/forest-rails/commit/60ceaf195371c56ee327cffbd40e8b85bf42ea3a))
+
+
+### Features
+
+* **auth:** authenticate using oidc ([#383](https://github.com/ForestAdmin/forest-rails/issues/383)) ([b535ab4](https://github.com/ForestAdmin/forest-rails/commit/b535ab4e7e7e371c93d01bdb41c6006bd9acc7cd))
+* **auth:** authenticate using oidc ([#400](https://github.com/ForestAdmin/forest-rails/issues/400)) ([4898b73](https://github.com/ForestAdmin/forest-rails/commit/4898b73bc70bf3a4828d7cdf63cd642add10b643))
+
+
+### BREAKING CHANGES
+
+* **auth:** Introduces a new authentication system.
+- The application_url property is required to initialize ForestLiana,
+- CORS rules must be adapted (to allow null origins).
+* **auth:** New authentication system.
+The application_url must be set in the ForestLiana initializer, adding a regex CORS rule for null origin is required.
+
+## [5.4.4](https://github.com/ForestAdmin/forest-rails/compare/v5.4.3...v5.4.4) (2021-02-19)
+
+
+### Bug Fixes
+
+* display a warning on missing association ([#426](https://github.com/ForestAdmin/forest-rails/issues/426)) ([a4974a3](https://github.com/ForestAdmin/forest-rails/commit/a4974a33968eb3ec6574bf9fb0a0e59ca9b86b78))
+
+## [5.4.3](https://github.com/ForestAdmin/forest-rails/compare/v5.4.2...v5.4.3) (2021-01-28)
+
+
+### Bug Fixes
+
+* use update instead of update_attribute to ensure rails 6.1 compatibility ([#417](https://github.com/ForestAdmin/forest-rails/issues/417)) ([41f9afb](https://github.com/ForestAdmin/forest-rails/commit/41f9afb8b2e45b2c26147f5f7bfe1941a38b3fd7))
+
+## [5.4.2](https://github.com/ForestAdmin/forest-rails/compare/v5.4.1...v5.4.2) (2021-01-27)
+
+
+### Bug Fixes
+
+* **stripe:** fix serialization issues on invoices ([#412](https://github.com/ForestAdmin/forest-rails/issues/412)) ([d9595bf](https://github.com/ForestAdmin/forest-rails/commit/d9595bfc79a46a9471f87154a023e35c4fd7d423))
+
+## [5.4.1](https://github.com/ForestAdmin/forest-rails/compare/v5.4.0...v5.4.1) (2021-01-21)
+
+
+### Bug Fixes
+
+* **smart-action-hook:** value injected to an enum field of type is now correctly handled ([#414](https://github.com/ForestAdmin/forest-rails/issues/414)) ([ef90105](https://github.com/ForestAdmin/forest-rails/commit/ef90105659f57c4c8531b0c4d576f345bc976b33))
+
+# [6.0.0-beta.4](https://github.com/ForestAdmin/forest-rails/compare/v6.0.0-beta.3...v6.0.0-beta.4) (2021-01-15)
+
+
+### Bug Fixes
+
+* **auth:** support multi-instances and remove auth's redirection ([#407](https://github.com/ForestAdmin/forest-rails/issues/407)) ([8fcf9d4](https://github.com/ForestAdmin/forest-rails/commit/8fcf9d4ba0f41b8c98451a3d15d31c73ab4fd162))
+
+# [6.0.0-beta.3](https://github.com/ForestAdmin/forest-rails/compare/v6.0.0-beta.2...v6.0.0-beta.3) (2020-12-14)
+
+
+### Bug Fixes
+
+* fix test after enums ([#398](https://github.com/ForestAdmin/forest-rails/issues/398)) ([7b37350](https://github.com/ForestAdmin/forest-rails/commit/7b37350fc2b6244c3180cb953c2954d5b6927739))
+* **smart-actions:** reset value when not present in enums in hook response ([#397](https://github.com/ForestAdmin/forest-rails/issues/397)) ([a1ddac1](https://github.com/ForestAdmin/forest-rails/commit/a1ddac1c0d474e11b43e0f489dcc5ea70cd940b8))
+* **smart-actions:** transform legacy widgets in hooks ([#395](https://github.com/ForestAdmin/forest-rails/issues/395)) ([0183d08](https://github.com/ForestAdmin/forest-rails/commit/0183d0883c85fa2569cba70d268747536770a612))
+* **smart-actions:** use changedField instead of comparing values to trigger the correct change hook ([#396](https://github.com/ForestAdmin/forest-rails/issues/396)) ([d65c065](https://github.com/ForestAdmin/forest-rails/commit/d65c065319f9ab83d909214a2a71923467a78a0d))
+
+
+### Features
+
+* **role:** add support for new roles ACL permissions ([#391](https://github.com/ForestAdmin/forest-rails/issues/391)) ([ae3539e](https://github.com/ForestAdmin/forest-rails/commit/ae3539e59c49b525078639a6d316ae2b5598ed75))
+* handle hooks ([#382](https://github.com/ForestAdmin/forest-rails/issues/382)) ([8dd0e35](https://github.com/ForestAdmin/forest-rails/commit/8dd0e356be27b33379b2aaa0376deb3a76123300))
+
+# [5.4.0](https://github.com/ForestAdmin/forest-rails/compare/v5.3.3...v5.4.0) (2020-12-10)
+
+
+### Features
+
+* **role:** add support for new roles ACL permissions ([#391](https://github.com/ForestAdmin/forest-rails/issues/391)) ([ae3539e](https://github.com/ForestAdmin/forest-rails/commit/ae3539e59c49b525078639a6d316ae2b5598ed75))
+
+# [6.0.0-beta.2](https://github.com/ForestAdmin/forest-rails/compare/v6.0.0-beta.1...v6.0.0-beta.2) (2020-12-09)
+
+
+### Bug Fixes
+
+* **gemfile:** gemfile.lock forest_liana version mismatch ([#401](https://github.com/ForestAdmin/forest-rails/issues/401)) ([60ceaf1](https://github.com/ForestAdmin/forest-rails/commit/60ceaf195371c56ee327cffbd40e8b85bf42ea3a))
+
+
+### Features
+
+* **auth:** authenticate using oidc ([#400](https://github.com/ForestAdmin/forest-rails/issues/400)) ([4898b73](https://github.com/ForestAdmin/forest-rails/commit/4898b73bc70bf3a4828d7cdf63cd642add10b643))
+
+
+### BREAKING CHANGES
+
+* **auth:** Introduces a new authentication system.
+- The application_url property is required to initialize ForestLiana,
+- CORS rules must be adapted (to allow null origins).
+
+# [6.0.0-beta.1](https://github.com/ForestAdmin/forest-rails/compare/v5.2.3...v6.0.0-beta.1) (2020-12-09)
+
+
+### Features
+
+* **auth:** authenticate using oidc ([#383](https://github.com/ForestAdmin/forest-rails/issues/383)) ([b535ab4](https://github.com/ForestAdmin/forest-rails/commit/b535ab4e7e7e371c93d01bdb41c6006bd9acc7cd))
+
+
+### BREAKING CHANGES
+
+* **auth:** New authentication system.
+The application_url must be set in the ForestLiana initializer, adding a regex CORS rule for null origin is required.
+
+## [5.3.3](https://github.com/ForestAdmin/forest-rails/compare/v5.3.2...v5.3.3) (2020-12-08)
+
+
+### Bug Fixes
+
+* fix test after enums ([#398](https://github.com/ForestAdmin/forest-rails/issues/398)) ([7b37350](https://github.com/ForestAdmin/forest-rails/commit/7b37350fc2b6244c3180cb953c2954d5b6927739))
+* **smart-actions:** reset value when not present in enums in hook response ([#397](https://github.com/ForestAdmin/forest-rails/issues/397)) ([a1ddac1](https://github.com/ForestAdmin/forest-rails/commit/a1ddac1c0d474e11b43e0f489dcc5ea70cd940b8))
+
+## [5.3.2](https://github.com/ForestAdmin/forest-rails/compare/v5.3.1...v5.3.2) (2020-12-07)
+
+
+### Bug Fixes
+
+* **smart-actions:** use changedField instead of comparing values to trigger the correct change hook ([#396](https://github.com/ForestAdmin/forest-rails/issues/396)) ([d65c065](https://github.com/ForestAdmin/forest-rails/commit/d65c065319f9ab83d909214a2a71923467a78a0d))
+
+## [5.3.1](https://github.com/ForestAdmin/forest-rails/compare/v5.3.0...v5.3.1) (2020-12-07)
+
+
+### Bug Fixes
+
+* **smart-actions:** transform legacy widgets in hooks ([#395](https://github.com/ForestAdmin/forest-rails/issues/395)) ([0183d08](https://github.com/ForestAdmin/forest-rails/commit/0183d0883c85fa2569cba70d268747536770a612))
+
+# [5.3.0](https://github.com/ForestAdmin/forest-rails/compare/v5.2.3...v5.3.0) (2020-12-07)
+
+
+### Features
+
+* handle hooks ([#382](https://github.com/ForestAdmin/forest-rails/issues/382)) ([8dd0e35](https://github.com/ForestAdmin/forest-rails/commit/8dd0e356be27b33379b2aaa0376deb3a76123300))
+
+## [5.2.3](https://github.com/ForestAdmin/forest-rails/compare/v5.2.2...v5.2.3) (2020-12-02)
+
+
+### Bug Fixes
+
+* **filter:** fix filtering with projects on Rails 5.1 ([#381](https://github.com/ForestAdmin/forest-rails/issues/381)) ([4f86990](https://github.com/ForestAdmin/forest-rails/commit/4f8699006a2836b8baa631d38d0e3532ec6ea198))
+
+## [5.2.2](https://github.com/ForestAdmin/forest-rails/compare/v5.2.1...v5.2.2) (2020-08-04)
+
+
+### Bug Fixes
+
+* **vulnerability:** patch a potential vulnerability updating lodash dependency ([#372](https://github.com/ForestAdmin/forest-rails/issues/372)) ([5bd2471](https://github.com/ForestAdmin/forest-rails/commit/5bd2471ef1fad8f6325816a5f1c682dbce9eee29))
+
+## [5.2.1](https://github.com/ForestAdmin/forest-rails/compare/v5.2.0...v5.2.1) (2020-07-13)
+
+
+### Bug Fixes
+
+* **vulnerabilities:** bump 2 dependencies of dependencies ([#368](https://github.com/ForestAdmin/forest-rails/issues/368)) ([7e63f70](https://github.com/ForestAdmin/forest-rails/commit/7e63f707266cc016b0ddab123336b1215635816d))
+
+# [5.2.0](https://github.com/ForestAdmin/forest-rails/compare/v5.1.3...v5.2.0) (2020-06-02)
+
+
+### Features
+
+* **scope:** validate scope context on list/count request ([#361](https://github.com/ForestAdmin/forest-rails/issues/361)) ([df502e1](https://github.com/ForestAdmin/forest-rails/commit/df502e1f164985e86f8145b52a796948d3c483ad))
+
+## [5.1.3](https://github.com/ForestAdmin/forest-rails/compare/v5.1.2...v5.1.3) (2020-05-19)
+
+
+### Bug Fixes
+
+* **release:** fix the automatic release using the ci ([037c651](https://github.com/ForestAdmin/forest-rails/commit/037c6516fbdde7127b08d3ab602e06e30f96e5c0))
+
+## RELEASE 5.1.2 - 2020-05-12
+### Changed
+- Technical - Patch CI configuration warnings.
+- Readme - Update the community badge.
+- Readme - Fix interface screenshots display.
+- Readme - Update and re-position the "How it works" section.
+
+## RELEASE 5.1.1 - 2020-04-20
+### Fixed
+- Charts - Ensure that line charts are well displayed in projects having a `groupdate` dependency version 5.X.
+
+## RELEASE 5.1.0 - 2020-04-17
+### Added
+- Smart Action - Allow users to protect their smart-action APIs from unauthorized usage.
+
+### Changed
+- Technical - Introduce conventional commits.
+- Technical - Adapt release script to conventional commits.
+
+### Fixed
+- Technical - Fix the license type in the `package.json` file.
+- Wording - Fix a typo in the missing .forestadmin-schema.json file message.
+
+## RELEASE 5.0.0 - 2020-03-20
+
+## RELEASE 5.0.0-beta.0 - 2020-03-03
+### Added
+- Resources Getter - Add a get_ids_from_request method to get all models IDs given a query or an ID list.
+- Resource Deletion - Users can now bulk delete records.
+
+### Fixed
+- Has Many Relationships - Fix records count, i.e consider filters when counting.
+
+## RELEASE 4.2.0 - 2020-01-22
+### Added
+- Has Many Relationships - Enable sorting on belongsTo relationship columns in related data.
+
+### Fixed
+- Technical - Fix CI build.
+
+## RELEASE 4.1.3 - 2019-12-04
+### Fixed
+- Stripe Integration - Fix Stripe collections display with latest Stripe gem versions.
+
+## RELEASE 4.1.2 - 2019-11-15
+### Fixed
+- Technical - Fix CI error.
+- Filters - Prevent a potential error if a client request resources with a blank filter query parameter.
+- Readme - Fix the build badge display.
+- Serializers - Prevent unexpected serializers removal.
+
+## RELEASE 4.1.1 - 2019-10-23
+### Fixed
+- Records list - Fix records retrieval issues. [Regression introduced in 4.0.1]
+- Technical - Fix CI error.
+
+## RELEASE 4.1.0 - 2019-10-21
+### Added
+- Rails Versions - Support Rails 6 projects.
+
+## RELEASE 4.0.2 - 2019-10-18
+### Fixed
+- Validation - Do not add non-generic validations to fields schema (for validations using `on:` option).
+
+## RELEASE 4.0.1 - 2019-10-18
+### Fixed
+- Technical - Fix a class name typo.
+- Logs - Prevent "already initialized constant" warnings due to multiple serializer definition.
+
+## RELEASE 4.0.0 - 2019-10-04
+
+## RELEASE 4.0.0-beta.1 - 2019-09-19
+### Added
+- Configurations - Users can specify the directory for Forest Smart Implementation.
+- DevOps - Automatically send the release note on Slack after a release.
+
+### Changed
+- Readme - Add a community section.
+- Readme - Remove the Licence section as it is already accessible in the Github page header.
+
+## RELEASE 4.0.0-beta.0 - 2019-08-07
+### Changed
+- Technical - Makes the JWT lighter and consistent across lianas.
+- Filters - Support complex/generic conditions chaining. 🛡
+- Technical - Upgrade Ruby version to 2.3.4 for the CI.
+
+## RELEASE 3.3.0 - 2019-09-19
+### Added
+- Configurations - Users can specify the directory for Forest Smart Implementation.
+- DevOps - Automatically send the release note on Slack after a release.
+
+### Changed
+- Readme - Add a community section.
+- Readme - Remove the Licence section as it is already accessible in the Github page header.
+
+## RELEASE 3.2.0 - 2019-07-22
+### Added
+- Column Types - Support HSTORE column type.
+
+## RELEASE 3.1.1 - 2019-07-18
+### Fixed
+- Fields - Detect properly `date` type columns to provide the right date picker experience in the UI.
+
+## RELEASE 3.1.0 - 2019-07-09
+### Added
+- Filters - Support 'OR' filters with conditions on references.
+
+## RELEASE 3.0.7 - 2019-06-20
+### Fixed
+- Schema - Schemas having fields with validations based on complex regex are now properly sent in remote environments.
+
+## RELEASE 3.0.6 - 2019-06-18
+### Changed
+- Security - Remove unnecessary leeway of 30s on JWTs.
+
+### Fixed
+- Schema - Fix potential server crash on start due schema formatting internal error.
+
+## RELEASE 3.0.5 - 2019-06-13
+### Fixed
+- Export - Fix broken export action from related data. [Regression introduced in 2.15.1]
+
+## RELEASE 3.0.4 - 2019-05-21
+### Fixed
+- Record Update - Prevent `encrypted_password` removal on Devise users models update.
+
+## RELEASE 3.0.3 - 2019-05-15
+### Fixed
+- Exports - Fix broken exports if users restart a new browser session (ie quit/restart browser).
+
+## RELEASE 3.0.2 - 2019-05-10
+### Fixed
+- Smart Actions - Fix broken Smart Actions having a name containing emoji without custom endpoint.
+
+## RELEASE 3.0.1 - 2019-04-29
+### Fixed
+- Smart Actions - Fix crash on server start.
+
+## RELEASE 3.0.0 - 2019-04-22
+
+## RELEASE 3.0.0-beta.18 - 2019-04-10
+### Fixed
+- Search - Enable PostgreSQL's CITEXT fields in search.
+
+## RELEASE 3.0.0-beta.17 - 2019-04-04
+### Changed
+- Error Handling - Display an explicit error message if the envSecret is detected as missing or unknown during data a API request.
+
+## RELEASE 3.0.0-beta.16 - 2019-03-29
+### Fixed
+- Security - Fix implementation of session token passed in headers while downloading collections records.
+
+## RELEASE 3.0.0-beta.15 - 2019-03-27
+### Changed
+- Security - Do not pass session token in query params while downloading collections records.
+
+## RELEASE 3.0.0-beta.14 - 2019-03-01
+### Fixed
+- Records Display - Restrict record data serialization based the schema collection fields in the #create and #update actions.
+
+## RELEASE 3.0.0-beta.13 - 2019-02-28
+### Fixed
+- Records Display - Restrict record data serialization based the schema collection fields in the #show action.
+
+## RELEASE 3.0.0-beta.12 - 2019-02-28
+### Fixed
+- Records Display - Ensure that the data is properly sent even if an attribute serialization happens for an unknown reason.
+
+## RELEASE 3.0.0-beta.11 - 2019-02-27
+### Fixed
+- Filters - Fix resources display if filtered with associations conditions with the related columns hidden in the list. 🛡
+
+## RELEASE 3.0.0-beta.10 - 2019-02-26
+### Fixed
+- Schema - Ensure that unhandled field types are not defined anymore in collections schemas. 🛡
+
+## RELEASE 3.0.0-beta.9 - 2019-02-25
+### Fixed
+- Charts - Fix Value charts having filters on associations targeting a collection having with a custom table name. 🛡
+- Charts - Fix Value charts having filters on associations targeting a collection associated through multiple `belongs_to` association to the current resource. 🛡
+
+## RELEASE 3.0.0-beta.8 - 2019-02-20
+### Fixed
+- Export - Fix broken export action. [Regression introduced in 3.0.0-beta.7]
+
+## RELEASE 3.0.0-beta.7 - 2019-02-06
+### Fixed
+- Filters - Fix association filtering on collections having several associations targeting the same table.
+
+## RELEASE 3.0.0-beta.6 - 2019-02-01
+### Added
+- Charts - Users can create "Leaderboard" charts.
+- Charts - Users can create "Objective" charts.
+- Technical - Add a new apimap property "relationship".
+
+## RELEASE 3.0.0-beta.5 - 2019-01-30
+### Fixed
+- Validations - Remove badly set validations on Array fields.
+
+## RELEASE 3.0.0-beta.4 - 2019-01-30
+### Fixed
+- Schema - Fix empty validations set in the schema file.
+
+## RELEASE 3.0.0-beta.3 - 2019-01-30
+### Fixed
+- Build - Fix liana version set in the `.forestadmin-schema.json` meta.
+
+## RELEASE 3.0.0-beta.2 - 2019-01-30
+### Fixed
+- Build - Fix liana version set in the `.forestadmin-schema.json` meta.
+
+## RELEASE 3.0.0-beta.1 - 2019-01-30
+### Fixed
+- Build - Fix regressions in the build script.
+
+## RELEASE 3.0.0-beta.0 - 2019-01-30
+### Added
+- Developer Experience - On start, create a `.forestadmin-schema.json` file that contains the schema definition.
+- Developer Experience - On production, load `.forestadmin-schema.json` for schema update.
+
+### Changed
+- Schema - Developers can deactivate the automatic schema sending on server start (using `FOREST_DISABLE_AUTO_SCHEMA_APPLY` environment variable, deprecating `FOREST_DEACTIVATE_AUTOMATIC_APIMAP`).
+
+## RELEASE 2.15.8 - 2019-03-01
+### Fixed
+- Records Display - Restrict record data serialization based the schema collection fields in the #create and #update actions.
+
+## RELEASE 2.15.7 - 2019-02-28
+### Fixed
+- Records Display - Restrict record data serialization based the schema collection fields in the #show action.
+
+## RELEASE 2.15.6 - 2019-02-28
+### Fixed
+- Records Display - Ensure that the data is properly sent even if an attribute serialization happens for an unknown reason.
+
+## RELEASE 2.15.5 - 2019-02-27
+### Fixed
+- Filters - Fix resources display if filtered with associations conditions with the related columns hidden in the list. 🛡
+
+## RELEASE 2.15.4 - 2019-02-26
+### Fixed
+- Schema - Ensure that unhandled field types are not defined anymore in collections schemas. 🛡
+
+## RELEASE 2.15.3 - 2019-02-25
+### Fixed
+- Charts - Fix Value charts having filters on associations targeting a collection having with a custom table name. 🛡
+- Charts - Fix Value charts having filters on associations targeting a collection associated through multiple `belongs_to` association to the current resource. 🛡
+
+## RELEASE 2.15.2 - 2019-02-20
+### Fixed
+- Export - Fix broken export action. [Regression introduced in 2.15.1]
+
+## RELEASE 2.15.1 - 2019-02-06
+### Fixed
+- Filters - Fix association filtering on collections having several associations targeting the same table.
+
+## RELEASE 2.15.0 - 2019-02-01
+### Added
+- Charts - Users can create "Leaderboard" charts.
+- Charts - Users can create "Objective" charts.
+- Technical - Add a new apimap property "relationship".
+
+## RELEASE 2.14.7 - 2019-01-30
+### Added
+- Build - Tag versions on git for each release.
+- Build - Developers can now create beta versions.
+
+### Fixed
+- Validations - Remove badly set validations on Array fields.
+
+## RELEASE 2.14.6 - 2018-12-14
+### Changed
+- Error Logging - Improve routing error logs for some edge cases.
+
+## RELEASE 2.14.5 - 2018-12-06
+### Fixed
+- Initialization - Fix `included_models` and `excluded_models` options.
+
+## RELEASE 2.14.4 - 2018-11-12
+### Fixed
+- Models - Fix models having a table name being a reserved SQL word.
+
+## RELEASE 2.14.3 - 2018-11-02
+### Fixed
+- Records List - Fix filtering on the records list. [Regression introduced in 2.14.2]
+- Security - Upgrade sprockets dependency version to fix a known vulnerability.
+
+## RELEASE 2.14.2 - 2018-10-31
+### Fixed
+- Records List - Avoid crash when filtering on a bad association or a bad field in resource getter.
+
+## RELEASE 2.14.1 - 2018-10-30
+### Fixed
+- API - Fix API crashes due to bad Forest API initialization if `FOREST_DEACTIVATE_AUTOMATIC_APIMAP` is configured.
+- Apimap - Fix the Apimap info sent with the `forest:display_apimap` task.
+
+## RELEASE 2.14.0 - 2018-10-25
+### Added
+- Apimap - Developers can deactivate the automatic Apimap sending on server start (using `FOREST_DEACTIVATE_AUTOMATIC_APIMAP` environment variable).
+- Apimap - Add a `forest:display_apimap` rake task to manually inspect the current Apimap version.
+- Apimap - Add a `forest:send_apimap` rake task to manually synchonize the models/customization with Forest servers.
+
+### Change
+- Technical - Remove a useless query param in the authorizations request.
+- Technical - Simplify the Bootstrapper initialize signature.
+
+## RELEASE 2.13.7 - 2018-10-19
+### Fixed
+- Filters - Fix BelongsTo filters on a destination table having a "non conventional" singular name. [Regression introduced in 2.8.5]
+
+## RELEASE 2.13.6 - 2018-10-18
+### Fixed
+- Live Query - Trim whitespaces in all queries and subqueries to avoid errors.
+
+## RELEASE 2.13.5 - 2018-10-12
+### Fixed
+- Live Query Segment - Optimize resource retrieving to avoid using too much memory.
+
+## RELEASE 2.13.4 - 2018-10-03
+### Fixed
+- Segment - Return an error 404 instead of 500 when a collection with an incorrect segment is called.
+
+## RELEASE 2.13.3 - 2018-09-25
+### Fixed
+- Permissions - Fix potential bad forbidden responses on first requests after server start.
+
+## RELEASE 2.13.2 - 2018-09-24
+### Fixed
+- Authentication - Fix authentication for projects using Ruby 2.2.X.
+
+## RELEASE 2.13.1 - 2018-09-19
+### Fixed
+- Development Autoreload - Prevent "A copy of ForestLiana::BaseController has been removed from the module tree but is still active!" in development mode.
+
+## RELEASE 2.13.0 - 2018-09-13
+### Added
+- IP Whitelist - Add IP Whitelist feature.
+
+## RELEASE 2.12.0 - 2018-09-13
+### Added
+- Authentication - Add two factor authentication.
+
+## RELEASE 2.11.13 - 2018-09-11
+### Added
+- Logs - Display an error log (and stacktrace) in case of routing error.
+
+## RELEASE 2.11.12 - 2018-09-10
+### Fixed
+- Logs - Display an error log (and stacktrace) in case of NoMethodError in the find_resource before_filter.
+
+## RELEASE 2.11.11 - 2018-08-30
+### Changed
+- Records Deletion - The deletion of a record which has already been deleted does not display an error anymore.
+
+## RELEASE 2.11.10 - 2018-08-23
+### Changed
+- STI Models - Display a warning on server start for any STI parent models that do not have children.
+
+### Fixed
+- [BREAKING] Collections - Fixes potential behaviour issues of collections having a name that collides with query params keys (searches, pages, sorts, timezones,...).
+  The smart actions params are retrieved differently:
+  *old* --> `params[:income][:data][:attributes][:values][:amount]`
+  *new* --> `params[:data][:attributes][:values][:amount]`
+
+- STI Models - Make the field corresponding to the inheritance_column (`type` by default) accessible to STI parent models that don't have children.
+
+## RELEASE 2.11.9 - 2018-08-10
+### Fixed
+- Gems Support - Improve ActiveType::Object detection to ignore it.
+
+## RELEASE 2.11.8 - 2018-08-10
+### Fixed
+- Gems Support - Ignores ActiveType::Object association during introspection and interactions (https://github.com/makandra/active_type).
+
+## RELEASE 2.11.7 - 2018-08-10
+### Fixed
+- Records Details - Fix record details display. [Regression introduced in 2.11.6]
+
+## RELEASE 2.11.6 - 2018-08-09
+### Fixed
+- Smart BelongsTo - Fix records list retrieval if the collection contains a Smart BelongsTo column that has been hidden. [Regression introduced in 2.9.1]
+
+## RELEASE 2.11.5 - 2018-07-31
+### Fixed
+- Search - Fix the broken search if the collection contains Array fields. [Regression introduced in 2.9.0]
+- Search - Highlight the records id if it matches with the search value.
+
+## RELEASE 2.11.4 - 2018-07-31
+### Fixed
+- Search - Fix the search while typing single quotes in the search value.
+
+## RELEASE 2.11.3 - 2018-07-30
+### Fixed
+- Records Display - Fix collections display for project using Ruby version inferior to 2.3.0. [Regression introduced in 2.10.1]
+
+## RELEASE 2.11.2 - 2018-07-30
+### Fixed
+- Smart BelongsTo - Fix the reference field values display in the records list of collections using Smart BelongsTo relationships.
+
+## RELEASE 2.11.1 - 2018-07-30
+### Fixed
+- Records Count - Fix list display error if the collection name is different from the class name (routing issue to compute the count).
+
+## RELEASE 2.11.0 - 2018-07-19
+### Changed
+- Performance - Improve the speed of listing the records by executing their count into another request.
+
+## RELEASE 2.10.5 - 2018-07-11
+### Fixed
+- HasMany Relationships - Fix the performance of the related data retrieval if the collection has hidden belongsTo associations in the list.
+
+## RELEASE 2.10.4 - 2018-07-11
+### Fixed
+- Mixpanel Integration - Only retrieve events that are less than 60 days old to be compliant with the Mixpanel's API.
+
+## RELEASE 2.10.3 - 2018-07-10
+### Fixed
+- ActiveStorage - Support ActiveStorage without having to set eager_load property to true in development environments.
+
+## RELEASE 2.10.2 - 2018-07-10
+### Fixed
+- Smart Views - Fix associated data retrieval from Smart Views (where the fields to retrieve are not specified in the query params).
+
+## RELEASE 2.10.1 - 2018-07-10
+### Fixed
+- Stripe Integration - Improve the error handling if the customer Stripe Id is not found.
+- Stripe Integration - Trial to prevent uninitialized constant errors with Stripe classes.
+
+## RELEASE 2.10.0 - 2018-07-10
+### Added
+- Mixpanel Integration - Add the integration to display the last 100 Mixpanel events of a "user" record.
+
+## RELEASE 2.9.2 - 2018-07-04
+### Fixed
+- Database Connection - If the database is not accessible on server start, the liana doesn't send an Apimap anymore (it was a "partial" Apimap in such case).
+
+## RELEASE 2.9.1 - 2018-07-03
+### Changed
+- Technical - Use the "official" domain for the default server host.
+
+### Fixed
+- Record Creation - Fix the search of belongsTo associated records in record creation forms if the belongsTo foreign key is a UUID.
+
+## RELEASE 2.9.0 - 2018-06-28
+### Added
+- Search - Display highlighted matches on table view when searching.
+
+## RELEASE 2.8.6 - 2018-06-27
+### Fixed
+- Intercom Integration - Users can now access to the Intercom Details page.
+
+## RELEASE 2.8.5 - 2018-06-26
+### Fixed
+- Namespacing - Prevent a potential error on server start if a ResourcesController class already exists in another lib of the client project.
+- Filters - Filtering on 2 different belongsTo foreign keys referencing the same table now returns the expected records.
+
+## RELEASE 2.8.4 - 2018-06-21
+### Changed
+- Onboarding - Improve the information message if the liana is properly setup and users run the "rails g forest_liana:install".
+
+### Fixed
+- Permissions - Fix automated permission for projects having multiple teams.
+
+## RELEASE 2.8.3 - 2018-06-20
+### Fixed
+- Onboarding - If the liana is properly setup and users run the "rails g forest_liana:install" command again, the task will be skipped.
+- Onboarding - The install generator now supports credentials.yml.enc file introduced in Rails 5.2.
+
+## RELEASE 2.8.2 - 2018-06-18
+### Fixed
+- Development Autoreload - Prevent "A copy of ForestLiana::ResourcesController has been removed from the module tree but is still active!" in development mode.
+
+## RELEASE 2.8.1 - 2018-06-15
+### Changed
+- Performance - Make the related data count retrieval much more efficient if the result contains thousands of records.
+
+## RELEASE 2.8.0 - 2018-06-05
+### Added
+- Permissions - Add a permission mechanism to protect the data accordingly to the UI configuration.
+
+## RELEASE 2.7.0 - 2018-06-01
+### Added
+- Segments - Users can create segments with SQL queries.
+
+## RELEASE 2.6.1 - 2018-05-29
+### Fixed
+- Smart Relationships - Fix the serialization of Smart belongs_to relationships in lists and record details.
+
+## RELEASE 2.6.0 - 2018-05-29
+### Added
+- Smart Actions - "Single" type Smart Action forms can now be prefilled with contextual values.
+
+## RELEASE 2.5.5 - 2018-05-23
+### Fixed
+- Live Query - Fix the charts in Live query mode when using mysql2 adapter.
+
+## RELEASE 2.5.4 - 2018-05-14
+### Fixed
+- Records List - Fix records retrieval regression for tables having self-references.
+
+## RELEASE 2.5.3 - 2018-05-09
+### Fixed
+- Rails 5 - Tables named "applications" are now properly handled using Rails 5+.
+
+## RELEASE 2.5.2 - 2018-04-16
+### Fixed
+- Rails 5.2 - Support New Rails 5.2 apps with config.action_controller.default_protect_from_forgery set to true.
+
+## RELEASE 2.5.1 - 2018-04-06
+### Changed
+- Sessions - Improve the error message if the environment secret is missing on session creation.
+
+### Fixed
+- Charts - Fix some bad Line charts aggregation due to Daylight Saving Time.
+
+## RELEASE 2.5.0 - 2018-04-03
+### Added
+- Related Data - Delete records directly from a hasMany listing.
+
+## RELEASE 2.4.9 - 2018-03-21
+### Fixed
+- Gem ActAsTaggable - Prevent errors on collections that are not taggable. [Regression introduced in 2.4.8]
+
+## RELEASE 2.4.8 - 2018-03-21
+### Fixed
+- Gem ActAsTaggable - Forest does not make all models taggable anymore.
+- Rails Version - Fix a recent incompatibility with Rails 5.1+. [Regression introduced in 2.4.5]
+
+## RELEASE 2.4.7 - 2018-03-21
+### Fixed
+- HasMany Relationships - Fix data display for projects having namespaced models (second trial). [Regression introduced in 2.3.0]
+
+## RELEASE 2.4.6 - 2018-03-21
+### Fixed
+- HasMany Relationships - Fix data display for projects having namespaced models. [Regression introduced in 2.3.0]
+
+## RELEASE 2.4.5 - 2018-03-21
+### Fixed
+- List Views - Fix records retrieval for project using Rails versions from 4.0.0 to 4.2.0. [Regression introduced in 2.3.0]
+
+## RELEASE 2.4.4 - 2018-03-21
+### Fixed
+- Live Queries - Display the Value Charts properly if no data has been retrieved.
+
+## RELEASE 2.4.3 - 2018-03-05
+### Fixed
+- Live Query - Fix charts generation for values equal to 0 or null.
+
+## RELEASE 2.4.2 - 2018-03-05
+### Fixed
+- Errors - Fix a typo on association update error handling.
+
+## RELEASE 2.4.1 - 2018-03-02
+### Changed
+- Errors - Add the full stack trace in case of internal error calling Forest API.
+
+## RELEASE 2.4.0 - 2018-03-01
+### Added
+- Smart Actions - Users can define Smart Actions only available in a record detail.
+
+### Fixed
+- Smart BelongsTo - Users can now display their records list on collections using Smart BelongsTo. [Regression introduced in 2.3.0]
+
+## RELEASE 2.3.5 - 2018-02-28
+### Fixed
+- Smart Actions - Display the Smart Actions form fields in the declaration order. [Regression introduced in 2.3.0]
+
+## RELEASE 2.3.4 - 2018-02-27
+### Fixed
+- Search - Prevent the records search to crash if no fields parameter is sent by the client.
+- Error Handling - Send a 500 status code in case of internal server error (instead of a 404).
+
+## RELEASE 2.3.3 - 2018-02-21
+### Fixed
+- Devise - Users now have a password field and can create records for models using Devise gem.
+
+## RELEASE 2.3.2 - 2018-02-21
+### Added
+- Filters - Add a new "is after X hours ago" operator to filter on date fields.
+
+## RELEASE 2.3.1 - 2018-02-09
+### Fixed
+- Live Queries - Prevent the execution of obvious "write" queries.
+- Live Queries - Prevent the execution of multiple queries.
+
+## RELEASE 2.3.0 - 2018-02-08
+### Changed
+- Apimap - Prevent random sorting collections and useless updates.
+- Smart Fields - Compute only the necessary Smart Fields values for list views and CSV exports.
+
+## RELEASE 2.2.2 - 2018-01-30
+### Fixed
+- Smart Collections - Fix a regression on fields values serialization.
+
+## RELEASE 2.2.1 - 2018-01-30
+### Fixed
+- Initialisation - Fix a potential error on database type retrieval on server start.
+
+## RELEASE 2.2.0 - 2018-01-26
+### Added
+- Charts - Users can create charts using raw database queries with the Live Query option.
+
+### Fixed
+- Security - Remove Rails vulnerabilities upgrading the gem version.
+
+## RELEASE 2.1.1 - 2018-01-17
+### Fixed
+- Start - Prevent a crash if the server is restarting while Forest services are in maintenance.
+
+## RELEASE 2.1.0 - 2018-01-11
+### Added
+- Authentication - Users can connect to their project using Google Single Sign-On.
+
+### Changed
+- Dependencies - Upgrade the json gem to work with Ruby versions 2.4.X on OSX.
+
+## RELEASE 2.0.4 - 2018-01-08
+### Changed
+- Performance - Set the CORS Max-Age to 1 day to be consistent with the other lianas behaviour.
+
+### Fixed
+- Serializer - Fix 'already defined' warning message from serializer on server start.
+
+## RELEASE 2.0.3 - 2017-12-11
+### Fixed
+- Server Start - Prevent potential error on server start [regression introduced by the version 2].
+- Collection Names - Make collection names containing colons valid for the Forest UI.
+
+## RELEASE 2.0.2 - 2017-12-08
+### Fixed
+- Records Display - Prevent potential collections display regression due to missing Serializers since version 2.0.1.
+
+## RELEASE 2.0.1 - 2017-12-06
+### Fixed
+- Initialisation - Remove potential warnings on server start.
+
+## RELEASE 2.0.0 - 2017-11-24
+### Added
+- STI Models - Support STI Models with a collection for the parent model and each child model, with automatic segments on the parent collection.
+
+### Changed
+- Collections Names - Collection names are now based on the model name.
+
+## RELEASE 1.9.8 - 2017-11-16
+### Added
+- Stripe Integration - Allow users to display Stripe records in the Details view.
+
+### Fixed
+- Stripe Integration - Fix the global integration when mapped on namespaced models.
+- Stripe Integration - Fix the access to customer subscriptions and bank accounts.
+- Line Charts - Use ISO 8601 format to display weeks in Line Charts.
+- Line Charts - Force the starting day of the week to Monday for Line Charts per week.
+
+## RELEASE 1.9.7 - 2017-10-30
+### Fixed
+- HasMany Getter - Fix HasMany associated records retrieval for namespaced models.
+
+## RELEASE 1.9.6 - 2017-10-26
+### Changed
+- Smart Fields - Prevent the Smart Fields computation errors to generate a crash and handle it letting the value empty.
+- Intercom Integration - Prefer Intercom access_token configuration to old fashioned app_id/api_key.
+
+## RELEASE 1.9.5 - 2017-10-19
+### Fixed
+- Smart Field - Fix Smart Fields values serialization for namespaced models.
+
+## RELEASE 1.9.4 - 2017-10-18
+### Fixed
+- Filters - Fix one-relationships filters on collections based on namespaced models.
+
+## RELEASE 1.9.3 - 2017-10-18
+### Fixed
+- Export CSV - Enable the CSV export for namespaced models.
+
+## RELEASE 1.9.2 - 2017-10-16
+### Fixed
+- Charts - Fix belongsTo filters on enum fields.
+
+## RELEASE 1.9.1 - 2017-10-04
+### Fixed
+- Filters - Fix filters on associations enum fields.
+
+## RELEASE 1.9.0 - 2017-10-02
+### Added
+- Smart Fields - Add a "is_filterable" option to let them appear in the filters selection.
+
+## RELEASE 1.8.1 - 2017-09-26
+### Fixed
+- Pie Charts - Fix enum values display on Pie Charts for latest Rails version users.
+
+## RELEASE 1.8.0 - 2017-09-20
+### Added
+- Smart Fields - Add a parameter to specify if the sorting is allowed on this field.
+- Smart Search - Developers can configure a Smart Search on a hasMany relationship.
+
+### Changed
+- Smart Collections - Facilitate the way to create Smart Collections.
+
+## RELEASE 1.7.10 - 2017-09-15
+### Fixed
+- Onboarding - Fix the automatic secrets.yml setup on projects using Rails 5.1+.
+
+## RELEASE 1.7.9 - 2017-09-15
+### Fixed
+- Stripe - Fix the Stripe Payments access.
+
+## RELEASE 1.7.8 - 2017-09-07
+### Added
+- Search - Developers can configure in which fields the search will be executed.
+
+## RELEASE 1.7.7 - 2017-08-29
+### Added
+- Paranoid Mode - Support Paranoia gem and hide all "deleted" data in Forest.
+
+## RELEASE 1.7.6 - 2017-08-24
+### Fixed
+- Exports - Add a new protection while formatting the data, if an associated record is not found.
+
+## RELEASE 1.7.5 - 2017-08-24
+### Fixed
+- Exports - Require missing lib for CSV formatting.
+
+## RELEASE 1.7.4 - 2017-08-24
+### Fixed
+- Exports - Fix some issues with the new export feature.
+
+## RELEASE 1.7.3 - 2017-08-23
+### Fixed
+- Exports - Fix bad initial implementation for exports authentication.
+
+## RELEASE 1.7.2 - 2017-08-22
+### Fixed
+- Validations - Do not consider validations if an Active Record before_validation Callback is defined in the model.
+
+## RELEASE 1.7.1 - 2017-08-22
+### Fixed
+- Validations - Do not consider conditional validations for Forest forms validation.
+
+## RELEASE 1.7.0 - 2017-08-21
+### Added
+- Exports - Forest can now handle large data exports.
+- Search - Split "simple" and "deep" search features with a new param.
+
+## RELEASE 1.6.17 - 2017-08-08
+### Added
+- Validations - Start the support of forms validations (with 6 first validations).
+- Fields - Send the defaultValue for creation forms.
+
+### Changed
+- Technical - Update .gemspec file to specify that Rails 3 is not maintained anymore.
+
+### Fixed
+- Record Updates - Do not try to update the Smart Fields if no new value is send in the update request.
+
+## RELEASE 1.6.16 - 2017-08-03
+### Fixed
+- Pie Charts - Fix potential pie chart rendering issue using Rails 5.
+
+## RELEASE 1.6.15 - 2017-07-11
+### Added
+- Search - Users can search on the hasMany associated data of a specific record.
+
+### Fixed
+- Deprecation Warning - Remove a deprecation warning on Chart request due to uniq method.
+
+## RELEASE 1.6.14 - 2017-07-05
+### Added
+- Filters - Add the before x hours operator.
+
+### Changed
+- Errors - Improve error handling on Record creation and update.
+
+### Fixed
+- Router - Catch resources routing errors with a 404 response instead of a crash.
+
+## RELEASE 1.6.13 - 2017-06-23
+### Added
+- Apimap - Send database type and orm version in apimap.
+
+### Fixed
+- Records Updates - Fix unexpected "serialize" field update on other record attributes update.
+- Development Autoreload - Prevent "A copy of ForestLiana::ResourcesController has been removed from the module tree but is still active!" in development mode.
+
+## RELEASE 1.6.12 - 2017-06-20
+### Fixed
+- Records Updates - Display an error message on record update on "serialize" field having a nil value.
+
+## RELEASE 1.6.11 - 2017-06-13
+### Fixed
+- Error Messages - Display an explicit warning if Forest servers are in maintenance.
+- Charts - Fix charts having filters on associations fields.
+
+## RELEASE 1.6.10 - 2017-05-30
+### Added
+- Smart Collections - Add a new isSearchable property to display the search bar for Smart Collections.
+- Filters - Add the not contains operator.
+
+## RELEASE 1.6.7 - 2017-05-24
+### Fixed
+- Pie Charts - Fix Sum Pie charts on a non-id column with at least one filter on an association.
+- Filters - Retrieve the right records for filters with conditions on belongsTo foreign key being blank.
+
+## RELEASE 1.6.6 - 2017-05-16
+### Added
+- Multi-Database - Developers can display models having the same table name on different databases.
+
+## RELEASE 1.6.5 - 2017-05-12
+### Added
+- Filter - Support AND and OR filters on acts_as_taggable_on attributes
+
+## RELEASE 1.6.4 - 2017-05-09
+### Fixed
+- Ruby 2.3 - Avoid to use Hash#dig to support version earlier than Ruby 2.3.
+
+## RELEASE 1.6.3 - 2017-05-05
+### Fixed
+- Apimap - Prevent the bad detection of database collections as Smart Collections if lib/forest_liana is loaded before the models.
+
+## RELEASE 1.6.2 - 2017-05-04
+### Added
+- Smart Actions - Support file download.
+- Smart Fields - Support belongs_to smart fields.
+- Smart Fields - Add an explicit error message if the search on a Smart Field generates an error.
+- Papertrail - Make Papertrail Versions visible in the records "Related Data".
+- Papertrail - Changes made using Forest are now tracked with Papertrail.
+
+### Fixed
+- Smart Fields - A search on a collection having Smart Fields with search method implemented will respond properly (bypassing failing Smart Fields search if any).
+
+## RELEASE 1.6.1 - 2017-04-26
+### Fixed
+- Smart Fields - Smart Fields having a setter are not read-only by default anymore.
+
+## RELEASE 1.6.0 - 2017-04-25
+### Added
+- Smart Fields - Developers can now define Smart Fields setters.
+
+## RELEASE 1.5.26 - 2017-04-21
+### Fixed
+- Record Deletion - Fix the records deletion on Rails 5.1.
+- Filters ToDate - Fix the end of period filtering for "toDate" date operator types.
+
+## RELEASE 1.5.25 - 2017-04-14
+### Added
+- Setup Guide - Add integration field to the collections to distinguish Smart Collections and Collections from integrations.
+
+### Fixed
+- Server Start - Fix the server crash on start while offline.
+- Server Start - Fix the server crash on start while Forest is down (Heroku error page case).
+
+## RELEASE 1.5.24 - 2017-04-06
+### Added
+- Version Warning - Display a warning message if the liana version used is too old.
+
+### Fixed
+- Value Charts - Fix Value Charts computing on collections having a foreign keys that is not named "id".
+- Records Deletion - Fix records deletion on collections having a foreign keys that is not named "id".
+- STI Models - Fix the display of the parent STI model.
+
+## RELEASE 1.5.23 - 2017-04-05
+### Fixed
+- STI Models - Add a dropdown with predefined existing STI type values in create/update forms.
+- STI Models - Children models do not generate a specific collection anymore (only parent model).
+
+## RELEASE 1.5.22 - 2017-04-05
+### Fixed
+- Self-referenced models - Users can update their records if the model has both a belongsTo and a hasMany self-reference associations.
+
+## RELEASE 1.5.21 - 2017-04-04
+### Fixed
+- HasMany - Fix the hasMany SQL request on some Rails versions.
+
+## RELEASE 1.5.20 - 2017-03-30
+### Added
+- Performance - Do not eager load the associations for the resources count if there is no search or filters on associations.
+
+### Changed
+- Analyzer - Force to unuse namespace for ActionController.
+
+## RELEASE 1.5.19 - 2017-03-30
+### Fixed
+- Analyzer - Fix the router controller name.
+
+## RELEASE 1.5.18 - 2017-03-29
+### Added
+- Smart Actions - Users don't have to select records to use a smart action through the global option.
+
+### Fixed
+- Analyzer - Avoid class name conflict with the "Application" model name.
+
+## RELEASE 1.5.17 - 2017-03-26
+### Fixed
+- Pie Charts - Fix the computation of Pie Charts having a groupBy on a belongsTo relationship.
+
+## RELEASE 1.5.16 - 2017-03-24
+### Fixed
+- Records deletion - Fix the deletion of records.
+
+## RELEASE 1.5.15 - 2017-03-21
+### Changed
+- Devise - Create a smart action automatically to change a devise password.
+
+## RELEASE 1.5.14 - 2017-03-16
+### Changed
+- CORS - Enable all forestadmin.com subdomains to requests the liana.
+- Analyzer - Avoid to analyze the tables without an ActiveRecord models.
+
+### Fixed
+- Record Getter - Prevent an unexpected error if the record does not exist.
+
+## RELEASE 1.5.13 - 2017-03-13
+### Changed
+- Smart business logic - Users can override the admin API per resource.
+
+## RELEASE 1.5.12 - 2017-03-09
+### Changed
+- Analyzer - Always retrieve the parent STI class instead of a random children.
+
+## RELEASE 1.5.11 - 2017-02-21
+### Fixed
+- Filters - Fix filters on boolean fields using MySQL databases.
+- Stripe - Fix Stripe invoices/cards/... display for "complex" model names.
+
+## RELEASE 1.5.10 - 2017-02-09
+### Fixed
+- Image Upload - Support Paperclip validates_attachment_file_name option.
+
+## RELEASE 1.5.9 - 2017-02-02
+### Fixed
+- Search - Fix search on collections using UUID as a primary key.
+
+## RELEASE 1.5.8 - 2017-01-29
+### Fixed
+- Deprecation warnings - Silent deprecation warnings for removed "serialized_attributes" in Rails 5.
+
+## RELEASE 1.5.7 - 2017-01-24
+### Fixed
+- BelongsTo association - Fix the update of a record when a belongsTo association uses a custom foreign key.
+
+## RELEASE 1.5.6 - 2016-01-17
+### Fixed
+- Devise - Users can update a record details without resetting the devise password.
+
+## RELEASE 1.5.5 - 2016-01-10
+### Fixed
+- Rake - Avoid to initialize Forest when running a Rake task.
+
+## RELEASE 1.5.4 - 2016-01-05
+### Fixed
+- Dashboard - Fix the dashboard display when the chart payloads are "force-utf8-encoded".
+
+## RELEASE 1.5.3 - 2016-01-05
+### Fixed
+- Authentication - Fix the authentication when Forest.user_class_name opt is present.
+
+## RELEASE 1.5.2 - 2016-01-04
+### Added
+- Column Types - Support JSON and JSONB column types.
+
+### Fixed
+- Tests - Fix test fixtures using dynamic dates.
+
+## RELEASE 1.5.1 - 2016-12-23
+### Fixed
+- Resources Getter - Fix the retrieval of records having attributes with special characters (ex: Â) on MySQL.
+
+## RELEASE 1.5.0 - 2016-12-12
+### Added
+- Segments - Smart Segments can be created to define specific records subsets.
+
+### Changed
+- Configuration - Rename secret values to env_secret and auth_secret.
+- Installation - Add the env_secret as an option instead of prompt it.
+- Installation - Store the env_secret and auth_secret in config/secrets.yml.
+- Installation - auth_secret and env_secret are nil by default in all non-development environments and need to be set manually.
+
+### Fixed
+- Pagination - Set the default hasMany page size to 5 to be consistent with other lianas.
+- Search - Support the search for MySQL databases.
+- Sorting - Support the sorting on belongsTo columns for MySQL databases.
+
+## RELEASE 1.4.7 - 2016-12-05
+### Added
+- Configuration - Catch a missing auth_key in the configuration and send an explicit error message on liana authentication.
+
+### Changed
+- Date Filters - Date filters operators are now based on the client timezone.
+- Pie Charts - Pie charts grouped by dates now display dates in the client timezone (instead of the raw SQL value).
+
+## RELEASE 1.4.6 - 2016-11-28
+### Fixed
+- Rails 5 - Fix app start crash regression due to "serialize" support.
+
+## RELEASE 1.4.5 - 2016-11-25
+### Added
+- Model Fields - Support "serialize" option for String type fields.
+- Pie Charts - Support Pie charts with a group by on an association field.
+- Smart field - Allow to override the read_only option of a Smart Field.
+- Errors Tracking - Catch errors on app launch / apimap generation / liana session creation.
+
+### Changed
+- Authentication - Add an option to set the model name for internal forest user authentication option.
+
+### Fixed
+- App Start - Prevent crash and display a warning for each associations badly declared in the models.
+- Resources Getter - Fix possible ambiguous id attribute in the query select.
+
+## RELEASE 1.4.4 - 2016-11-18
+### Changed
+- Rails 5 - Remove deprecation warnings with empty responses.
+
+### Fixed
+- App Start - Fix some applications starts crash due to CORS injection on frozen middleware.
+
+## RELEASE 1.4.3 - 2016-11-15
+### Added
+- Chart Filters - Support chart filters on belongsTo associations.
+
+### Fixed
+- Date Filters - Fix the date operators broken in release 1.4.2.
+
+## RELEASE 1.4.2 - 2016-11-15
+### Fixed
+- Ruby 2.0 - Fix the chart creation when a date operator is present.
+
+## RELEASE 1.4.1 - 2016-11-11
+### Fixed
+- Rails 5 - Fix application start using Rails liana 1.4.0.
+
+## RELEASE 1.4.0 - 2016-11-10
+### Added
+- Field Type - Support Time field type.
+
+### Fixed
+- Polymorphism - Fix polymorphic "hasMany" on record hasMany association retrieval.
+- Collections Customization - Fix the smart collections/fields/actions use if the lib/forest_liana directory is eager loaded by the app.
+
+## RELEASE 1.3.53 - 2016-11-04
+### Fixed
+- Records Edition - Fix a regression when serializing the Create/Update response.
+
+## RELEASE 1.3.52 - 2016-11-04
+### Changed
+- Performance - Request only displayed fields in the records list.
+- SQL Errors - SQL errors are now send in the response after a record creation or update.
+
+## RELEASE 1.3.51 - 2016-11-01
+### Fixed
+- Rails 3 - Fix a regression when computing charts for Rails 3 applications.
+
+## RELEASE 1.3.50 - 2016-10-31
+### Added
+- CORS - Users can deactivate Forest CORS headers.
+
+## RELEASE 1.3.49 - 2016-10-31
+### Fixed
+- Ruby 1.9 - Allow UTF-8 characters in the source code.
+
+## RELEASE 1.3.48 - 2016-10-28
+### Added
+- Analyzer - Support STI models.
+
+### Changed
+- Filters - Add the new date filters protocol.
+- Pie Charts - Display enum labels instead of integers for a "group by" on enum field.
+
+### Fixed
+- Rails 5 - Fix the way to discover models in Rails 5 - abstract class.
+- Rails 5 - Fix deprecation warnings.
+- Custom Action - Fix the bad endpoints if some actions have the same name.
+
+## RELEASE 1.3.47 - 2016-10-19
+### Added
+- Analyzer - Add the included_models options.
+
+## RELEASE 1.3.46 - 2016-10-18
+### Added
+- Analyzer - Add the excluded_models options.
+
+## RELEASE 1.3.45 - 2016-10-14
+### Added
+- Analyzer - Add the included_models options.
+- Analyzer - Add the excluded_models options.
+
+## RELEASE 1.3.45 - 2016-10-14
+### Added
+- Devise - Support password management with Devise Authenticable.
+
+### Fixed
+- Error handling - Display the right errors on create/update.
+- Value Charts - Fix previous period count regression due to filterType introduction.
+- Smart fields - Enable search on smart fields.
+- Fields - Serialize the "isVirtual" property in the apimap.
+
+## RELEASE 1.3.44 - 2016-10-11
+### Fixed
+- Deserialization - Ensure data->attributes is present before deserializing
+
+## RELEASE 1.3.43 - 2016-10-11
+### Added
+- Fields - Users want to view/edit their array of integers.
+
+### Fixed
+- Polymorphism - Fix the nullification of a polymorphic has_one association.
+- Serializer - Set the relationship to nil if the record is not found instead of crashing.
+- Models - Fix the way we discovered the active record models.
+
+## RELEASE 1.3.42 - 2016-10-03
+### Fixed
+- Smart field - Ensure the serializer exists before creating the smart field.
+- Record Create - Fix empty relationships on record creation.
+
+## RELEASE 1.3.41 - 2016-09-26
+### Added
+- Filters - Users want the OR filter operator with their conditions (restricted to simple conditions).
+- Schema - Support UUID field type.
+
+### Fixed
+- Record Update - Fix the potential dissociations on record update.
+- Search - Support search on ID of type 'String'.
+
+## RELEASE 1.3.40 - 2016-09-26
+### Added
+- Filters - Users want to have "From now" and "Today" operators.
+
+### Fixed
+- Charts - Fix value chart with filters and a previous period comparison.

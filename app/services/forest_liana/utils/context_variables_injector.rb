@@ -1,0 +1,57 @@
+module ForestLiana
+  module Utils
+    class ContextVariablesInjector
+      PLACEHOLDER = /{{([^}]+)}}/
+
+      def self.inject_context_in_value(value, context_variables)
+        inject_context_in_value_custom(value) do |context_variable_key|
+          context_value(context_variable_key, context_variables)
+        end
+      end
+
+      def self.context_value(context_variable_key, context_variables)
+        value = context_variables.get_value(context_variable_key)
+        if value.nil?
+          available_keys = context_variables.respond_to?(:keys) ? context_variables.keys.join(', ') : 'unknown'
+          error_message = "Unknown context variable: '#{context_variable_key}'. " \
+                        "Please check the query for any typos. " \
+                        "Available context variables: #{available_keys}. "
+          raise error_message
+        end
+        value.is_a?(Array) || value.is_a?(Hash) ? value.to_json : value.to_s
+      end
+
+      def self.inject_context_in_value_custom(value)
+        return value unless value.is_a?(String)
+
+        value.gsub(PLACEHOLDER) { yield(Regexp.last_match(1)) }
+      end
+
+      def self.inject_context_in_filter(filter, context_variables)
+        return nil unless filter
+        # A non-Hash filter (a top-level `filters=[]`, say) is left untouched rather than crashing
+        # on filter.key? — FiltersParser's own ensure_valid_aggregation raises its usual 422 for it
+        # once apply_filters runs, same as the non-Array `conditions` case just below.
+        return filter unless filter.is_a?(Hash)
+
+        if filter.key? 'aggregator'
+          # A non-Array `conditions` is left untouched rather than mapped over (which would
+          # otherwise iterate Hash#each's own [key, value] pairs) — FiltersParser's own
+          # ensure_valid_aggregation raises its usual 422 for it right after this.
+          conditions = filter['conditions']
+          return {
+            'aggregator' => filter['aggregator'],
+            'conditions' => conditions.is_a?(Array) ? conditions.map { |condition| inject_context_in_filter(condition, context_variables) } : conditions
+          }
+        end
+
+        {
+          'field' => filter['field'],
+          'operator' => filter['operator'],
+          'value' => inject_context_in_value(filter['value'], context_variables)
+        }
+
+      end
+    end
+  end
+end

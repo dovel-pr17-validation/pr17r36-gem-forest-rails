@@ -1,0 +1,73 @@
+class Forest::Tree
+  include ForestLiana::Collection
+
+  collection :Tree
+
+  # Deliberately incomplete: reads age too, which its own dependencies: never names — the
+  # MissingAttributeValve regression fixture for "does the reload disturb an already-loaded
+  # association" (spec/requests/missing_attribute_valve_spec.rb).
+  field :name_with_age, type: 'String', dependencies: ['name'] do
+    "#{object.name} (#{object.age})"
+  end
+
+  # Deliberately incomplete the other way: reads a relation's own column, which its dependencies:
+  # never names — reloading this record can never fix a missing column on a different record, the
+  # MissingAttributeValve regression fixture for "degrade immediately, don't loop or crash".
+  field :owner_name, type: 'String', dependencies: ['name'] do
+    object.owner.name
+  end
+
+  # A relation-path dependency (crosses the belongs_to owner association) — the fixture for
+  # "does declaring this select the FK it needs, without ever hitting the valve" (query_footprint_spec.rb).
+  field :owner_name_declared, type: 'String', dependencies: ['owner:name'] do
+    object.owner.name
+  end
+
+  # A multi-hop path (belongs_to island, then its has_one location) — the fixture for "is the
+  # whole chain preloaded, and is it left alone entirely when the request never names this field"
+  # (query_footprint_spec.rb).
+  field :island_coordinates, type: 'String', dependencies: ['island:location:coordinates'] do
+    object.island&.location&.coordinates
+  end
+
+  # The same target, reached through Tree's own `has_one :location, through: :island`. The key
+  # preload reads off the tree row is the *through* hop's (`trees.island_id`), not the one the
+  # outer reflection answers — the fixture for that (query_footprint_spec.rb).
+  field :through_coordinates, type: 'String', dependencies: ['location:coordinates'] do
+    object.location&.coordinates
+  end
+
+  # A multi-hop path whose first hop the list also displays as a column. The hop-2 preload reads
+  # `users.name` off the rows the JOIN built with a narrowed select — the fixture for "is the key
+  # a later hop reads selected on the table it is joined from" (query_footprint_spec.rb).
+  field :owner_named_trees_count, type: 'Number', dependencies: ['owner:trees_by_name:name'] do
+    object.owner.trees_by_name.size
+  end
+
+  # The same failure through a :through, where the joined hop is the one the path never names —
+  # PRD-1316's own declaration shape.
+  field :owner_named_tree_names, type: 'String', dependencies: ['owner_named_trees:name'] do
+    object.owner_named_trees.map(&:name).join(',')
+  end
+
+  # The hop-2 key held apart from the hop's foreign key: `users.title` is what the preloader
+  # reads, `age` what foreign_key answers and no column of users. Reading the wrong one of the
+  # two selects nothing at all, and the list 500s again.
+  field :owner_titled_trees_count, type: 'Number', dependencies: ['owner:trees_by_title:name'] do
+    object.owner.trees_by_title.size
+  end
+
+  # A path that carries on *past* a displayed has_one :through: the preloader leaves the whole
+  # declaration alone and the next hop reads `locations.coordinates` off the rows that relation's
+  # JOIN built. The joined relation is then the one the path names, not the hop it goes through.
+  field :location_trees_count, type: 'Number', dependencies: ['location:trees_by_coordinates:name'] do
+    object.location&.trees_by_coordinates&.size
+  end
+
+  # A smart belongs_to: is_virtual with a reference, and no ActiveRecord reflection behind it —
+  # the fixture for everything that walks a getter's includes (has_many_getter_spec.rb,
+  # associations_spec.rb). Nothing else in the dummy declared one.
+  belongs_to :smart_owner, reference: 'User.id' do
+    object.owner
+  end
+end

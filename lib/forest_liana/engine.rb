@@ -1,0 +1,160 @@
+require 'rack/cors'
+require 'jsonapi-serializers'
+require 'groupdate'
+require 'net/http'
+require 'useragent'
+require 'jwt'
+require 'bcrypt'
+require_relative 'bootstrapper'
+require_relative 'collection'
+require_relative 'active_record_override'
+
+module Rack
+  class Cors
+    class Resource
+      def to_preflight_headers(env)
+        h = to_headers(env)
+        # HTTP header names are case-insensitive, but Rack 3 stopped normalizing casing on the way
+        # out: an uppercase key here reaches the server as-is, and Rack::Lint rejects it.
+        h['access-control-allow-private-network'] = 'true' if env['HTTP_ACCESS_CONTROL_REQUEST_PRIVATE_NETWORK'] == 'true'
+        if env[HTTP_ACCESS_CONTROL_REQUEST_HEADERS]
+          h.merge!('access-control-allow-headers' => env[HTTP_ACCESS_CONTROL_REQUEST_HEADERS])
+        end
+        h
+      end
+    end
+  end
+end
+
+module ForestLiana
+  class Engine < ::Rails::Engine
+    isolate_namespace ForestLiana
+
+    def configure_forest_cors
+      begin
+        rack_cors_class = Rack::Cors
+        rack_cors_class = 'Rack::Cors' if Rails::VERSION::MAJOR < 5
+        null_regex = Regexp.new(/\Anull\z/)
+
+        config.middleware.insert_before 0, rack_cors_class do
+          allow do
+            hostnames = [null_regex, 'localhost:4200', /\A.*\.forestadmin\.com\z/]
+            hostnames += ENV['CORS_ORIGINS'].split(',') if ENV['CORS_ORIGINS']
+
+            origins hostnames
+            resource ForestLiana::AuthenticationController::PUBLIC_ROUTES[1], headers: :any, methods: :any, credentials: true, max_age: 86400 # NOTICE: 1 day
+          end
+
+          allow do
+            hostnames = ['localhost:4200', /\A.*\.forestadmin\.com\z/]
+            hostnames += ENV['CORS_ORIGINS'].split(',') if ENV['CORS_ORIGINS']
+
+            origins hostnames
+            resource '*', headers: :any, methods: :any, credentials: true, max_age: 86400 # NOTICE: 1 day
+          end
+        end
+        nil
+      rescue => exception
+        FOREST_REPORTER.report exception
+        exception
+      end
+    end
+
+    def rake?
+      # NOTICE: `rails db:migrate` runs through Rake but exposes $0 as `rails`,
+      #         so matching the binary name alone let the bootstrapper introspect
+      #         models mid-migration (crashing on enums backed by a pending column).
+      return true if File.basename($0) == 'rake'
+
+      # NOTICE: `respond_to?` guard — the Rake constant can be defined with only a
+      #         partial load (Rails' test_unit requires rake/file_list), leaving
+      #         Rake.application undefined and crashing boot.
+      defined?(Rake) && Rake.respond_to?(:application) &&
+        Rake.application.top_level_tasks.any? { |task| task != 'default' }
+    end
+
+    def database_available?
+      database_available = true
+      begin
+        ActiveRecord::Base.connection_pool.with_connection { |connection| connection.active? }
+      rescue => error
+        database_available = false
+        FOREST_REPORTER.report error
+        FOREST_LOGGER.error "No Apimap sent to Forest servers, it seems that the database is not accessible:\n#{error}"
+      end
+      database_available
+    end
+
+    error = configure_forest_cors unless ENV['FOREST_CORS_DEACTIVATED']
+
+    def eager_load_active_record_descendants app
+      # HACK: Force the ActiveRecord descendants classes from ActiveStorage to load for
+      #       introspection.
+      if defined? ActiveStorage
+        ActiveStorage::Blob
+        ActiveStorage::Attachment
+      end
+
+      if Rails::VERSION::MAJOR > 5 && Rails.autoloaders.zeitwerk_enabled?
+        Zeitwerk::Loader.eager_load_all
+      else
+        app.eager_load!
+      end
+    end
+
+    initializer 'forest_liana.override_active_record_dependency' do
+      ActiveSupport.on_load(:active_record) do
+        ActiveRecord::Associations::JoinDependency.prepend(ForestLiana::ActiveRecordOverride::Associations::JoinDependency)
+      end
+    end
+
+    config.after_initialize do |app|
+      if error
+        FOREST_REPORTER.report error
+        FOREST_LOGGER.error "Impossible to set the whitelisted Forest " \
+          "domains for CORS constraint:\n#{error}"
+      end
+
+      eager_load_active_record_descendants(app)
+
+      if database_available?
+        # NOTICE: Do not run the code below on rails g forest_liana:install.
+        if ForestLiana.env_secret || ForestLiana.secret_key
+          unless rake?
+            bootstrapper = Bootstrapper.new
+            if ENV['FOREST_DEACTIVATE_AUTOMATIC_APIMAP']
+              FOREST_LOGGER.warn "DEPRECATION WARNING: FOREST_DEACTIVATE_AUTOMATIC_APIMAP option has been renamed. Please use FOREST_DISABLE_AUTO_SCHEMA_APPLY instead."
+            end
+            bootstrapper.synchronize unless ActiveRecord::Type::Boolean.new.cast(ENV['FOREST_DEACTIVATE_AUTOMATIC_APIMAP']) || ActiveRecord::Type::Boolean.new.cast(ENV['FOREST_DISABLE_AUTO_SCHEMA_APPLY']) || Rails.env.test?
+          end
+        end
+      end
+
+      ForestLiana::Engine.register_out_of_mount_hook_routes
+    end
+
+    # An endpoint outside the engine mount can only be served by the host router: a route drawn in
+    # the engine gets prefixed with the mount, where no client ever calls. Prepended so a host
+    # catch-all (SPA fallback) cannot shadow the hooks, and registered from after_initialize rather
+    # than from config/routes/actions.rb, which is re-evaluated on every reload and would stack a
+    # duplicate block per pass — prepended blocks persist across reloads on their own. Defined here
+    # so the block's closure captures this empty scope, not after_initialize's locals: the block is
+    # retained by the router for the process lifetime and would otherwise pin the bootstrapper.
+    def self.register_out_of_mount_hook_routes
+      Rails.application.routes.prepend do
+        ForestLiana.apimap.each do |collection|
+          collection.actions.each do |action|
+            next if action.endpoint_under_forest_mount?
+
+            post "#{action.absolute_endpoint}/hooks/load" => 'forest_liana/actions#load',
+              action_name: ActiveSupport::Inflector.parameterize(action.name)
+            if action.hooks && action.hooks[:change].present?
+              post "#{action.absolute_endpoint}/hooks/change" => 'forest_liana/actions#change',
+                action_name: ActiveSupport::Inflector.parameterize(action.name)
+            end
+          end
+        end
+      end
+    end
+  end
+end

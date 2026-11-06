@@ -1,0 +1,36 @@
+{
+  "name": "forest-rails",
+  "version": "9.22.17",
+  "description": "The official Rails liana for Forest.",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "prepare": "husky install",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ForestAdmin/forest-rails.git"
+  },
+  "author": "",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/ForestAdmin/forest-rails/issues"
+  },
+  "homepage": "https://github.com/ForestAdmin/forest-rails#readme",
+  "devDependencies": {
+    "@commitlint/cli": "17.4.2",
+    "@commitlint/config-conventional": "17.4.2",
+    "@semantic-release/changelog": "6.0.1",
+    "@semantic-release/exec": "6.0.3",
+    "@semantic-release/git": "10.0.1",
+    "husky": "7.0.0",
+    "semantic-release": "19.0.5",
+    "semantic-release-rubygem": "1.2.0",
+    "semantic-release-slack-bot": "3.5.2"
+  },
+  "resolutions": {
+    "semantic-release-slack-bot/**/micromatch": "^4.0.8"
+  }
+}

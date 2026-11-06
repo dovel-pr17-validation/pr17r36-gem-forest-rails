@@ -1,0 +1,1135 @@
+require 'rails_helper'
+
+describe 'Requesting Tree resources', :type => :request  do
+  let(:scope_filters) { {'scopes' => {}, 'team' => {'id' => '1', 'name' => 'Operations'}} }
+  before do
+    user = User.create(name: 'Michel')
+    tree = Tree.create(name: 'Lemon Tree', owner: user, cutter: user)
+    island = Island.create(name: 'Lemon Island', trees: [tree])
+    Location.create(coordinates: '1,2', island: island)
+
+    Rails.cache.write('forest.users', {'1' => { 'id' => 1, 'roleId' => 1, 'rendering_id' => '1' }})
+    Rails.cache.write('forest.has_permission', true)
+    Rails.cache.delete('forest.collections') # force a fresh fetch through the stub below, not a leftover from an earlier example
+    enabled = { 'roles' => [1] }
+    # read_permissions may force a real refetch on a denial (a stale cache may sit behind a
+    # just-granted permission) — stub the source instead of writing the derived cache directly,
+    # so that refetch sees the same permissions rather than hitting the network.
+    @environment_permissions_fetched = 0
+    allow_any_instance_of(ForestLiana::Ability::Fetch).to receive(:get_permissions)
+      .with('/liana/v4/permissions/environment') do
+        @environment_permissions_fetched += 1
+        {
+          'collections' => {
+            'Tree' => { 'collection' => { 'browseEnabled' => enabled, 'readEnabled' => enabled, 'editEnabled' => enabled, 'addEnabled' => enabled, 'deleteEnabled' => enabled, 'exportEnabled' => enabled }, 'actions' => {} },
+            'Location' => { 'collection' => { 'browseEnabled' => enabled, 'readEnabled' => enabled, 'editEnabled' => enabled, 'addEnabled' => enabled, 'deleteEnabled' => enabled, 'exportEnabled' => enabled }, 'actions' => {} },
+            'User' => { 'collection' => { 'browseEnabled' => enabled, 'readEnabled' => enabled, 'editEnabled' => enabled, 'addEnabled' => enabled, 'deleteEnabled' => enabled, 'exportEnabled' => enabled }, 'actions' => {} }
+          }
+        }
+      end
+
+    allow(ForestLiana::IpWhitelist).to receive(:retrieve) { true }
+    allow(ForestLiana::IpWhitelist).to receive(:is_ip_whitelist_retrieved) { true }
+    allow(ForestLiana::IpWhitelist).to receive(:is_ip_valid) { true }
+    allow(ForestLiana::ScopeManager).to receive(:fetch_scopes).and_return(scope_filters)
+  end
+
+  after do
+    User.destroy_all
+    Tree.destroy_all
+    Island.destroy_all
+    Location.destroy_all
+  end
+
+  token = JWT.encode({
+    id: 1,
+    email: 'michael.kelso@that70.show',
+    first_name: 'Michael',
+    last_name: 'Kelso',
+    team: 'Operations',
+    rendering_id: 16,
+    exp: Time.now.to_i + 2.weeks.to_i,
+    permission_level: 'admin'
+  }, ForestLiana.auth_secret, 'HS256')
+
+  headers = {
+    'Accept' => 'application/json',
+    'Content-Type' => 'application/json',
+    'Authorization' => "Bearer #{token}"
+  }
+
+  describe 'index' do
+    describe 'without any filter' do
+      params = {
+        fields: { 'Tree' => 'id,name,location' },
+        page: { 'number' => '1', 'size' => '10' },
+        searchExtended: '0',
+        sort: '-id',
+        timezone: 'Europe/Paris'
+      }
+
+      it 'should respond 200' do
+        get '/forest/Tree', params: params, headers: headers
+        expect(response.status).to eq(200)
+      end
+
+      it 'should return 403 when user permission is not allowed' do
+        Rails.cache.delete('forest.users')
+        Rails.cache.write('forest.users', {'1' => { 'id' => 1, 'roleId' => 2, 'rendering_id' => '1' }})
+        allow_any_instance_of(ForestLiana::Ability::Fetch)
+          .to receive(:get_permissions)
+                .with('/liana/v4/permissions/environment')
+                .and_return(
+                  {
+                    "collections" => {
+                      "Tree" => {
+                        "collection" => {
+                          "browseEnabled" => { "roles" => [1] },
+                          "readEnabled" => { "roles" => [1] },
+                          "editEnabled" => { "roles" => [1] },
+                          "addEnabled" => { "roles" => [1] },
+                          "deleteEnabled" => { "roles" => [1] },
+                          "exportEnabled" => { "roles" => [1] }
+                        },
+                        "actions"=> {}
+                      }
+                    }
+                  }
+                )
+
+        get '/forest/Tree', params: params, headers: headers
+
+        expect(response.status).to eq(403)
+        expect(JSON.parse(response.body)['errors'][0]['detail']).to eq 'You don\'t have permission to access this resource'
+      end
+
+      it 'should respond the tree data' do
+        get '/forest/Tree', params: params, headers: headers
+        
+        expect(JSON.parse(response.body)).to include({
+          "data" => [{
+            "type" => "Tree",
+            "id" => "1",
+            "attributes" => {
+              "id" => 1,
+              "name" => "Lemon Tree"
+            },
+            "links" => {
+              "self" => "/forest/tree/1"
+            },
+            "relationships" => {
+              "location" => {
+                "data" => { "id" => "1", "type" => "Location" },
+                "links" => { "related" => {} }
+              }
+            }
+          }],
+          "included" => [{
+            "type" => "Location",
+            "id" => "1",
+            "links" => { "self" => "/forest/location/1" }
+          }]
+        })
+      end
+    end
+
+    describe 'with a filter on an association that is not a displayed column' do
+      params = {
+        fields: { 'Tree' => 'id,name' },
+        filters: JSON.generate({
+          field: 'owner:id',
+          operator: 'present'
+        }),
+        page: { 'number' => '1', 'size' => '10' },
+        searchExtended: '0',
+        sort: '-id',
+        timezone: 'Europe/Paris'
+      }
+
+      it 'should respond 200' do
+        get '/forest/Tree', params: params, headers: headers
+        expect(response.status).to eq(200)
+      end
+
+      it 'should respond the tree data' do
+        get '/forest/Tree', params: params, headers: headers
+        expect(JSON.parse(response.body)).to eq({
+          "data" => [{
+            "type" => "Tree",
+            "id" => "1",
+            "attributes" => {
+              "id" => 1,
+              "name" => "Lemon Tree"
+            },
+            "links" => {
+              "self" => "/forest/tree/1"
+            }
+          }],
+          "included" => []
+        })
+      end
+    end
+  end
+
+  describe 'read-permission redaction' do
+    describe 'index, naming a field of a collection the role cannot read' do
+      params = {
+        fields: { 'Tree' => 'id,name,island' },
+        page: { 'number' => '1', 'size' => '10' },
+        searchExtended: '0',
+        sort: '-id',
+        timezone: 'Europe/Paris'
+      }
+
+      it 'refuses with a 403 naming every offending field, not a silently shortened payload' do
+        get '/forest/Tree', params: params, headers: headers
+
+        expect(response.status).to eq(403)
+        body = JSON.parse(response.body)
+        expect(body['errors'][0]['detail'])
+          .to eq "You are not allowed to read 'island' from the 'Island' collection."
+        expect(body['errors'][0]['data']).to eq('fields' => ['island'])
+      end
+    end
+
+    describe 'index, an ordinary listing that never named the unreadable relation' do
+      params = {
+        page: { 'number' => '1', 'size' => '10' },
+        searchExtended: '0',
+        sort: '-id',
+        timezone: 'Europe/Paris'
+      }
+
+      it 'succeeds, with that relation silently absent rather than refusing the whole listing' do
+        get '/forest/Tree', params: params, headers: headers
+
+        expect(response.status).to eq(200)
+        body = JSON.parse(response.body)
+        expect(body['data'][0]['relationships']).not_to have_key('island')
+        expect(body['data'][0]['relationships']).to have_key('location')
+      end
+    end
+
+    it 'treats the very same denied path differently depending on whether the caller named it' do
+      unnamed_params = {
+        page: { 'number' => '1', 'size' => '10' }, searchExtended: '0', sort: '-id', timezone: 'Europe/Paris'
+      }
+      named_params = unnamed_params.merge(fields: { 'Tree' => 'id,name,island' })
+
+      get '/forest/Tree', params: unnamed_params, headers: headers
+      expect(response.status).to eq(200)
+
+      get '/forest/Tree', params: named_params, headers: headers
+      expect(response.status).to eq(403)
+    end
+
+    describe 'show' do
+      it 'redacts the fields of a relation the role cannot read instead of refusing the whole record' do
+        tree_id = Tree.first.id
+
+        get "/forest/Tree/#{tree_id}", params: { timezone: 'Europe/Paris' }, headers: headers
+
+        expect(response.status).to eq(200)
+        body = JSON.parse(response.body)
+        expect(body['data']['relationships']).not_to have_key('island')
+        expect(body['data']['relationships']).to have_key('location')
+      end
+
+      # A to-many the projection never named keeps its link even when its target collection is
+      # unreadable: a `links.related` is a URL, not data, and AssociationsController#index
+      # authorizes browse on that collection before answering it. Checking here would cost a read
+      # permission lookup per to-many, on every get-one, to hide a URL the apimap already carries.
+      it 'keeps the link of a to-many whose target the role cannot read, without refetching permissions' do
+        user_id = User.first.id
+        fetched_before = @environment_permissions_fetched
+
+        get "/forest/User/#{user_id}", headers: headers.merge('Forest-Projection' => 'id,name')
+
+        expect(response.status).to eq(200)
+        relationships = JSON.parse(response.body)['data']['relationships']
+        expect(relationships).to have_key('addresses')
+        expect(relationships['addresses']['links']['related']['href'])
+          .to eq "/forest/User/#{user_id}/relationships/addresses"
+        expect(@environment_permissions_fetched - fetched_before).to eq 1
+      end
+
+      # Same distinction as index: a field the caller named (here, via the projection header
+      # rather than fields[]) is refused rather than silently redacted if unreadable.
+      it 'refuses with a 403 when the projection header names a relation the role cannot read' do
+        tree_id = Tree.first.id
+
+        get "/forest/Tree/#{tree_id}", headers: headers.merge('Forest-Projection' => 'id,name,island')
+
+        expect(response.status).to eq(403)
+        body = JSON.parse(response.body)
+        expect(body['errors'][0]['detail'])
+          .to eq "You are not allowed to read 'island' from the 'Island' collection."
+        expect(body['errors'][0]['data']).to eq('fields' => ['island'])
+      end
+    end
+
+    describe 'update' do
+      it 'redacts the response of a write instead of refusing it' do
+        tree_id = Tree.first.id
+
+        put "/forest/Tree/#{tree_id}",
+              params: { data: { type: 'Tree', id: tree_id.to_s, attributes: { name: 'Renamed' } } },
+              headers: headers, as: :json
+
+        expect(response.status).to eq(200)
+        body = JSON.parse(response.body)
+        expect(body['data']['attributes']['name']).to eq('Renamed')
+        expect(body['data']['relationships']).not_to have_key('island')
+      end
+    end
+  end
+
+  # ApplicationController's rescue_from covers part of the ExpectedError hierarchy only. #show
+  # renders the rest itself rather than re-raising it: a bare re-raise would let a subclass no
+  # rescue_from names leave the controller with no Forest error payload and no report at all.
+  # The covered half is pinned by projection_inherited_loads_spec.rb's own 422 get-one example.
+  describe 'show error handling' do
+    it 'renders an expected error no rescue_from covers, with its own status, instead of letting it escape' do
+      allow_any_instance_of(ForestLiana::ResourceGetter).to receive(:perform)
+        .and_raise(ForestLiana::Errors::NotImplementedMethodError.new('Nope'))
+
+      get "/forest/Tree/#{Tree.first.id}", params: { timezone: 'Europe/Paris' }, headers: headers
+
+      expect(response.status).to eq(500)
+      expect(JSON.parse(response.body)['errors'].first).to include('status' => 501, 'detail' => 'Nope')
+    end
+
+    it 'reports an expected error carrying a 5xx, rather than letting it pass for a client error' do
+      allow_any_instance_of(ForestLiana::ResourceGetter).to receive(:perform)
+        .and_raise(ForestLiana::Errors::NotImplementedMethodError.new('Nope'))
+      expect(FOREST_REPORTER).to receive(:report).once
+
+      get "/forest/Tree/#{Tree.first.id}", params: { timezone: 'Europe/Paris' }, headers: headers
+    end
+
+    # The refetch a denial triggers is the one request that reaches the Forest API mid-request,
+    # after forest_authorize! has already passed on the cache — so it is where an outage surfaces.
+    # It must not wear the same 403 as the RBAC refusals it sits next to.
+    describe 'when the permissions API is down during that refetch' do
+      before do
+        Rails.cache.write('forest.collections', {
+          'Tree' => { 'browse' => [1], 'read' => [1], 'edit' => [1], 'add' => [1], 'delete' => [1], 'export' => [1], actions: {} },
+          'Island' => { 'browse' => [1], 'read' => [], 'edit' => [], 'add' => [], 'delete' => [], 'export' => [], actions: {} }
+        }, expires_in: 15.minutes)
+        # What Fetch#get_permissions raises on any non-200 — pinned on its own in permission_spec.
+        allow_any_instance_of(ForestLiana::Ability::Fetch).to receive(:get_permissions)
+          .with('/liana/v4/permissions/environment')
+          .and_raise(ForestLiana::Errors::PermissionsUnavailableError.new)
+      end
+
+      it 'answers 503 rather than a 403 indistinguishable from a denial, and reports it' do
+        expect(FOREST_REPORTER).to receive(:report).once
+
+        get "/forest/Tree/#{Tree.first.id}", headers: headers.merge('Forest-Projection' => 'id,name,island')
+
+        expect(response.status).to eq(503)
+        expect(JSON.parse(response.body)['errors'].first)
+          .to include('status' => 503, 'name' => 'PermissionsUnavailableError')
+      end
+
+      it 'leaves the last good permissions in the cluster-wide cache instead of emptying it' do
+        allow(FOREST_REPORTER).to receive(:report)
+
+        get "/forest/Tree/#{Tree.first.id}", headers: headers.merge('Forest-Projection' => 'id,name,island')
+
+        expect(Rails.cache.read('forest.collections')).to include('Tree', 'Island')
+      end
+    end
+  end
+
+  describe 'read-permission enforcement on filter and sort' do
+    it 'lets a malformed filter reach the parser\'s own 422, rather than crashing this guard' do
+      params = {
+        filters: JSON.generate({ 'operator' => 'equal', 'value' => 'x' }),
+        page: { 'number' => '1', 'size' => '10' },
+        searchExtended: '0',
+        timezone: 'Europe/Paris'
+      }
+
+      get '/forest/Tree', params: params, headers: headers
+
+      expect(response.status).to eq(422)
+      expect(JSON.parse(response.body)['errors'][0]['detail']).to eq 'Invalid condition format'
+    end
+
+    it 'lets a malformed aggregation reach the parser\'s own 422, rather than crashing this guard' do
+      params = {
+        filters: JSON.generate({ 'aggregator' => 'and', 'conditions' => { 'field' => 'name' } }),
+        page: { 'number' => '1', 'size' => '10' },
+        searchExtended: '0',
+        timezone: 'Europe/Paris'
+      }
+
+      get '/forest/Tree', params: params, headers: headers
+
+      expect(response.status).to eq(422)
+      expect(JSON.parse(response.body)['errors'][0]['detail']).to eq 'Filters cannot be a raw value'
+    end
+
+    it 'lets an aggregation with a nil conditions reach the parser\'s own 422, rather than crashing this guard' do
+      params = {
+        filters: JSON.generate({ 'aggregator' => 'and', 'conditions' => nil }),
+        page: { 'number' => '1', 'size' => '10' },
+        searchExtended: '0',
+        timezone: 'Europe/Paris'
+      }
+
+      get '/forest/Tree', params: params, headers: headers
+
+      expect(response.status).to eq(422)
+      expect(JSON.parse(response.body)['errors'][0]['detail']).to eq 'Filters cannot be a raw value'
+    end
+
+    it 'lets a non-blank top-level non-Hash filter reach the parser\'s own 422, rather than crashing this guard' do
+      params = {
+        filters: JSON.generate(5),
+        page: { 'number' => '1', 'size' => '10' },
+        searchExtended: '0',
+        timezone: 'Europe/Paris'
+      }
+
+      get '/forest/Tree', params: params, headers: headers
+
+      expect(response.status).to eq(422)
+      expect(JSON.parse(response.body)['errors'][0]['detail']).to eq 'Filters cannot be a raw value'
+    end
+
+    # An empty Array is `blank?`, same as no filter at all: it's dropped before reaching
+    # FiltersParser (long-standing behavior, unrelated to this guard) — this only pins that it no
+    # longer crashes on filter.key?/node['aggregator'], not the 422 the non-blank case above gets.
+    it 'does not crash on a top-level empty-Array filter' do
+      params = {
+        filters: JSON.generate([]),
+        page: { 'number' => '1', 'size' => '10' },
+        searchExtended: '0',
+        timezone: 'Europe/Paris'
+      }
+
+      get '/forest/Tree', params: params, headers: headers
+
+      expect(response.status).to eq(200)
+    end
+
+    describe 'filtering on a column of a collection the role cannot read' do
+      params = {
+        filters: JSON.generate({ 'field' => 'island:name', 'operator' => 'equal', 'value' => 'Lemon Island' }),
+        page: { 'number' => '1', 'size' => '10' },
+        searchExtended: '0',
+        timezone: 'Europe/Paris'
+      }
+
+      it 'refuses index with a 403 naming the path and the collection' do
+        get '/forest/Tree', params: params, headers: headers
+
+        expect(response.status).to eq(403)
+        body = JSON.parse(response.body)
+        expect(body['errors'][0]['detail'])
+          .to eq "You cannot filter on 'island:name': you are not allowed to read the 'Island' collection."
+        expect(body['errors'][0]['data']).to eq('action' => 'filter on', 'field' => 'island:name', 'collections' => ['Island'])
+      end
+
+      it 'refuses count the same way, naming the path and the collection' do
+        get '/forest/Tree/count', params: params, headers: headers
+
+        expect(response.status).to eq(403)
+        body = JSON.parse(response.body)
+        expect(body['errors'][0]['detail'])
+          .to eq "You cannot filter on 'island:name': you are not allowed to read the 'Island' collection."
+        expect(body['errors'][0]['data']).to eq('action' => 'filter on', 'field' => 'island:name', 'collections' => ['Island'])
+      end
+
+      it 'refuses csv export the same way' do
+        get '/forest/Tree.csv', params: params.merge(header: 'id'), headers: headers
+
+        expect(response.status).to eq(403)
+      end
+    end
+
+    describe 'filtering on a column of a collection absent from the apimap' do
+      params = {
+        filters: JSON.generate({ 'field' => 'island:name', 'operator' => 'equal', 'value' => 'Lemon Island' }),
+        page: { 'number' => '1', 'size' => '10' },
+        searchExtended: '0',
+        timezone: 'Europe/Paris'
+      }
+
+      before do
+        allow(ForestLiana).to receive(:apimap).and_wrap_original do |original|
+          original.call.reject { |collection| collection.name.to_s == 'Island' }
+        end
+      end
+
+      it 'refuses with UnexposedQueryCollectionError, not the generic denied error' do
+        get '/forest/Tree', params: params, headers: headers
+
+        expect(response.status).to eq(403)
+        body = JSON.parse(response.body)
+        expect(body['errors'][0]['name']).to eq('UnexposedQueryCollectionError')
+        expect(body['errors'][0]['detail'])
+          .to eq "You cannot filter on 'island:name': it reaches the 'Island' collection, which is not " \
+            'exposed to Forest Admin. No role can be granted read on it until the collection is exposed.'
+        expect(body['errors'][0]['data']).to eq('action' => 'filter on', 'field' => 'island:name', 'collections' => ['Island'])
+      end
+    end
+
+    describe 'sorting on a column of a collection the role cannot read' do
+      params = {
+        sort: '-island.name',
+        page: { 'number' => '1', 'size' => '10' },
+        searchExtended: '0',
+        timezone: 'Europe/Paris'
+      }
+
+      it 'refuses index' do
+        get '/forest/Tree', params: params, headers: headers
+
+        expect(response.status).to eq(403)
+        expect(JSON.parse(response.body)['errors'][0]['detail'])
+          .to eq "You cannot sort on 'island:name': you are not allowed to read the 'Island' collection."
+      end
+
+      it 'does not refuse count, which never applies the sort' do
+        get '/forest/Tree/count', params: params, headers: headers
+
+        expect(response.status).to eq(200)
+      end
+    end
+
+    it 'never checks a scope, even one referencing a column of an unreadable collection' do
+      allow(ForestLiana::ScopeManager).to receive(:fetch_scopes).and_return(
+        'scopes' => {
+          'Tree' => { 'aggregator' => 'and', 'conditions' => [{ 'field' => 'island:name', 'operator' => 'present' }] }
+        },
+        'team' => { 'id' => '1', 'name' => 'Operations' }
+      )
+      params = { page: { 'number' => '1', 'size' => '10' }, searchExtended: '0', timezone: 'Europe/Paris' }
+
+      get '/forest/Tree', params: params, headers: headers
+
+      expect(response.status).to eq(200)
+    end
+
+    it 'never refuses a filter on the root collection, even when the root has no read permission of its own' do
+      # `browse` (not `read`) is what forest_authorize! gates the route on; a role can legitimately
+      # browse a collection without having its own `read` — the root is still pinned readable for
+      # this guard, which must not re-derive a denial for it from a permission it is not gated on.
+      # Stubbed at the source (persistently denied), not written to the derived cache directly —
+      # the forced retry-on-denial would otherwise re-read this same outer before block's stub,
+      # which grants Tree read, and mask whether the pin actually held.
+      enabled = { 'roles' => [1] }
+      disabled = { 'roles' => [] }
+      allow_any_instance_of(ForestLiana::Ability::Fetch).to receive(:get_permissions)
+        .with('/liana/v4/permissions/environment').and_return(
+          'collections' => {
+            'Tree' => { 'collection' => { 'browseEnabled' => enabled, 'readEnabled' => disabled, 'editEnabled' => disabled, 'addEnabled' => disabled, 'deleteEnabled' => disabled, 'exportEnabled' => disabled }, 'actions' => {} }
+          }
+        )
+      Rails.cache.delete('forest.collections')
+      params = {
+        filters: JSON.generate({ 'field' => 'name', 'operator' => 'present' }),
+        page: { 'number' => '1', 'size' => '10' },
+        searchExtended: '0',
+        timezone: 'Europe/Paris'
+      }
+
+      get '/forest/Tree', params: params, headers: headers
+
+      expect(response.status).to eq(200)
+    end
+  end
+
+  describe 'read-permission enforcement on search' do
+    describe 'an extended search reaching a column of a collection the role cannot read' do
+      params = {
+        search: 'Lemon',
+        searchExtended: '1',
+        page: { 'number' => '1', 'size' => '10' },
+        timezone: 'Europe/Paris'
+      }
+
+      it 'refuses index with a 403 naming the path and the collection' do
+        get '/forest/Tree', params: params, headers: headers
+
+        expect(response.status).to eq(403)
+        body = JSON.parse(response.body)
+        expect(body['errors'][0]['detail'])
+          .to eq "You cannot search on 'island:name': you are not allowed to read the 'Island' collection."
+        expect(body['errors'][0]['data']).to eq('action' => 'search on', 'field' => 'island:name', 'collections' => ['Island'])
+      end
+
+      # `resources#count` had no specific rescue for this family of errors: pins that it carries
+      # the same `name`/`data` payload as index, not the generic ExpectedError shape it fell into.
+      it 'refuses count the same way, with the same name/data payload as index' do
+        get '/forest/Tree/count', params: params, headers: headers
+
+        expect(response.status).to eq(403)
+        body = JSON.parse(response.body)
+        expect(body['errors'][0]['name']).to eq('UnauthorizedQueryFieldError')
+        expect(body['errors'][0]['data']).to eq('action' => 'search on', 'field' => 'island:name', 'collections' => ['Island'])
+      end
+    end
+
+    it 'serves a plain search reaching the same column, since search stays root-only unless extended' do
+      params = {
+        search: 'Lemon',
+        searchExtended: '0',
+        page: { 'number' => '1', 'size' => '10' },
+        timezone: 'Europe/Paris'
+      }
+
+      get '/forest/Tree', params: params, headers: headers
+
+      expect(response.status).to eq(200)
+    end
+  end
+
+  describe 'select-all destroy naming a filter on a collection the role cannot read' do
+    it 'refuses with a 403 body instead of a bodiless 500' do
+      params = {
+        data: {
+          attributes: {
+            collection_name: 'Tree',
+            all_records: true,
+            all_records_subset_query: {
+              filters: JSON.generate({ 'field' => 'island:name', 'operator' => 'equal', 'value' => 'Lemon Island' })
+            }
+          }
+        }
+      }
+
+      delete '/forest/Tree', params: JSON.dump(params), headers: headers
+
+      expect(response.status).to eq(403)
+      expect(JSON.parse(response.body)['errors'][0]['detail'])
+        .to eq "You cannot filter on 'island:name': you are not allowed to read the 'Island' collection."
+    end
+  end
+
+  describe 'select-all destroy sorting on a collection the role cannot read' do
+    # ResourcesGetter.get_ids_from_request never called #perform (only .query_for_batch, built in
+    # the constructor), and assert_sort_readable! used to live only inside #perform — a sort on a
+    # denied collection reordered the batch of ids to delete without ever being checked.
+    it 'refuses with a 403, instead of reordering the ids to delete by an unreadable column' do
+      params = {
+        data: {
+          attributes: {
+            collection_name: 'Tree',
+            all_records: true,
+            all_records_subset_query: {
+              sort: '-island.name'
+            }
+          }
+        }
+      }
+
+      delete '/forest/Tree', params: JSON.dump(params), headers: headers
+
+      expect(response.status).to eq(403)
+      expect(JSON.parse(response.body)['errors'][0]['detail'])
+        .to eq "You cannot sort on 'island:name': you are not allowed to read the 'Island' collection."
+    end
+  end
+
+  describe 'live query segment permission' do
+    let(:listed_segment_query) { 'SELECT id FROM trees WHERE name IS NOT NULL' }
+    let(:unlisted_segment_query) { 'SELECT id FROM trees WHERE 1 = 0' }
+
+    restricted_token = JWT.encode({
+      id: 1,
+      email: 'michael.kelso@that70.show',
+      first_name: 'Michael',
+      last_name: 'Kelso',
+      team: 'Operations',
+      rendering_id: 16,
+      exp: Time.now.to_i + 2.weeks.to_i,
+      permission_level: 'user'
+    }, ForestLiana.auth_secret, 'HS256')
+
+    restricted_headers = headers.merge('Authorization' => "Bearer #{restricted_token}")
+
+    let(:list_params) {
+      {
+        fields: { 'Tree' => 'id,name' },
+        page: { 'number' => '1', 'size' => '10' },
+        searchExtended: '0',
+        sort: '-id',
+        timezone: 'Europe/Paris'
+      }
+    }
+
+    it 'refuses a listing whose segment query is not one of the team segments' do
+      get '/forest/Tree', params: list_params.merge(segmentQuery: unlisted_segment_query), headers: restricted_headers
+
+      expect(response.status).to eq(403)
+      expect(JSON.parse(response.body)['errors'][0]['name']).to eq('AccessDenied')
+    end
+
+    it 'serves the listing when the rendering lists that exact segment query' do
+      allow(ForestLiana::ScopeManager).to receive(:fetch_scopes).and_return(
+        'scopes' => {},
+        'segments' => { 'Tree' => [listed_segment_query] },
+        'team' => { 'id' => '1', 'name' => 'Operations' }
+      )
+
+      get '/forest/Tree', params: list_params.merge(segmentQuery: listed_segment_query), headers: restricted_headers
+
+      expect(response.status).to eq(200)
+      expect(JSON.parse(response.body)['data'][0]['attributes']['name']).to eq('Lemon Tree')
+    end
+
+    it 'refuses the count the same way' do
+      get '/forest/Tree/count', params: { segmentQuery: unlisted_segment_query, timezone: 'Europe/Paris' }, headers: restricted_headers
+
+      expect(response.status).to eq(403)
+    end
+
+    it 'refuses the csv export the same way' do
+      get '/forest/Tree.csv', params: { segmentQuery: unlisted_segment_query, header: 'id,name' }, headers: restricted_headers
+
+      expect(response.status).to eq(403)
+    end
+
+    it 'refuses a select-all bulk delete without deleting anything' do
+      params = {
+        data: {
+          attributes: {
+            collection_name: 'Tree',
+            all_records: true,
+            all_records_subset_query: { segmentQuery: unlisted_segment_query }
+          }
+        }
+      }
+
+      delete '/forest/Tree', params: JSON.dump(params), headers: restricted_headers
+
+      expect(response.status).to eq(403)
+      expect(Tree.count).to eq(1)
+    end
+
+    it 'still serves an admin an unlisted segment query' do
+      get '/forest/Tree', params: list_params.merge(segmentQuery: unlisted_segment_query), headers: headers
+
+      expect(response.status).to eq(200)
+    end
+  end
+
+  describe 'csv' do
+    it 'should return CSV with correct headers and data' do
+      params = {
+        fields: { 'Tree' => 'id,name,owner', 'owner' => 'name'},
+        page: { 'number' => '1', 'size' => '10' },
+        searchExtended: '0',
+        sort: '-id',
+        timezone: 'Europe/Paris',
+        header: 'id,name,owner',
+      }
+      get '/forest/Tree.csv', params: params, headers: headers
+
+      expect(response.status).to eq(200)
+      expect(response.headers['Content-Type']).to include('text/csv')
+      expect(response.headers['Content-Disposition']).to include('attachment')
+
+      csv_content = response.body
+      csv_lines = csv_content.split("\n")
+
+      expect(csv_lines.first).to eq(params[:header])
+      expect(csv_lines[1]).to eq('1,Lemon Tree,Michel')
+    end
+
+    it 'returns CSV with only requested fields and ignores optional relation' do
+      params = {
+        fields: { 'Tree' => 'id,name', 'owner' => 'name'},
+        page: { 'number' => '1', 'size' => '10' },
+        searchExtended: '0',
+        sort: '-id',
+        timezone: 'Europe/Paris',
+        header: 'id,name',
+      }
+      get '/forest/Tree.csv', params: params, headers: headers
+
+      expect(response.status).to eq(200)
+      expect(response.headers['Content-Type']).to include('text/csv')
+      expect(response.headers['Content-Disposition']).to include('attachment')
+
+      csv_content = response.body
+      csv_lines = csv_content.split("\n")
+
+      expect(csv_lines.first).to eq(params[:header])
+      expect(csv_lines[1]).to eq('1,Lemon Tree')
+    end
+
+    # Unlike index/show/update, an explicitly named but unreadable column drops silently instead
+    # of refusing the whole file — matching agent-nodejs's own CSV route (same redactProjection,
+    # same named-vs-not distinction it already applies to its JSON list, not a CSV-specific rule).
+    it 'drops an unreadable column silently instead of refusing the whole export' do
+      params = {
+        fields: { 'Tree' => 'id,name,island' },
+        header: 'id,name,island',
+      }
+      get '/forest/Tree.csv', params: params, headers: headers
+
+      expect(response.status).to eq(200)
+      expect(response.headers['Content-Type']).to include('text/csv')
+      csv_lines = response.body.split("\n")
+      expect(csv_lines.first).to eq('id,name')
+      expect(csv_lines[1]).to eq('1,Lemon Tree')
+    end
+  end
+end
+
+describe 'Requesting User resources', :type => :request  do
+  describe 'index' do
+    before do
+      User.create(name: 'John')
+
+      Rails.cache.write('forest.users', {'1' => { 'id' => 1, 'roleId' => 1, 'rendering_id' => '1' }})
+      Rails.cache.write('forest.has_permission', true)
+      Rails.cache.write(
+        'forest.collections',
+        {
+          'User' => {
+            'browse'  => [1],
+            'read'    => [1],
+            'edit'    => [1],
+            'add'     => [1],
+            'delete'  => [1],
+            'export'  => [1],
+            'actions' => {}
+          }
+        }
+      )
+
+      allow(ForestLiana::IpWhitelist).to receive(:retrieve) { true }
+      allow(ForestLiana::IpWhitelist).to receive(:is_ip_whitelist_retrieved) { true }
+      allow(ForestLiana::IpWhitelist).to receive(:is_ip_valid) { true }
+      allow(ForestLiana::ScopeManager).to receive(:fetch_scopes).and_return(
+        {'scopes' => {}, 'team' => {'id' => '1', 'name' => 'Operations'}}
+      )
+    end
+
+    after do
+      User.destroy_all
+    end
+
+    it 'should respond the user data with meta when search apply on simple column and smart field' do
+      token = JWT.encode({
+        id: 1,
+        email: 'michael.kelso@that70.show',
+        first_name: 'Michael',
+        last_name: 'Kelso',
+        team: 'Operations',
+        rendering_id: 16,
+        exp: Time.now.to_i + 2.weeks.to_i,
+        permission_level: 'admin'
+      }, ForestLiana.auth_secret, 'HS256')
+
+      headers = {
+        'Accept' => 'application/json',
+        'Content-Type' => 'application/json',
+        'Authorization' => "Bearer #{token}"
+      }
+      
+      params = {
+        fields: { 'User' => 'id,name,cap_name' },
+        page: { 'number' => '1', 'size' => '10' },
+        searchExtended: '0',
+        search: 'JOHN',
+        sort: '-id',
+        timezone: 'Europe/Paris'
+      }
+
+      allow(ForestAdmin::JSONAPI::Serializer).to receive(:serialize).and_return(
+        { "data" => [
+          {
+            "type" => "User",
+            "id" => "1",
+            "attributes" => { "id" => 1, "name" => "John", "cap_name" => "JOHN" },
+            "links" => { "self" => "/forest/user/1" }
+          }
+        ], "included" => [] }
+      )
+
+      get '/forest/User', params: params, headers: headers
+
+      expect(JSON.parse(response.body)).to include(
+        "data" => [
+          {
+            "type" => "User",
+            "id" => "1",
+            "attributes" => {
+              "id" => 1,
+              "name" => "John",
+              "cap_name" => "JOHN"
+            },
+            "links" => { "self" => "/forest/user/1" },
+          }
+        ],
+        "included" => [],
+        "meta" => { 'decorators' => { '0' => { 'id' => "1", 'search' => %w[name cap_name] } } }
+      )
+    end
+
+    it 'serves an extended search on a collection whose only search surface beyond it is a smart field lambda' do
+      token = JWT.encode({
+        id: 1,
+        email: 'michael.kelso@that70.show',
+        first_name: 'Michael',
+        last_name: 'Kelso',
+        team: 'Operations',
+        rendering_id: 16,
+        exp: Time.now.to_i + 2.weeks.to_i,
+        permission_level: 'admin'
+      }, ForestLiana.auth_secret, 'HS256')
+
+      headers = {
+        'Accept' => 'application/json',
+        'Content-Type' => 'application/json',
+        'Authorization' => "Bearer #{token}"
+      }
+
+      params = {
+        fields: { 'User' => 'id,name,cap_name' },
+        page: { 'number' => '1', 'size' => '10' },
+        searchExtended: '1',
+        search: 'JOHN',
+        timezone: 'Europe/Paris'
+      }
+
+      get '/forest/User', params: params, headers: headers
+
+      # Deliberately never refused, in either mode: a smart-field search lambda's reach is outside
+      # the checked footprint by construction, and gating a refusal on searchExtended would only
+      # cost every customer of this hook their extended search (see search_query_builder.rb#perform).
+      expect(response.status).to eq(200)
+    end
+  end
+end
+
+describe 'Requesting Island resources', :type => :request  do
+  let(:scope_filters) { {'scopes' => {}, 'team' => {'id' => '1', 'name' => 'Operations'}} }
+  before do
+    island = Island.create(name: 'Paradise Island')
+    Location.create(coordinates: '10,20', island: island)
+
+    Rails.cache.write('forest.users', {'1' => { 'id' => 1, 'roleId' => 1, 'rendering_id' => '1' }})
+    Rails.cache.write('forest.has_permission', true)
+    Rails.cache.write(
+      'forest.collections',
+      {
+        'Island' => {
+          'browse'  => [1],
+          'read'    => [1],
+          'edit'    => [1],
+          'add'     => [1],
+          'delete'  => [1],
+          'export'  => [1],
+          'actions' => {}
+        },
+        'Location' => {
+          'browse'  => [1],
+          'read'    => [1],
+          'edit'    => [1],
+          'add'     => [1],
+          'delete'  => [1],
+          'export'  => [1],
+          'actions' => {}
+        }
+      }
+    )
+
+    allow(ForestLiana::IpWhitelist).to receive(:retrieve) { true }
+    allow(ForestLiana::IpWhitelist).to receive(:is_ip_whitelist_retrieved) { true }
+    allow(ForestLiana::IpWhitelist).to receive(:is_ip_valid) { true }
+    allow(ForestLiana::ScopeManager).to receive(:fetch_scopes).and_return(scope_filters)
+  end
+
+  after do
+    Island.destroy_all
+    Location.destroy_all
+  end
+
+  token = JWT.encode({
+    id: 1,
+    email: 'michael.kelso@that70.show',
+    first_name: 'Michael',
+    last_name: 'Kelso',
+    team: 'Operations',
+    rendering_id: 16,
+    exp: Time.now.to_i + 2.weeks.to_i,
+    permission_level: 'admin'
+  }, ForestLiana.auth_secret, 'HS256')
+
+  headers = {
+    'Accept' => 'application/json',
+    'Content-Type' => 'application/json',
+    'Authorization' => "Bearer #{token}"
+  }
+
+  describe 'csv' do
+    it 'should return CSV with has_one association without SQL error' do
+      params = {
+        fields: { 'Island' => 'id,name,location', 'location' => 'coordinates'},
+        page: { 'number' => '1', 'size' => '10' },
+        searchExtended: '0',
+        sort: '-id',
+        timezone: 'Europe/Paris',
+        header: 'id,name,location',
+      }
+      get '/forest/Island.csv', params: params, headers: headers
+
+      expect(response.status).to eq(200)
+      expect(response.headers['Content-Type']).to include('text/csv')
+      expect(response.headers['Content-Disposition']).to include('attachment')
+
+      csv_content = response.body
+      csv_lines = csv_content.split("\n")
+
+      expect(csv_lines.first).to eq(params[:header])
+      expect(csv_lines[1]).to eq('1,Paradise Island,"10,20"')
+    end
+  end
+end
+
+describe 'Requesting Address resources', :type => :request  do
+  let(:scope_filters) { {'scopes' => {}, 'team' => {'id' => '1', 'name' => 'Operations'}} }
+  before do
+    user = User.create(name: 'Michel')
+    Address.create(line1: '10 Downing Street', city: 'London', zipcode: '2AB', addressable: user)
+
+    Rails.cache.write('forest.users', {'1' => { 'id' => 1, 'roleId' => 1, 'rendering_id' => '1' }})
+    Rails.cache.write('forest.has_permission', true)
+    Rails.cache.write(
+      'forest.collections',
+      {
+        'Address' => {
+          'browse'  => [1],
+          'read'    => [1],
+          'edit'    => [1],
+          'add'     => [1],
+          'delete'  => [1],
+          'export'  => [1],
+          'actions' => {}
+        },
+        'User' => {
+          'browse'  => [1],
+          'read'    => [1],
+          'edit'    => [1],
+          'add'     => [1],
+          'delete'  => [1],
+          'export'  => [1],
+          'actions' => {}
+        }
+      }
+    )
+
+    allow(ForestLiana::IpWhitelist).to receive(:retrieve) { true }
+    allow(ForestLiana::IpWhitelist).to receive(:is_ip_whitelist_retrieved) { true }
+    allow(ForestLiana::IpWhitelist).to receive(:is_ip_valid) { true }
+    allow(ForestLiana::ScopeManager).to receive(:fetch_scopes).and_return(scope_filters)
+  end
+
+  after do
+    User.destroy_all
+    Address.destroy_all
+  end
+
+  token = JWT.encode({
+    id: 1,
+    email: 'michael.kelso@that70.show',
+    first_name: 'Michael',
+    last_name: 'Kelso',
+    team: 'Operations',
+    rendering_id: 16,
+    exp: Time.now.to_i + 2.weeks.to_i,
+    permission_level: 'admin'
+  }, ForestLiana.auth_secret, 'HS256')
+
+  headers = {
+    'Accept' => 'application/json',
+    'Content-Type' => 'application/json',
+    'Authorization' => "Bearer #{token}"
+  }
+
+  describe 'index' do
+    params = {
+      fields: { 'Address' => 'id,line1,city,zip_code,addressable' },
+      page: { 'number' => '1', 'size' => '10' },
+      searchExtended: '0',
+      sort: '-id',
+      timezone: 'Europe/Paris'
+    }
+
+    it 'should respond the address data' do
+      get '/forest/Address', params: params, headers: headers
+
+      expect(JSON.parse(response.body)).to include(
+        "data" => [
+          {
+            "type" => "Address",
+            "id" => "1",
+            "attributes" => {
+              "id" => 1,
+              "line1" => "10 Downing Street",
+              "city" => "London"
+            },
+            "links" => { "self" => "/forest/address/1" },
+            "relationships" => {
+              "addressable" => { "links" => { "related" => {} }, "data" => { "type" => "User", "id" => "1" } }
+            }
+          }
+        ]
+      )
+    end
+  end
+
+  describe 'csv' do
+    it 'should return CSV with polymorphic association' do
+      params = {
+        fields: { 'Address' => 'id,line1,city,addressable', 'addressable' => 'name'},
+        page: { 'number' => '1', 'size' => '10' },
+        searchExtended: '0',
+        sort: '-id',
+        timezone: 'Europe/Paris',
+        header: 'id,line1,city,addressable',
+      }
+      get '/forest/Address.csv', params: params, headers: headers
+
+      expect(response.status).to eq(200)
+      expect(response.headers['Content-Type']).to include('text/csv')
+      expect(response.headers['Content-Disposition']).to include('attachment')
+
+      csv_content = response.body
+      csv_lines = csv_content.split("\n")
+
+      expect(csv_lines.first).to eq(params[:header])
+      expect(csv_lines[1]).to eq('1,10 Downing Street,London,Michel')
+    end
+
+    it 'should return CSV with only requested fields and ignore optional polymorphic relation' do
+      params = {
+        fields: { 'Address' => 'id,line1,city', 'addressable' => 'name'},
+        page: { 'number' => '1', 'size' => '10' },
+        searchExtended: '0',
+        sort: '-id',
+        timezone: 'Europe/Paris',
+        header: 'id,line1,city',
+      }
+      get '/forest/Address.csv', params: params, headers: headers
+
+      expect(response.status).to eq(200)
+      expect(response.headers['Content-Type']).to include('text/csv')
+      expect(response.headers['Content-Disposition']).to include('attachment')
+
+      csv_content = response.body
+      csv_lines = csv_content.split("\n")
+
+      expect(csv_lines.first).to eq(params[:header])
+      expect(csv_lines[1]).to eq('1,10 Downing Street,London')
+    end
+  end
+end

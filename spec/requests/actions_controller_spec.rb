@@ -1,0 +1,858 @@
+require 'rails_helper'
+
+describe 'Requesting Actions routes', :type => :request  do
+  subject(:controller) { ForestLiana::ApplicationController.new }
+
+  let(:rendering_id) { 13 }
+  let(:scope_filters) { {'scopes' => {}, 'team' => {'id' => '1', 'name' => 'Operations'}} }
+
+  before(:each) do
+    allow(ForestLiana::IpWhitelist).to receive(:is_ip_whitelist_retrieved) { true }
+    allow(ForestLiana::IpWhitelist).to receive(:is_ip_valid) { true }
+    Island.create(id: 1, name: 'Corsica')
+
+    ForestLiana::ScopeManager.invalidate_scope_cache(rendering_id)
+    allow(ForestLiana::ScopeManager).to receive(:fetch_scopes).and_return(scope_filters)
+
+
+    allow(ForestAdmin::JSONAPI::Serializer)
+      .to receive(:serialize)
+            .and_return(json_out)
+
+    allow(controller)
+      .to receive(:force_utf8_encoding) do |arg|
+      arg
+    end
+  end
+
+  after(:each) do
+    Island.destroy_all
+  end
+
+  let(:token) {
+    JWT.encode({
+      id: 38,
+      email: 'michael.kelso@that70.show',
+      first_name: 'Michael',
+      last_name: 'Kelso',
+      team: 'Operations',
+      rendering_id: rendering_id,
+      exp: Time.now.to_i + 2.weeks.to_i,
+      permission_level: 'admin'
+    }, ForestLiana.auth_secret, 'HS256')
+  }
+
+  let(:headers) {
+    {
+      'Accept' => 'application/json',
+      'Content-Type' => 'application/json',
+      'Authorization' => "Bearer #{token}"
+    }
+  }
+
+  let(:record) { Island.first }
+
+  let(:json_out){ { 'data' => [] } }
+
+  describe 'hooks' do
+    island = ForestLiana.apimap.find {|collection| collection.name.to_s == ForestLiana.name_for(Island)}
+
+    describe 'call /load on layout form' do
+      params = {
+        data: {
+          attributes: { ids: [1], collection_name: 'Island' }
+        }
+      }
+
+      it 'should respond 200 with expected response on load' do
+        post '/forest/actions/my_action_with_layout/hooks/load', params: JSON.dump(params), headers: headers
+        result = JSON.parse(response.body)
+
+        expect(response.status).to eq(200)
+        expect(result).to eq(
+          {
+            "fields" => [
+              {
+                "field"=>"foo",
+                "type"=>"String",
+                "defaultValue"=>nil,
+                "enums"=>nil,
+                "isRequired"=>false,
+                "isReadOnly"=>false,
+                "reference"=>nil,
+                "description"=>nil,
+                "hook"=>"on_foo_changed",
+                "position"=>0,
+                "widgetEdit"=>nil,
+                "value"=>nil
+              },
+              { "field"=>"field 1", "type"=>"String"},
+              {"field"=>"field 2", "type"=>"String" }
+            ],
+            "layout"=>[
+              {
+                "type"=>"Layout",
+                "component"=>"page",
+                "elements"=>[
+                  {"type"=>"Layout", "component"=>"htmlBlock", "content"=>"<p>test</p>"},
+                  {"type"=>"Layout", "component"=>"separator"},
+                  {"component"=>"input", "fieldId"=>"foo"},
+                  {"component"=>"input", "fieldId"=>"field 1"},
+                  {"type"=>"Layout", "component"=>"separator"},
+                  {"component"=>"input", "fieldId"=>"field 2"}
+                ]
+              }
+            ]
+          }
+        )
+      end
+    end
+
+    describe 'call /load' do
+      params = {
+        data: {
+          attributes: { ids: [1], collection_name: 'Island' }
+        }
+      }
+
+      it 'should respond 200' do
+        post '/forest/actions/my_action/hooks/load', params: JSON.dump(params), headers: headers
+        action = island.actions.select { |action| action.name == 'my_action' }.first
+        foo = action.fields.select { |field| field[:field] == 'foo' }.first
+        expect(response.status).to eq(200)
+        expect(JSON.parse(response.body)).to eq({'fields' => [foo.merge({:value => nil}).transform_keys { |key| key.to_s.camelize(:lower) }.stringify_keys]})
+        # action form without layout elements should not have the key layout
+        expect(JSON.parse(response.body)).not_to have_key('layout')
+      end
+
+      it 'should respond 422 with bad params' do
+        post '/forest/actions/my_action/hooks/load', params: {}, headers: headers
+        expect(response.status).to eq(422)
+      end
+
+      it 'should respond 200 with the static form when the action has no load hook' do
+        post '/forest/actions/static_form_action/hooks/load', params: JSON.dump(params), headers: headers
+        action = island.actions.select { |action| action.name == 'static_form_action' }.first
+        static_field = action.fields.select { |field| field[:field] == 'static_field' }.first
+        expect(response.status).to eq(200)
+        expect(JSON.parse(response.body)).to eq({'fields' => [static_field.merge({:value => nil}).transform_keys { |key| key.to_s.camelize(:lower) }.stringify_keys]})
+
+        first_body = response.body
+        post '/forest/actions/static_form_action/hooks/load', params: JSON.dump(params), headers: headers
+        expect(response.status).to eq(200)
+        expect(response.body).to eq(first_body)
+      end
+
+      it 'should respond 200 with empty fields when the action has no form at all' do
+        post '/forest/actions/test/hooks/load', params: JSON.dump(params), headers: headers
+        expect(response.status).to eq(200)
+        expect(JSON.parse(response.body)).to eq({'fields' => []})
+      end
+
+      it 'should respond 500 with bad hook result type' do
+        post '/forest/actions/fail_action/hooks/load', params: JSON.dump(params), headers: headers
+        expect(response.status).to eq(500)
+        expect(JSON.parse(response.body)).to eq({'error' => 'Error in smart action load hook: hook must return an array of fields'})
+      end
+
+      it 'should respond 500 with bad hook result data structure' do
+        post '/forest/actions/cheat_action/hooks/load', params: JSON.dump(params), headers: headers
+        expect(response.status).to eq(500)
+        expect(JSON.parse(response.body)).to eq({'error' => 'Error in smart action load hook: hook must return an array of fields'})
+      end
+
+      it 'should return the first_name of the user who call the action' do
+        post '/forest/actions/use_user_context/hooks/load', params: JSON.dump(params), headers: headers
+        action = island.actions.select { |action| action.name == 'use_user_context' }.first
+        foo = action.fields.select { |field| field[:field] == 'foo' }.first
+        expect(response.status).to eq(200)
+        expect(JSON.parse(response.body)).to eq({'fields' => [foo.merge({:value => 'Michael'}).transform_keys { |key| key.to_s.camelize(:lower) }.stringify_keys]})
+      end
+    end
+
+    describe 'on an endpoint declared outside the engine mount' do
+      params = {
+        data: {
+          attributes: { ids: [1], collection_name: 'Island' }
+        }
+      }
+
+      # The dummy app declares a `/api/*path` catch-all standing in for a host SPA fallback: these
+      # routes have to outrank it, or the 404 this fix removes comes straight back.
+      it 'should serve /load at the endpoint the client calls' do
+        post '/api/custom/islands/out_of_mount_action/hooks/load', params: JSON.dump(params), headers: headers
+        expect(response.status).to eq(200)
+        expect(JSON.parse(response.body)['fields'].map { |field| field['field'] }).to eq(['foo'])
+      end
+
+      it 'should let the host catch-all keep every other path under it' do
+        post '/api/custom/islands/something_else', params: JSON.dump(params), headers: headers
+        expect(JSON.parse(response.body)).to eq({'caught_by' => 'host catch-all'})
+      end
+
+      it 'should serve /change at the endpoint the client calls' do
+        action = island.actions.select { |action| action.name == 'out_of_mount_action' }.first
+        foo = action.fields.select { |field| field[:field] == 'foo' }.first
+        updated_foo = foo.clone.merge({:previousValue => nil, :value => 'bar'})
+        p = {
+          data: {
+            attributes: {
+              ids: [1],
+              fields: [updated_foo],
+              collection_name: 'Island',
+              changed_field: 'foo'
+            }
+          }
+        }
+
+        post '/api/custom/islands/out_of_mount_action/hooks/change', params: JSON.dump(p), headers: headers
+        expect(response.status).to eq(200)
+        expect(JSON.parse(response.body)['fields'].map { |field| field['field'] }).to eq(['foo'])
+      end
+
+      it 'should not expose the hooks under the engine mount' do
+        expect {
+          post '/forest/api/custom/islands/out_of_mount_action/hooks/load', params: JSON.dump(params), headers: headers
+        }.to raise_error(ActionController::RoutingError)
+      end
+    end
+
+    describe 'on a single-record action' do
+      let(:single_record_error) { 'This action can only be triggered on one record at a time.' }
+
+      before do
+        action = island.actions.find { |action| action.name == 'my_action' }
+        allow(action).to receive(:type).and_return('single')
+      end
+
+      def hook_params(attributes)
+        JSON.dump(data: { attributes: { collection_name: 'Island' }.merge(attributes) })
+      end
+
+      [
+        ['two ids', { ids: [1, 2] }],
+        ['no id', { ids: [] }],
+        ['a select-all', { ids: [1], all_records: true }],
+      ].each do |description, selection|
+        it "should refuse to load the form given #{description}" do
+          post '/forest/actions/my_action/hooks/load', params: hook_params(selection), headers: headers
+
+          expect(response.status).to eq(422)
+          expect(response.body).to include(single_record_error)
+        end
+      end
+
+      it 'should refuse a change given two ids' do
+        post '/forest/actions/my_action/hooks/change',
+          params: hook_params(ids: [1, 2], fields: [{ field: 'foo', hook: 'on_foo_changed' }], changed_field: 'foo'),
+          headers: headers
+
+        expect(response.status).to eq(422)
+        expect(response.body).to include(single_record_error)
+      end
+
+      it 'should load the form on exactly one id' do
+        post '/forest/actions/my_action/hooks/load', params: hook_params(ids: [1]), headers: headers
+
+        expect(response.status).to eq(200)
+      end
+    end
+
+    describe 'call /change' do
+      it 'should respond 200' do
+        action = island.actions.select { |action| action.name == 'my_action' }.first
+        foo = action.fields.select { |field| field[:field] == 'foo' }.first
+        updated_foo = foo.clone.merge({:previousValue => nil, :value => 'bar'})
+        params = {
+          data: {
+            attributes: {
+              ids: [1],
+              fields: [updated_foo],
+              collection_name: 'Island',
+              changed_field: 'foo',
+              is_read_only: true
+            }
+          }
+        }
+
+        post '/forest/actions/my_action/hooks/change', params: JSON.dump(params), headers: headers
+        expect(response.status).to eq(200)
+        expected = updated_foo.clone.merge({:value => 'baz'})
+        expected[:widgetEdit] = nil
+        expected.delete(:widget)
+        expected = expected.transform_keys { |key| key.to_s.camelize(:lower) }
+        expect(JSON.parse(response.body)).to eq({'fields' => [expected.stringify_keys]})
+      end
+
+      it 'should respond 500 with bad params' do
+        post '/forest/actions/my_action/hooks/change', params: JSON.dump({ data: { attributes: { collection_name: 'Island' }}}), headers: headers
+        expect(response.status).to eq(500)
+        expect(JSON.parse(response.body)).to eq({'error' => 'Error in smart action change hook: fields params is mandatory'})
+      end
+
+      it 'should respond 500 with bad hook result type' do
+        action = island.actions.select { |action| action.name == 'fail_action' }.first
+        foo = action.fields.select { |field| field[:field] == 'foo' }.first
+        updated_foo = foo.clone.merge({:previousValue => nil, :value => 'bar'})
+        params = {
+          data: {
+            attributes: {
+              ids: [1],
+              fields: [updated_foo],
+              collection_name: 'Island',
+              changed_field: 'foo',
+              is_read_only: true
+            }
+          }
+        }
+
+        post '/forest/actions/fail_action/hooks/change', params: JSON.dump(params), headers: headers
+        expect(response.status).to eq(500)
+        expect(JSON.parse(response.body)).to eq({'error' => 'Error in smart action load hook: hook must return an array of fields'})
+      end
+
+      it 'should reset value when enums has changed' do
+        action = island.actions.select { |action| action.name == 'enums_action' }.first
+        foo = action.fields.select { |field| field[:field] == 'foo' }.first
+        enum = action.fields.select { |field| field[:field] == 'enum' }.first
+        updated_foo = foo.clone.merge({:previousValue => nil, :value => 'bar'})
+        updated_enum = enum.clone.merge({:previousValue => nil, :value => 'a'}) # set value to a
+        p = {
+          data: {
+            attributes: {
+              ids: [1],
+              fields: [updated_foo, updated_enum],
+              collection_name: 'Island',
+              changed_field: 'foo'
+            }
+          }
+        }
+
+        post '/forest/custom/islands/enums_action/hooks/change', params: JSON.dump(p), headers: headers
+        expect(response.status).to eq(200)
+
+        expected_enum = updated_enum.clone.merge({ :enums => %w[c d e], :value => nil, :widgetEdit => nil})
+        expected_enum.delete(:widget)
+        expected_foo = updated_foo.clone.merge({ :widgetEdit => nil})
+        expected_foo.delete(:widget)
+
+        expected_enum = expected_enum.transform_keys { |key| key.to_s.camelize(:lower) }
+        expected_foo = expected_foo.transform_keys { |key| key.to_s.camelize(:lower) }
+
+        expect(JSON.parse(response.body)).to eq({'fields' => [expected_foo.stringify_keys, expected_enum.stringify_keys]})
+      end
+
+      it 'should not reset value when every enum values are in the enums definition' do
+        action = island.actions.select { |action| action.name == 'multiple_enums_action' }.first
+        foo = action.fields.select { |field| field[:field] == 'foo' }.first
+        multiple_enum = action.fields.select { |field| field[:field] == 'multipleEnum' }.first
+        updated_multiple_enum = multiple_enum.clone.merge({:previousValue => nil, :value => %w[c]})
+        p = {
+          data: {
+            attributes: {
+              ids: [1],
+              fields: [foo, updated_multiple_enum],
+              collection_name: 'Island',
+              changed_field: 'foo'
+            }
+          }
+        }
+        post '/forest/actions/multiple_enums_action/hooks/change', params: JSON.dump(p), headers: headers
+        expect(response.status).to eq(200)
+
+        expected_multiple_enum = updated_multiple_enum.clone.merge({ :enums => %w[c d z], :widgetEdit => nil, :value => %w[c]})
+        expected_multiple_enum.delete(:widget)
+        expected_foo = foo.clone.merge({ :widgetEdit => nil})
+        expected_foo.delete(:widget)
+
+        expected_multiple_enum = expected_multiple_enum.transform_keys { |key| key.to_s.camelize(:lower) }
+        expected_foo = expected_foo.transform_keys { |key| key.to_s.camelize(:lower) }
+
+        expect(JSON.parse(response.body)).to eq({'fields' => [expected_foo.stringify_keys, expected_multiple_enum.stringify_keys]})
+      end
+
+      it 'should reset value when one of the enum values is not in the enums definition' do
+        action = island.actions.select { |action| action.name == 'multiple_enums_action' }.first
+        foo = action.fields.select { |field| field[:field] == 'foo' }.first
+        multiple_enum = action.fields.select { |field| field[:field] == 'multipleEnum' }.first
+        wrongly_updated_multiple_enum = multiple_enum.clone.merge({:previousValue => nil, :value => %w[a b]})
+        p = {
+          data: {
+            attributes: {
+              ids: [1],
+              fields: [foo, wrongly_updated_multiple_enum],
+              collection_name: 'Island',
+              changed_field: 'foo'
+            }
+          }
+        }
+
+        post '/forest/actions/multiple_enums_action/hooks/change', params: JSON.dump(p), headers: headers
+        expect(response.status).to eq(200)
+
+        expected_multiple_enum = wrongly_updated_multiple_enum.clone.merge({ :enums => %w[c d z], :widgetEdit => nil, :value => nil })
+        expected_multiple_enum.delete(:widget)
+        expected_foo = foo.clone.merge({ :widgetEdit => nil})
+        expected_foo.delete(:widget)
+
+        expected_multiple_enum = expected_multiple_enum.transform_keys { |key| key.to_s.camelize(:lower) }
+        expected_foo = expected_foo.transform_keys { |key| key.to_s.camelize(:lower) }
+
+        expect(JSON.parse(response.body)).to eq({'fields' => [expected_foo.stringify_keys, expected_multiple_enum.stringify_keys]})
+      end
+    end
+  end
+
+  describe 'calling the action on development environment' do
+    let(:all_records) { false }
+    let(:params) {
+      {
+        data: {
+          attributes: {
+            collection_name: 'Island',
+            ids: ['1'],
+            all_records: all_records,
+            smart_action_id: 'Island-Test'
+          },
+          type: 'custom-action-requests'
+        },
+        timezone: 'Europe/Paris'
+      }
+    }
+
+    it 'should respond 200 and perform the action' do
+      Rails.cache.delete('forest.has_permission')
+      Rails.cache.delete('forest.users')
+      Rails.cache.write('forest.users', {'1' => { 'id' => 1, 'roleId' => 2, 'rendering_id' => '1' }})
+      allow_any_instance_of(ForestLiana::Ability::Fetch)
+        .to receive(:get_permissions)
+              .with('/liana/v4/permissions/environment')
+              .and_return(true)
+
+      post '/forest/actions/test', params: JSON.dump(params), headers: headers
+
+      expect(response.status).to eq(200)
+      expect(JSON.parse(response.body)).to eq({'success' => 'You are OK.'})
+    end
+  end
+
+  describe 'calling the action' do
+    let(:all_records) { false }
+    let(:params) {
+      {
+        data: {
+          attributes: {
+            collection_name: 'Island',
+            ids: ['1'],
+            all_records: all_records,
+            smart_action_id: 'Island-Test'
+          },
+          type: 'custom-action-requests'
+        },
+        timezone: 'Europe/Paris'
+      }
+    }
+
+    describe 'without scopes' do
+      it 'should respond 200 and perform the action' do
+        allow_any_instance_of(ForestLiana::Ability).to receive(:forest_authorize!) { true }
+        post '/forest/actions/test', params: JSON.dump(params), headers: headers
+        expect(response.status).to eq(200)
+        expect(JSON.parse(response.body)).to eq({'success' => 'You are OK.'})
+      end
+
+      let(:params) {
+        {
+          data: {
+            attributes: {
+              collection_name: 'Island',
+              ids: ['1'],
+              all_records: all_records,
+              smart_action_id: 'Island-Test'
+            },
+            type: 'custom-action-requests'
+          },
+          timezone: 'Europe/Paris'
+        }
+      }
+
+      describe 'with invalid conditions' do
+        it 'should respond a 409' do
+          Rails.cache.write('forest.has_permission', true)
+          Rails.cache.write('forest.users', {'38' => { 'id' => 38, 'roleId' => 1, 'rendering_id' => '13' }})
+          Rails.cache.write(
+            'forest.collections',
+            {
+              'Island' => {
+                :actions =>
+                  {
+                    'test' => { 'triggerEnabled' => [1],
+                      'triggerConditions' => [],
+                      'approvalRequired' => [1],
+                      'approvalRequiredConditions' =>
+                        [
+                          { 'filter' =>
+                            { 'field' => 'id',
+                              'value' => 2,
+                              'source' => 'data',
+                              'operator' => 'foo-greater-than'
+                            },
+                            'roleId' => 1
+                          }
+                        ],
+                    }
+                  }
+              }
+            }
+          )
+
+          post '/forest/actions/test', params: JSON.dump(params), headers: headers
+
+          expect(response.status).to eq(409)
+          expect(JSON.parse(response.body)).to eq(
+            {
+              "errors" => [
+                {
+                  "status" => 409,
+                  "detail" => "The conditions to trigger this action cannot be verified. Please contact an administrator.",
+                  "name" => "InvalidActionConditionError"
+                }
+              ]
+            }
+          )
+        end
+      end
+
+      describe 'with unknown action' do
+        it 'should respond a 409' do
+          Rails.cache.write('forest.has_permission', true)
+          Rails.cache.write('forest.users', {'38' => { 'id' => 38, 'roleId' => 1, 'rendering_id' => '13' }})
+          Rails.cache.write(
+            'forest.collections',
+            {
+              'Island' => {
+                :actions =>
+                  {
+                    'test' => { 'triggerEnabled' => [1],
+                      'triggerConditions' => [],
+                      'approvalRequired' => [1],
+                      'approvalRequiredConditions' =>
+                        [
+                          { 'filter' =>
+                            { 'field' => 'id',
+                              'value' => 2,
+                              'source' => 'data',
+                              'operator' => 'foo-greater-than'
+                            },
+                            'roleId' => 1
+                          }
+                        ],
+                    }
+                  }
+              }
+            }
+          )
+
+          post '/forest/actions/unknown_action', params: JSON.dump(params), headers: headers
+
+          expect(response.status).to eq(409)
+          expect(JSON.parse(response.body)).to eq(
+            {"errors"=> [{"detail" => "The collection Island doesn't exist", "name" => "collection not found", "status" => 409}]}
+          )
+        end
+      end
+    end
+
+    describe 'with a requester named outside a signed approval request' do
+      it 'should respond 422 and NOT perform the action' do
+        params[:data][:attributes][:requester_id] = 99
+        expect_any_instance_of(Forest::IslandsController).not_to receive(:test)
+
+        post '/forest/actions/test', params: JSON.dump(params), headers: headers
+
+        expect(response.status).to eq(422)
+      end
+    end
+
+    describe 'with scopes' do
+      before(:each) do
+        allow_any_instance_of(ForestLiana::Ability).to receive(:forest_authorize!) { true }
+        # forest_authorize! is stubbed out above; the field-read-permission checks a select-all
+        # scope resolution runs independently of it must be bypassed the same way, or they hit the
+        # real permissions API with nothing cached to answer from.
+        Rails.cache.write('forest.has_permission', false)
+      end
+
+      describe 'when record is in scope' do
+        let(:scope_filters) {
+          {
+            'scopes' =>
+              {
+                'Island' => {
+                  'aggregator' => 'and',
+                  'conditions' => [{'field' => 'name', 'operator' => 'equal', 'value' => 'Corsica'}]
+                }
+              },
+            'team' => {
+              'id' => 43,
+              'name' => 'Operations'
+            }
+          }
+        }
+
+        it 'should respond 200 and perform the action' do
+          post '/forest/actions/test', params: JSON.dump(params), headers: headers
+          expect(response.status).to eq(200)
+          expect(JSON.parse(response.body)).to eq({'success' => 'You are OK.'})
+        end
+      end
+
+      describe 'when record is out of scope' do
+        let(:scope_filters) {
+          {
+            'scopes' =>
+              {
+                'Island' => {
+                  'aggregator' => 'and',
+                  'conditions' => [{'field' => 'name', 'operator' => 'equal', 'value' => 'Ré'}]
+                }
+              },
+            'team' => {
+              'id' => 43,
+              'name' => 'Operations'
+            }
+          }
+        }
+
+        it 'should respond 400 and NOT perform the action' do
+          post '/forest/actions/test', params: JSON.dump(params), headers: headers
+          expect(response.status).to eq(400)
+          expect(JSON.parse(response.body)).to eq({ 'error' => 'Smart Action: target record not found' })
+        end
+
+        describe 'and all_records are targeted' do
+          let(:all_records) { true }
+
+          it 'should respond 200 and perform the action' do
+            post '/forest/actions/test', params: JSON.dump(params), headers: headers
+            expect(response.status).to eq(200)
+            expect(JSON.parse(response.body)).to eq({'success' => 'You are OK.'})
+          end
+        end
+      end
+    end
+  end
+
+  describe 'serialize model' do
+    it 'should set is_collection and context option correctly' do
+      options = { field: {"Island" => "id,name"} }
+
+      expect(ForestAdmin::JSONAPI::Serializer)
+        .to receive(:serialize) do |obj, opts|
+        expect(obj).to eq(record)
+        expect(opts[:is_collection]).to be(false)
+        expect(opts[:context]).to include(unoptimized: true)
+        json_out
+      end
+
+      expect(controller).to receive(:force_utf8_encoding).with(json_out)
+
+      res = controller.send(:serialize_model, record, options)
+      expect(res).to eq(json_out)
+    end
+  end
+
+  describe 'serialize models' do
+    let(:records) { Island.all }
+
+    context 'when params fields is not present' do
+      it 'merges unoptimized into context' do
+        options = { field: {"Island" => "id,name"}, params: { searchToEdit: 'true' }, context: { foo: 42 } }
+
+        expect(ForestAdmin::JSONAPI::Serializer)
+          .to receive(:serialize) do |objs, opts|
+          expect(objs).to eq(records)
+          expect(opts[:is_collection]).to be(true)
+          expect(opts[:context]).to include(unoptimized: true, foo: 42)
+          json_out
+        end
+
+        res = controller.send(:serialize_models, records, options)
+        expect(res).to eq(json_out)
+      end
+    end
+
+    context 'when params fields is present' do
+      it 'leaves context unchanged' do
+        options = { fields: { 'Island' => 'id' }, params: { fields: 'id' }, context: { foo: 1 } }
+
+        expect(ForestAdmin::JSONAPI::Serializer)
+          .to receive(:serialize) do |_, opts|
+          expect(opts[:context]).to eq(foo: 1)
+          json_out
+        end
+
+        controller.send(:serialize_models, records, options)
+      end
+    end
+
+    context 'when params[:search] is present' do
+      it 'adds meta.decorators via DecorationHelper and concatenates smart fields' do
+        options = { params: { search: 'hello' } }
+        fields_searched = ['existing']
+        collection_double = double('collection', string_smart_fields_names: %w[foo bar])
+
+        allow_any_instance_of(ForestLiana::ApplicationController)
+          .to receive(:get_collection)
+                .and_return(collection_double)
+
+        expect(ForestLiana::DecorationHelper)
+          .to receive(:decorate_for_search) do |json, fields, term|
+          expect(json).to eq(json_out)
+          expect(fields).to match_array(%w[existing foo bar])
+          expect(term).to eq('hello')
+          { foo: 'bar' }
+        end
+          .and_return({ foo: 'bar' })
+
+        res = controller.send(:serialize_models, records, options, fields_searched)
+
+        expect(res['meta']).to eq(decorators: { foo: 'bar' })
+        expect(fields_searched).to match_array(%w[existing foo bar])
+      end
+    end
+
+    it 'calls force_utf8_encoding with the final JSON' do
+      options = {}
+      expect(controller).to receive(:force_utf8_encoding).with(json_out)
+      controller.send(:serialize_models, records, options)
+    end
+  end
+
+  describe 'fields_per_model method' do
+    let(:model) { Island }
+    let(:collection_name) { 'Island' }
+
+    before do
+      forest_collection = double('forest_collection')
+      allow(ForestLiana).to receive(:apimap).and_return([forest_collection])
+      allow(forest_collection).to receive(:name).and_return(collection_name)
+    end
+
+    context 'with smart relations pointing to external models' do
+      it 'should use reference model name as key for external smart relations' do
+        smart_relations = [
+          {
+            field: :organization,
+            reference: 'Api__OrganizationsView.id',
+            is_virtual: true,
+            is_searchable: false,
+            type: 'String'
+          }
+        ]
+
+        forest_collection = double('forest_collection')
+        allow(forest_collection).to receive(:name).and_return(collection_name)
+        allow(forest_collection).to receive(:fields_smart_belongs_to).and_return(smart_relations)
+        allow(ForestLiana).to receive(:apimap).and_return([forest_collection])
+
+        params_fields = ActionController::Parameters.new({
+                                                           'organization' => 'name'
+                                                         })
+
+        mock_params = ActionController::Parameters.new({
+                                                         collection: 'Island',
+                                                         fields: { 'Island' => 'id,name', 'organization' => 'name'},
+                                                         page: { 'number' => '1', 'size' => '10' },
+                                                         searchExtended: '0',
+                                                         sort: '-id',
+                                                         timezone: 'Europe/Paris'
+                                                       })
+        allow(controller).to receive(:params).and_return(mock_params)
+
+        result = controller.send(:fields_per_model, params_fields, model)
+
+        expect(result).to have_key('Api__OrganizationsView')
+        expect(result['Api__OrganizationsView']).to eq('name')
+        expect(result).not_to have_key('organization')
+      end
+    end
+
+    context 'with smart relations pointing to same collection (self-reference)' do
+      it 'should use relation name as key for self-referencing smart relations' do
+        smart_relations = [
+          {
+            field: :parent_island,
+            reference: 'Island.id',
+            is_virtual: true,
+            is_searchable: false,
+            type: 'String'
+          }
+        ]
+
+        forest_collection = double('forest_collection')
+        allow(forest_collection).to receive(:name).and_return(collection_name)
+        allow(forest_collection).to receive(:fields_smart_belongs_to).and_return(smart_relations)
+        allow(ForestLiana).to receive(:apimap).and_return([forest_collection])
+
+        params_fields = ActionController::Parameters.new({
+                                                           'parent_island' => 'name'
+                                                         })
+
+        mock_params = ActionController::Parameters.new({
+                                                         collection: 'Island',
+                                                         fields: { 'Island' => 'id,name', 'parent_island' => 'name'},
+                                                         page: { 'number' => '1', 'size' => '10' },
+                                                         searchExtended: '0',
+                                                         sort: '-id',
+                                                         timezone: 'Europe/Paris'
+                                                       })
+        allow(controller).to receive(:params).and_return(mock_params)
+
+        result = controller.send(:fields_per_model, params_fields, model)
+
+        expect(result).to have_key('parent_island')
+        expect(result['parent_island']).to eq('name')
+        expect(result).not_to have_key('Island')
+      end
+    end
+
+    context 'with several requested relations' do
+      let(:smart_relations) do
+        [
+          { field: :organization, reference: 'Api__OrganizationsView.id', is_virtual: true, is_searchable: false, type: 'String' },
+          { field: :parent_island, reference: 'Island.id', is_virtual: true, is_searchable: false, type: 'String' }
+        ]
+      end
+      let(:forest_collection) { double('forest_collection', name: collection_name, fields_smart_belongs_to: smart_relations) }
+      let(:params_fields) do
+        ActionController::Parameters.new({ 'Island' => 'id,name', 'organization' => 'name', 'parent_island' => 'name' })
+      end
+
+      before do
+        allow(ForestLiana).to receive(:apimap).and_return([forest_collection])
+        allow(controller).to receive(:params).and_return(
+          ActionController::Parameters.new({ collection: 'Island', fields: params_fields.to_unsafe_h })
+        )
+      end
+
+      it 'finds the collection once' do
+        expect(forest_collection).to receive(:name).once.and_return(collection_name)
+
+        controller.send(:fields_per_model, params_fields, model)
+      end
+
+      it 'reads its smart belongs-to once' do
+        expect(forest_collection).to receive(:fields_smart_belongs_to).once.and_return(smart_relations)
+
+        controller.send(:fields_per_model, params_fields, model)
+      end
+
+      it 'keys every relation as it would alone' do
+        result = controller.send(:fields_per_model, params_fields, model)
+
+        expect(result).to eq('Island' => 'id,name', 'Api__OrganizationsView' => 'name', 'parent_island' => 'name')
+      end
+    end
+  end
+end

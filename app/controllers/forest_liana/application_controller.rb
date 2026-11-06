@@ -1,0 +1,393 @@
+require 'jwt'
+require 'csv'
+
+module ForestLiana
+  class ApplicationController < ForestLiana::BaseController
+    rescue_from ForestLiana::Ability::Exceptions::AccessDenied, with: :render_error
+    rescue_from ForestLiana::Errors::HTTP400Error, with: :render_error
+    rescue_from ForestLiana::Errors::HTTP403Error, with: :render_error
+    rescue_from ForestLiana::Errors::HTTP422Error, with: :render_error
+    rescue_from ForestLiana::Errors::PermissionsUnavailableError, with: :render_error
+    rescue_from ForestLiana::Ability::Exceptions::ActionConditionError, with: :render_error
+    rescue_from ForestLiana::Ability::Exceptions::UnknownCollection, with: :render_error
+    rescue_from ForestLiana::Ability::Exceptions::UnauthorizedFieldsError, with: :render_error
+    rescue_from ForestLiana::Ability::Exceptions::UnauthorizedQueryFieldError, with: :render_error
+    rescue_from ForestLiana::Ability::Exceptions::UnexposedQueryCollectionError, with: :render_error
+
+    # `render_error` above already gives these their 403 + name/data payload — every list here is
+    # for an action whose own `begin/rescue` would otherwise let a bare `rescue => error` swallow
+    # them into a 500 first. Those actions catch this list and re-`raise`, letting it reach here.
+    QUERY_PERMISSION_ERRORS = [
+      ForestLiana::Ability::Exceptions::UnauthorizedFieldsError,
+      ForestLiana::Ability::Exceptions::UnauthorizedQueryFieldError,
+      ForestLiana::Ability::Exceptions::UnexposedQueryCollectionError,
+    ].freeze
+
+    def self.papertrail?
+      Object.const_get('PaperTrail::Version').is_a?(Class) rescue false
+    end
+
+    around_action :with_request_cache
+
+    # NOTICE: Calling the method set_paper_trail_whodunnit loads the PaperTrail
+    #         gem and Forest detects the PaperTrail::Version automatically. This
+    #         method is used to set the whodunnit field automatically to track
+    #         changes made using Forest with PaperTrail.
+    if Rails::VERSION::MAJOR < 4
+      before_filter :authenticate_user_from_jwt
+      before_filter :set_paper_trail_whodunnit if self.papertrail?
+    else
+      before_action :authenticate_user_from_jwt
+      before_action :set_paper_trail_whodunnit if self.papertrail?
+    end
+
+    if self.papertrail?
+      # NOTICE: The Forest user email is returned to track changes made using
+      #         Forest with Papertrail.
+      define_method :user_for_paper_trail do
+        @jwt_decoded_token['email']
+      end
+    end
+
+    # NOTICE: Helper method for Smart Routes logic based on current user info.
+    def forest_user
+      @jwt_decoded_token
+    end
+
+    def serialize_model(record, options = {})
+      options[:is_collection] = false
+      options[:context] = { unoptimized: options[:fields].nil? }.merge(options[:context] || {})
+
+      json = ForestAdmin::JSONAPI::Serializer.serialize(record, options)
+
+      force_utf8_encoding(json)
+    end
+
+    def serialize_models(records, options = {}, fields_searched = [])
+      options[:is_collection] = true
+      if options[:fields].nil?
+        options[:context] = { unoptimized: true }.merge(options[:context] || {})
+      end
+
+      json = ForestAdmin::JSONAPI::Serializer.serialize(records, options)
+
+      if options[:params] && options[:params][:search]
+        # NOTICE: Add the Smart Fields with a 'String' type.
+        fields_searched.concat(get_collection.string_smart_fields_names).uniq!
+        json['meta'] = {
+          decorators: ForestLiana::DecorationHelper
+            .decorate_for_search(json, fields_searched, options[:params][:search])
+        }
+      end
+
+      force_utf8_encoding(json)
+    end
+
+    def get_collection
+      raise NotImplementedError, "#{self.class} must implement #get_collection"
+    end
+
+    def authenticate_user_from_jwt
+      begin
+        if request.headers
+          if request.headers['Authorization']
+            token = request.headers['Authorization'].split.second
+          # NOTICE: Necessary for downloads authentication.
+          elsif request.headers['cookie']
+            match = ForestLiana::Token::REGEX_COOKIE_SESSION_TOKEN.match(request.headers['cookie'])
+            token = match[1] if match && match[1]
+          end
+
+          @jwt_decoded_token = JWT.decode(token, ForestLiana.auth_secret, true,
+            { algorithm: 'HS256' }).try(:first)
+
+          # NOTICE: Automatically logs out the users that use tokens having an old data format.
+          if @jwt_decoded_token['data']
+            raise ForestLiana::Errors::HTTP401Error.new("Your token format is invalid, please login again.")
+          end
+
+          @rendering_id = @jwt_decoded_token['rendering_id']
+        else
+          head :unauthorized
+        end
+      rescue JWT::ExpiredSignature, JWT::VerificationError
+        render json: { error: 'expired_token' }, status: :unauthorized,
+          serializer: nil
+      rescue
+        head :unauthorized
+      end
+    end
+
+    def internal_server_error
+      head :internal_server_error
+    end
+
+    def deactivate_count_response
+      render serializer: nil, json: { meta: { count: 'deactivated'} }
+    end
+
+    def count_deactivated?(model)
+      name = ForestLiana.name_for(model)
+      ForestLiana.apimap.find { |collection| collection.name.to_s == name }&.is_countable == false
+    end
+
+    private
+
+    def with_request_cache(&block)
+      ForestLiana::RequestCache.with(&block)
+    end
+
+    # NOTICE: What survives becomes(), which allocates a fresh instance and copies @attributes
+    #         onto it and nothing else. Shared by both controllers' get_record, unlike the rest of
+    #         their rendering, because getting it wrong is a correctness bug rather than a
+    #         difference of route.
+    #
+    #         An association proxy is bound to the reflection of the class that built it, and
+    #         association(name) hands back whatever sits under that key without re-checking it
+    #         against the new class. An STI subclass is free to redefine a same-named association
+    #         with its own class_name, scope or foreign_key, so copying such an entry wholesale
+    #         would serve the subclass's target under the base class's field — plausible, wrong,
+    #         and raising nothing. Only entries both classes reflect identically are carried over;
+    #         anything else is left to load lazily, the behaviour it had before this existed.
+    def carry_preloaded_associations(record, became)
+      cache = record.instance_variable_get(:@association_cache) || {}
+      carried = cache.select do |name, _|
+        record.class.reflect_on_association(name) == became.class.reflect_on_association(name)
+      end
+      became.instance_variable_set(:@association_cache, carried)
+
+      became
+    end
+
+    # NOTICE: Header-then-query fallback, decided here and nowhere else: the header is rewritten
+    #         into params[:fields], so every route keeps reading the projection it always read
+    #         and the header wins over the query params without any route knowing about it.
+    #
+    #         Declared as a before_action by the routes that project, and by them only: a count,
+    #         a stats or a write carries no projection, must not have its params rewritten by a
+    #         header meant for the list next to it, and must not answer a 400 for one. The same
+    #         rule as agent-nodejs, whose own suite pins the header ignored on count.
+    def apply_projection_header
+      header = request.headers[ForestLiana::ProjectionParser::HEADER_NAME]
+      return if header.nil?
+
+      root_model = projection_root_model
+      # NOTICE: An unresolvable collection is left to the route, which answers its own 404.
+      return if root_model.nil?
+
+      fields = ForestLiana::ProjectionParser.new(header, ForestLiana.name_for(root_model)).perform
+      params[:fields] = ActionController::Parameters.new(fields)
+    rescue ForestLiana::Errors::ExpectedError
+      # NOTICE: The deliberate 400 on a malformed header, which render_error answers.
+      raise
+    rescue => error
+      FOREST_REPORTER.report error
+      FOREST_LOGGER.error "Forest-Projection header error: #{error}\n#{format_stacktrace(error)}"
+      internal_server_error
+    end
+
+    # NOTICE: A projection is rooted on the collection the records come from, which is the
+    #         association target on the relationships routes, not the collection in the URL.
+    def projection_root_model
+      return nil if params[:collection].blank?
+
+      model = ForestLiana::SchemaUtils.find_model_from_collection_name(params[:collection])
+      return nil unless model.respond_to?(:reflect_on_association)
+      return model if params[:association_name].blank?
+
+      association = model.reflect_on_association(params[:association_name].to_sym)
+      # NOTICE: klass raises on a polymorphic reflection, and this runs in a before_action: the
+      #         guard is what keeps a 500 from replacing the 404 the route answers on its own. A
+      #         relationships index rejects a belongs_to, which a polymorphic relation always is.
+      return nil if association.nil? || ForestLiana::SchemaUtils.polymorphic?(association)
+
+      association.klass
+    end
+
+    def render_error(exception)
+      # Same rule as render_expected_error, for the errors that reach here through a rescue_from
+      # instead: a 5xx is a server-side failure, reported and logged as one.
+      if exception.error_code.to_i >= 500
+        FOREST_REPORTER.report exception
+        ForestLiana::Errors::ExceptionHelper.recursively_print(exception, is_error: true)
+      end
+
+      errors = {
+        status: exception.error_code,
+        detail: exception.message,
+      }
+
+      errors['name'] = exception.name if exception.try(:name)
+      errors['data'] = exception.data if exception.try(:data)
+
+      render json: { errors: [errors] }, status: exception.status
+    end
+
+    def force_utf8_encoding(json)
+      if json['data'].class == Array
+        # NOTICE: Collection of records case
+        json['data'].each { |record| force_utf8_attributes_encoding(record) }
+      else
+        # NOTICE: Single record case
+        force_utf8_attributes_encoding(json['data']) if json['data']
+      end
+
+      json['included'].try(:each) do |association|
+        force_utf8_attributes_encoding(association)
+      end
+
+      json
+    end
+
+    def force_utf8_attributes_encoding(model)
+      # NOTICE: Declare all strings are encoded in utf-8
+      if model['attributes']
+        model['attributes'].each do |name, value|
+          if value.respond_to?(:force_encoding)
+            begin
+              model['attributes'][name] = value.force_encoding('utf-8')
+            rescue
+              # NOTICE: Enums are frozen Strings
+            end
+          end
+        end
+      end
+    end
+
+    def fields_per_model(params_fields, model)
+      if params_fields
+        if Rails::VERSION::MAJOR > 4
+          params_fields_hash = params_fields.to_unsafe_h
+        else
+          params_fields_hash = params_fields.to_hash
+        end
+
+        forest_collection = nil
+        smart_relations = nil
+        params_fields_hash.inject({}) do |fields, param_field|
+          relation_name = param_field[0]
+          relation_fields = param_field[1]
+          forest_collection ||= begin
+            collection_name = model.to_s.gsub('::', '__')
+            ForestLiana.apimap.find { |collection| collection.name.to_s == collection_name }
+          end
+          smart_relations ||= forest_collection.fields_smart_belongs_to
+
+          if relation_name == ForestLiana.name_for(model)
+            fields[relation_name] = relation_fields
+          elsif model.reflect_on_association(relation_name.to_sym)
+            model_association = model.reflect_on_association(relation_name.to_sym)
+            if model_association && !model_association.polymorphic?
+              model_name = ForestLiana.name_for(model_association.klass)
+              # NOTICE: Join fields in case of model with self-references.
+              if fields[model_name]
+                fields[model_name] = [
+                  fields[model_name],
+                  relation_fields
+                ].join(',').split(',').uniq.join(',')
+              else
+                fields[model_name] = relation_fields
+              end
+            elsif model_association && model_association.polymorphic?
+              fields[relation_name] = relation_fields
+            end
+          else
+            smart_relations.each do |smart_relation|
+              if smart_relation[:field].to_s == relation_name
+                if smart_relation[:reference].split('.').first == params[:collection]
+                  fields[relation_name] = relation_fields
+                else
+                  fields[smart_relation[:reference].split('.').first] = relation_fields
+                end
+              end
+            end
+          end
+
+          fields
+        end
+      else
+        nil
+      end
+    end
+
+    def render_csv getter, model
+      # Unlike index/show/update, an unreadable column here is dropped rather than refusing the
+      # whole export (named_collections: [] — nothing is ever "named") — matching agent-nodejs's
+      # own CSV route, which runs the same redactProjection as its JSON list but drops a denied
+      # column instead of 403ing the file whenever it doesn't error there either.
+      requested_fields = fields_per_model(params[:fields], model)
+      fields_to_serialize = redact_fields(forest_user, model, requested_fields, named_collections: [])
+
+      set_headers_file
+      set_headers_streaming
+
+      response.status = 200
+      collection_name = ForestLiana.name_for(model)
+      requested_field_names = params[:fields][collection_name].split(',').map { |name| name.to_s }
+      requested_header = params[:header].split(',')
+
+      # Keep the header row aligned with whatever redact_fields left in fields_to_serialize,
+      # the same way agent-nodejs's CsvGenerator.filterHeader drops a redacted column's label.
+      surviving = (fields_to_serialize[collection_name] || '').split(',')
+      kept = requested_field_names.zip(requested_header).select { |name, _| surviving.include?(name) }
+      field_names_requested = kept.map(&:first)
+      csv_header = kept.map(&:last)
+
+      self.response_body = Enumerator.new do |content|
+        content << ::CSV::Row.new(field_names_requested, csv_header, true).to_s
+        getter.query_for_batch.find_in_batches() do |records|
+          records.each do |record|
+            json = serialize_model(record, {
+              include: getter.includes.map(&:to_s),
+              fields: fields_to_serialize
+            })
+            record_attributes = json['data']['attributes']
+            record_relationships = json['data']['relationships'] || {}
+            included = json['included']
+
+            values = field_names_requested.map do |field_name|
+              if field_name == 'id'
+                json['data']['id']
+              elsif record_attributes[field_name]
+                record_attributes[field_name]
+              elsif record_relationships[field_name] &&
+                record_relationships[field_name]['data']
+                relationship_id = record_relationships[field_name]['data']['id']
+                relationship_type = record_relationships[field_name]['data']['type']
+                relationship_object = included.select do |object|
+                  object['id'] == relationship_id && object['type'] == relationship_type
+                end
+
+                relationship_object = relationship_object.first
+                if relationship_object && relationship_object['attributes']
+                  relationship_object['attributes'][params[:fields][field_name]]
+                else
+                  nil
+                end
+              end
+            end
+            content << ::CSV::Row.new(field_names_requested, values).to_s
+          end
+        end
+      end
+    end
+
+    def set_headers_file
+      csv_filename = "#{params[:filename]}.csv"
+      headers["Content-Type"] = "text/csv; charset=utf-8"
+      headers["Content-disposition"] = %{attachment; filename="#{csv_filename}"}
+      headers['Last-Modified'] = Time.now.ctime.to_s
+    end
+
+    def set_headers_streaming
+      # NOTICE: From nginx doc: Setting this to "no" will allow unbuffered
+      #         responses suitable for Comet and HTTP streaming applications
+      headers['X-Accel-Buffering'] = 'no'
+      headers["Cache-Control"] = "no-cache"
+    end
+
+    def format_stacktrace error
+      error.backtrace.join("\n\t")
+    end
+  end
+end

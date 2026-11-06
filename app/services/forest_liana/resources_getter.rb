@@ -1,0 +1,335 @@
+module ForestLiana
+  class ResourcesGetter < BaseGetter
+    attr_reader :search_query_builder, :includes, :records_count
+
+    def initialize(resource, params, forest_user)
+      @resource = resource
+      @params = params
+      @user = forest_user
+      @collection_name = ForestLiana.name_for(@resource)
+      @collection = get_collection(@collection_name)
+      # SearchQueryBuilder only joins an association under searchExtended (:103) — a plain
+      # search never leaves @resource's own columns. A smart field's search: lambda is the
+      # exception: it can reach anywhere, so its footprint stays unknown.
+      @count_needs_includes = @params[:search].present? &&
+        (@params['searchExtended'].to_i == 1 || smart_search_fields?)
+      @fields_to_serialize = get_fields_to_serialize
+      @field_names_requested = field_names_requested
+      @segment = get_segment
+      compute_includes
+      @search_query_builder = SearchQueryBuilder.new(@params, searchable_includes(@resource), @collection, @user)
+
+      prepare_query
+      @base_records_for_batch = @records
+    end
+
+    def self.get_ids_from_request(params, user, limit: nil)
+      attributes = params.dig('data', 'attributes')
+      return attributes[:ids] if attributes&.fetch(:all_records, false) == false && attributes[:ids]
+
+      attributes = merge_subset_query(attributes)
+      resources_getter = initialize_resources_getter(attributes, user)
+      ids = fetch_ids(resources_getter, limit: limit)
+
+      filter_excluded_ids(ids, attributes[:all_records_ids_excluded])
+    end
+
+    def assert_sort_readable!
+      @search_query_builder.assert_sort_readable!(@user, @resource)
+    end
+
+    def perform
+      assert_sort_readable!
+      # Captured before any select narrows @records: count/optimized_count must build its COUNT
+      # off this, never off @records past this point — a `.select` naming more than one column
+      # makes Rails emit `COUNT(col1, col2)`, invalid SQL, if `.count` ever ran off it instead.
+      # A second #perform on the same instance must not recapture @records after the first call
+      # already projected it, or this guard protects nothing the second time around.
+      @unprojected_records ||= optimize_record_loading(@resource, @records, false)
+
+      @records = if project?
+        polymorphic_association, preload_loads = analyze_associations(@resource)
+        includes = @includes.uniq - polymorphic_association - preload_loads - @optional_includes
+        apply_projection(@unprojected_records, includes)
+      else
+        @unprojected_records
+      end
+
+      # Deliberately after the capture above: a preload is a query of its own, per page — count
+      # builds its COUNT off @unprojected_records and has no getter to run, so it must not inherit
+      # one.
+      @records = apply_smart_field_preloads(@records)
+    end
+
+    # NOTICE: Without a fields[] param at all, serialization is unoptimized (every field of every
+    #         relation the request touches) — projecting would starve fields the caller never
+    #         named but still expects back.
+    def projection?
+      !@params.dig(:fields, @collection_name).nil?
+    end
+
+    def count
+      @records_count = @count_needs_includes ? optimized_count : unprojected_records.count
+    end
+
+    # See HasManyGetter#query_for_batch: same dual-use split between a CSV export (which calls
+    # #perform first, so this picks up its smart-field preload) and a bulk "select all" batch
+    # (which never does, per initialize_resources_getter below, and only reads ids).
+    # On the relation, not a page: find_in_batches then resolves it per batch, so the key guard
+    # reads the select rather than a row. "Unprojected" only means this class did not narrow it —
+    # a segment whose scope calls .select narrows it before prepare_query ever returns.
+    def query_for_batch
+      return @base_records_for_batch unless @unprojected_records
+
+      records = apply_smart_field_preloads(@unprojected_records)
+      cross_database = selectable_preloads(records, cross_database_associations(@resource))
+
+      cross_database.empty? ? records : records.preload(cross_database)
+    end
+
+    def records
+      records = @records.offset(offset).limit(limit).to_a
+      polymorphic_association, = analyze_associations(@resource)
+
+      preload_polymorphic_associations(records, polymorphic_association)
+      # On the page, not @records: count and query_for_batch build off the same relation.
+      preload_cross_database_associations(records, cross_database_associations(@resource))
+
+      records
+    end
+
+    def columns_for_cross_database_association(association_name)
+      association = @resource.reflect_on_association(association_name)
+
+      # Always include all columns of the associated model to avoid missing attribute errors
+      columns = association.klass.column_names.map(&:to_sym)
+
+      # Ensure the foreign key is present for manual binding (especially for has_one)
+      if association.macro == :has_one
+        foreign_keys = Array(association.foreign_key).map(&:to_sym)
+        columns.concat(foreign_keys)
+      end
+
+      columns.uniq
+    end
+
+    def compute_includes
+      associations_has_one = ForestLiana::QueryHelper.get_one_associations(@resource)
+
+      @optional_includes = []
+      if @field_names_requested && @params['searchExtended'].to_i != 1
+        includes = associations_has_one.map(&:name)
+
+        # A dotted search_fields entry ('author.name') only ever searches on an extended request
+        # (search_query_builder gates it on extended_search?) — joining its association here, on
+        # the plain branch, would pay for a search that never runs.
+        filter_associations = extract_associations_from_filter
+        filter_has_many = filter_associations.select do |assoc_name|
+          assoc = @resource.reflect_on_association(assoc_name)
+          assoc && [:has_many, :has_and_belongs_to_many].include?(assoc.macro)
+        end
+
+        @includes = (includes & @field_names_requested).concat(filter_has_many).uniq
+      else
+        @includes = associations_has_one
+        # Avoid eager loading has_one associations pointing to a different database as ORM can't join cross databases
+                      .reject { |association| separate_database?(@resource, association) }
+                      .map(&:name)
+      end
+    end
+
+    def includes_for_serialization
+      super & @fields_to_serialize.map(&:to_s)
+    end
+
+    private
+
+    def project?
+      projection? && @collection.smart_fields_projectable?(@field_names_requested)
+    end
+
+    # @collection is the same entry schema_for_resource(@resource) would look up — reusing it
+    # skips a second, much costlier lookup (schema_for_resource is O(collections × models): it
+    # calls find_model_from_collection_name, itself a scan of ForestLiana.models, once per
+    # apimap entry).
+    def smart_search_fields?
+      @collection&.fields&.any? { |field| field[:search] } || false
+    end
+
+    def get_fields_to_serialize
+      @params.dig(:fields, @collection_name)&.split(',')&.map(&:to_sym) || []
+    end
+
+    def get_segment
+      @collection.segments.find { |segment| segment.name == @params[:segment] } if @params[:segment]
+    end
+
+    def field_names_requested
+      return [] unless @params.dig(:fields, @collection_name)
+
+      associations_for_query = extract_associations_from_filter
+      @params[:sort]&.split(',')&.each do |sort_field|
+        associations_for_query << sort_field.delete_prefix('-').split('.').first.to_sym if sort_field.include?('.')
+      end
+      @fields_to_serialize | associations_for_query
+    end
+
+    def extract_associations_from_filter
+      associations = []
+
+      filters = @params[:filters]
+      filters = JSON.parse(filters) if filters.is_a?(String)
+      filters = filters.to_unsafe_h if filters.respond_to?(:to_unsafe_h)
+
+      conditions = []
+
+      # A non-Array `conditions` (a malformed aggregator node) is left out rather than iterated:
+      # Hash#each would yield [key, value] pairs, and condition['field'] on one raises a TypeError
+      # instead of letting FiltersParser's own ensure_valid_aggregation answer its usual 422.
+      if filters.is_a?(Hash) && filters['conditions'].is_a?(Array)
+        conditions = filters['conditions']
+      elsif filters.is_a?(Hash) && filters.key?('field')
+        conditions = [filters]
+      end
+
+      conditions.each do |condition|
+        field = condition['field']
+        if field&.include?(':')
+          # Handle association filters with : separator (e.g., "user:name")
+          associations << field.split(':').first.to_sym
+          @count_needs_includes = true
+        elsif field&.include?('.')
+          # Handle nested association filters with . separator (e.g., "top_level_partner.display_name")
+          associations << field.split('.').first.to_sym
+          @count_needs_includes = true
+        end
+      end
+
+      associations.uniq
+    end
+
+    def prepare_query
+      @records = get_resource
+
+      if @segment
+        @records = apply_segment(@records)
+      end
+
+      apply_live_query_segment if @params[:segmentQuery]
+      @records = search_query
+    end
+
+    def optimized_count
+      optimize_record_loading(@resource, unprojected_records).count
+    end
+
+    def apply_segment(records)
+      return records.send(@segment.scope) if @segment.scope
+      return records.where(@segment.where.call) if @segment.where
+
+      records
+    end
+
+    def apply_live_query_segment
+      ScopeManager.assert_can_execute_segment_query!(@user, @collection_name, @params[:segmentQuery])
+
+      LiveQueryChecker.new(@params[:segmentQuery], 'Live Query Segment').validate
+
+      begin
+        segment_query = @params[:segmentQuery].gsub(/\;\s*$/, '')
+        segment_query = ScopeManager.inject_context_variables_on_query(segment_query, @user, @resource.connection)
+
+        @records = @records.where(
+          "#{@resource.table_name}.#{@resource.primary_key} IN (SELECT id FROM (#{segment_query}) as ids)"
+        )
+      rescue => error
+        handle_live_query_error(error)
+      end
+    end
+
+    def handle_live_query_error(error)
+      error_message = "Live Query Segment: #{error.message}"
+      FOREST_REPORTER.report error
+      FOREST_LOGGER.error(error_message)
+      raise ForestLiana::Errors::LiveQueryError.new(error_message)
+    end
+
+    def self.merge_subset_query(attributes)
+      attributes.merge(attributes[:all_records_subset_query].dup.to_unsafe_h)
+    end
+
+    # This path never calls #perform, so query_for_batch falls back to @base_records_for_batch
+    # as built by the constructor — but #perform is the only thing that used to call
+    # assert_sort_readable!, so every other caller of get_ids_from_request (destroy_bulk, a
+    # select-all dissociate, a smart action's select-all) carried a sort param past this guard
+    # entirely.
+    def self.initialize_resources_getter(attributes, user)
+      resources_getter =
+        if related_data?(attributes)
+          HasManyGetter.new(*related_data_params(attributes, user))
+        else
+          ResourcesGetter.new(SchemaUtils.find_model_from_collection_name(attributes[:collection_name]), attributes, user)
+        end
+
+      resources_getter.assert_sort_readable!
+      resources_getter
+    end
+
+    def self.related_data?(attributes)
+      attributes[:parent_collection_id] && attributes[:parent_collection_name] && attributes[:parent_association_name]
+    end
+
+    def self.related_data_params(attributes, user)
+      parent_model = SchemaUtils.find_model_from_collection_name(attributes[:parent_collection_name])
+      model = parent_model.reflect_on_association(attributes[:parent_association_name].to_sym)
+
+      [
+        parent_model,
+        model,
+        attributes.merge(
+          collection: attributes[:parent_collection_name],
+          id: attributes[:parent_collection_id],
+          association_name: attributes[:parent_association_name]
+        ),
+        user
+      ]
+    end
+
+    def self.fetch_ids(resources_getter, limit: nil)
+      ids = []
+      resources_getter.query_for_batch.find_in_batches do |records|
+        ids += records.map(&:id)
+        break if limit && ids.length >= limit
+      end
+
+      limit ? ids.first(limit) : ids
+    end
+
+    def self.filter_excluded_ids(ids, ids_excluded)
+      return ids if ids_excluded.blank?
+
+      excluded = ids_excluded.map(&:to_s)
+      # Composite pks are arrays; the frontend excludes them in their serialized JSON form.
+      ids.reject { |id| excluded.include?(id.is_a?(Array) ? id.to_json : id.to_s) }
+    end
+
+    def search_query
+      @search_query_builder.perform(@records)
+    end
+
+    def offset
+      return 0 unless pagination?
+
+      number = @params.dig(:page, :number)
+      number.to_i.positive? ? (number.to_i - 1) * limit : 0
+    end
+
+    def limit
+      @params.dig(:page, :size)&.to_i || 10
+    end
+
+    def pagination?
+      @params[:page]&.dig(:number)
+    end
+  end
+end
