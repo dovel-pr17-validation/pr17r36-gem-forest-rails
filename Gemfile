@@ -9,7 +9,7 @@ gem 'rails', '6.1.7.9'
 # concurrent-ruby 1.3.5 dropped its `logger` dependency, which Rails < 7.1 relied on.
 gem 'concurrent-ruby', '1.3.4'
 # groupdate >= 6.5 needs Rails 7.
-gem 'groupdate', '5.2.2'
+gem 'groupdate', '5.2.4'
 
 group :test do
   # Rails < 7.1 pins the sqlite3 adapter to the 1.x line.
